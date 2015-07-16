@@ -1,0 +1,1018 @@
+<?php
+
+function get_post_custom_attributes($post) {
+
+	$ret = array();
+
+	switch ($post->post_type) {
+		case "pof_post_program":
+		
+			$languages = get_field("kielet", $post->ID);
+		
+			$langs = array();
+			if (!empty($languages)) {
+				foreach ($languages as $language) {
+					array_push ($langs, array('name'=>'language', 'attributes' => array('value' => $language)));
+				}
+			}
+			
+			$ret = 	array( 
+				'name'=>'leaf',
+				array(
+					'name'=>'languages',
+					$langs
+				)
+			);
+			
+			break;
+	
+		case "pof_post_agegroup":
+			$ret = 	array( 
+				'name'=>'leaf',
+				array(
+					'name'=>'minAge',
+					'attributes' => array(
+						'value' => get_field("agegroup_min_age")
+					),
+				),
+				array(
+					'name'=>'maxAge',
+					'attributes' => array(
+						'value' => get_field("agegroup_max_age")
+					),
+				)
+			);
+			
+			break;
+	}
+
+	return $ret;
+
+}
+
+function get_post_tags_XML($post_id) {
+	$ret = array(
+		'name'=>'tags'
+	);
+	
+	$taitoalueet_tags = wp_get_post_terms($post_id, 'pof_tax_skillarea');
+	
+	$taitoalueet = array(
+		'name'=>'taitoalueet'
+	);
+	
+	foreach ($taitoalueet_tags as $taitoalue_tag) {
+		$taitoalue = array(
+			'name'=>'taitoalue',
+			'value' => $taitoalue_tag->name,
+			'attributes' => array(
+				'slug' => $taitoalue_tag->slug,
+				'id' => $taitoalue_tag->term_taxonomy_id
+			),
+		);
+		array_push($taitoalueet, $taitoalue);
+	}
+	
+	array_push($ret, $taitoalueet);
+	
+	$suoritus_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskduration');
+	
+	$suoritus_kestot = array(
+		'name'=>'task_duration'
+	);
+	
+	foreach ($suoritus_kesto_tags as $suoritus_kesto_tag) {
+		$suoritus_kesto = array(
+			'name'=>'duration',
+			'value' => $suoritus_kesto_tag->name,
+			'attributes' => array(
+				'slug' => $suoritus_kesto_tag->slug,
+				'id' => $suoritus_kesto_tag->term_taxonomy_id
+			),
+		);
+		array_push($suoritus_kestot, $suoritus_kesto);
+	}
+	
+	array_push($ret, $suoritus_kestot);
+	
+	$suoritus_valmistelu_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskpreparationduration');
+	
+	$suoritus_valmistelu_kestot = array(
+		'name'=>'task_preaparation_duration'
+	);
+	
+	foreach ($suoritus_valmistelu_kesto_tags as $suoritus_valmistelu_kesto_tag) {
+		$suoritus_valmistelu_kesto = array(
+			'name'=>'duration',
+			'value' => $suoritus_valmistelu_kesto_tag->name,
+			'attributes' => array(
+				'slug' => $suoritus_valmistelu_kesto_tag->slug,
+				'id' => $suoritus_valmistelu_kesto_tag->term_taxonomy_id
+			),
+		);
+		array_push($suoritus_valmistelu_kestot, $suoritus_valmistelu_kesto);
+	}
+	
+	array_push($ret, $suoritus_valmistelu_kestot);
+	
+	$tarvike_tags = wp_get_post_terms($post_id, 'pof_tax_equipment');
+	
+	$tarvikkeet = array(
+		'name'=>'equipments'
+	);
+	
+	foreach ($tarvike_tags as $tarvike_tag) {
+		$tarvike = array(
+			'name'=>'equipment',
+			'value' => $tarvike_tag->name,
+			'attributes' => array(
+				'slug' => $tarvike_tag->slug,
+				'id' => $tarvike_tag->term_taxonomy_id
+			),
+		);
+		array_push($tarvikkeet, $tarvike);
+	}
+	
+	array_push($ret, $tarvikkeet);
+	
+	return $ret;
+}
+
+function get_post_images_XML($post_id) {
+	$ret = array(
+		'name'=>'images'
+	);
+
+	$logo = get_field('logo_image', $post_id);
+
+	if ($logo) {
+		$logo_arr = array(
+			'name'=>'logo',
+			'value' => $logo['title'],
+			'attributes' => array(
+				'mime_type' => $logo['mime_type'],
+				'height' => $logo['height'],
+				'width' => $logo['width'],
+				'url' => $logo['url']
+			),
+		);
+	} else {
+		$logo_arr = array(
+			'name'=>'logo'
+		);
+	}
+
+	
+	array_push($ret, $logo_arr);
+	
+	$main_image = get_field('main_image', $post_id);
+
+
+	if ($main_image) {
+		$mainimage_arr = array(
+			'name'=>'main_image',
+			'value' => $main_image['title'],
+			'attributes' => array(
+				'mime_type' => $main_image['mime_type'],
+				'height' => $main_image['height'],
+				'width' => $main_image['width'],
+				'url' => $main_image['url']
+			),
+		);
+	} else {
+		$mainimage_arr = array(
+			'name'=>'main_image'
+		);
+	}
+
+	
+	array_push($ret, $mainimage_arr);
+
+	return $ret;
+}
+
+function get_post_additional_content_XML($post_id) {
+	$ret = array(
+		'name'=>'additional_content'
+	);
+
+	$images = simple_fields_fieldgroup("additional_images_fg", $post_id);
+
+	$images_arr = array(
+		'name'=>'images'
+	);
+
+	if ($images) {
+		foreach ($images as $additional_image) {
+			if ($additional_image['additional_image']) {
+				$image = $additional_image['additional_image'];
+				$image_arr = array(
+					'name'=>'image',
+					'value' => $additional_image['additional_image_text'],
+					'attributes' => array(
+						'mime_type' => $image['mime'],
+						'height' => $image['metadata']['height'],
+						'width' => $image['metadata']['width'],
+						'url' => $image['url']
+					),
+				);
+				array_push($images_arr, $image_arr);
+			}
+		}
+	}
+
+	array_push($ret, $images_arr);
+
+	$files = simple_fields_fieldgroup("additional_files_fg", $post_id);
+
+	$files_arr = array(
+		'name'=>'files'
+	);
+
+	if ($files) {
+		foreach ($files as $additional_file) {
+			if ($additional_file['additional_file']) {
+	
+				$file = $additional_file['additional_file'];
+
+				$file_arr = array(
+					'name'=>'file',
+					'value' => $additional_file['additional_file_text'],
+					'attributes' => array(
+						'mime_type' => $image['mime'],
+						'url' => $file['url']
+					),
+				);
+				array_push($files_arr, $file_arr);
+			}
+		}
+	}
+
+	$links = simple_fields_fieldgroup("additional_links_fg", $post_id);
+
+	$links_arr = array(
+		'name'=>'links'
+	);
+
+	if ($links) {
+		foreach ($links as $additional_link) {
+			if ($additional_link['additional_link_url']) {
+	
+				$link = $additional_link['additional_link_url'];
+
+				$link_arr = array(
+					'name'=>'link',
+					'value' => $additional_link['additional_link_text'],
+					'attributes' => array(
+						'url' => $link
+					),
+				);
+				array_push($links_arr, $link_arr);
+			}
+		}
+	}
+
+	array_push($ret, $links_arr);
+
+	array_push($ret, $files_arr);
+
+
+	return $ret;
+}
+
+function generate_xml_element( $dom, $data ) {
+	$dom->formatOutput = true; // Add whitespace to make easier to read XML
+	if ( empty( $data['name'] ) )
+		return false;
+ 
+	// Create the element
+	$element_value = ( ! empty( $data['value'] ) ) ? $data['value'] : null;
+	$element = $dom->createElement( $data['name'], $element_value );
+ 
+	// Add any attributes
+	if ( ! empty( $data['attributes'] ) && is_array( $data['attributes'] ) ) {
+		foreach ( $data['attributes'] as $attribute_key => $attribute_value ) {
+			$element->setAttribute( $attribute_key, $attribute_value );
+		}
+	}
+ 
+	// Any other items in the data array should be child elements
+	foreach ( $data as $data_key => $child_data ) {
+		if ( ! is_numeric( $data_key ) )
+			continue;
+ 
+		$child = generate_xml_element( $dom, $child_data );
+		if ( $child )
+			$element->appendChild( $child );
+	}
+ 
+	return $element;
+}
+ 
+function getXML($data) {
+	$doc = new DOMDocument();
+	$doc->formatOutput = true; // Add whitespace to make easier to read XML
+	$doc->preserveWhiteSpace = false;
+	$child = generate_xml_element( $doc, $data );
+	if ( $child )
+		$doc->appendChild( $child );
+	$outXml = $doc->saveXML();
+
+	$xml = new DOMDocument(); 
+	$xml->preserveWhiteSpace = false; 
+	$xml->formatOutput = true; 
+	$xml->loadXML($outXml); 
+	$outXml = $xml->saveXML();
+	return $outXml;
+}
+
+
+
+/** JSON FUNCTIONS */
+
+
+$available_languages = array('sv', 'en');
+
+function getLastModifiedBy($userId) {
+	$tmp = new stdClass();
+	$tmp->id = $userId;
+	if (!empty($userId)) {
+		$tmp->name = get_userdata($userId)->display_name;
+	}
+	return $tmp;
+}
+
+function getJsonItemBaseDetails($jsonItem, $post) {
+	global $available_languages;
+
+	$jsonItem->lastModified = $post->post_modified;
+	$jsonItem->lastModifiedBy = getLastModifiedBy(get_post_meta( $post->ID, '_edit_last', true));
+
+	$post_guid = get_post_meta( $post->ID, "post_guid", true );
+
+	$jsonItem->guid = $post_guid;
+
+	$lang_obj = new stdClass();
+	$lang_obj->lang = 'fi';
+	$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=fi";
+	$lang_obj->lastModified = $post->post_modified;
+	array_push($jsonItem->languages, $lang_obj);
+
+	foreach ($available_languages as $available_language) {
+		$tmp = get_field("title_".strtolower($available_language), $post->ID);
+		if (!empty($tmp)) {
+			$lang_obj = new stdClass();
+			$lang_obj->lang = $available_language;
+			$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=".$available_language;
+			$lang_obj->lastModified = $post->post_modified;
+			array_push($jsonItem->languages, $lang_obj);
+		}
+
+	}
+
+	return $jsonItem;
+}
+
+function getJsonItemBaseDetailsItem($jsonItem, $post) {
+	global $available_languages;
+
+	$jsonItem->lastModified = $post->post_modified;
+	$jsonItem->lastModifiedBy = getLastModifiedBy(get_post_meta( $post->ID, '_edit_last', true));
+
+	$post_guid = get_post_meta( $post->ID, "post_guid", true );
+
+	$jsonItem->guid = $post_guid;
+
+	$lang_obj = new stdClass();
+	$lang_obj->lang = 'fi';
+	$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=fi";
+	$lang_obj->lastModified = $post->post_modified;
+	array_push($jsonItem->languages, $lang_obj);
+
+	foreach ($available_languages as $available_language) {
+		$tmp = get_field("title_".strtolower($available_language), $post->ID);
+		if (!empty($tmp)) {
+			$lang_obj = new stdClass();
+			$lang_obj->lang = $available_language;
+			$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=".$available_language;
+			$lang_obj->lastModified = $post->post_modified;
+			array_push($jsonItem->languages, $lang_obj);
+		}
+
+	}
+
+	return $jsonItem;
+}
+
+function getJsonItemDetailsProgram($jsonItem, $post) {
+	$jsonItem->owner = get_field("program_owner", $post->ID);
+	$jsonItem->lang = get_field("program_lang", $post->ID);
+	return $jsonItem;
+}
+
+function getJsonItemDetailsAgegroup($jsonItem, $post) {
+	$jsonItem->minAge = get_field("agegroup_min_age", $post->ID);
+	$jsonItem->maxAge = get_field("agegroup_max_age", $post->ID);
+	$jsonItem->subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("agegroup_subtaskgroup_term", $post->ID));
+	return $jsonItem;
+}
+
+function getJsonItemDetailsTaskgroup($jsonItem, $post) {
+	$jsonItem->additional_tasks_count = get_field("taskgroup_additional_tasks_count", $post->ID);
+	$jsonItem->subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $post->ID));
+	$jsonItem->taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $post->ID));
+	$jsonItem->subtask_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $post->ID));
+	return $jsonItem;
+}
+
+
+function getJsonSubtaskgroupTerm($term) {
+	$ret = new stdClass();
+	$ret->name = $term;
+	switch ($term) {
+		default:
+		case "":
+			return null;
+			break;
+		case "jalki":
+			$ret->single = "Jälki";
+			$ret->plural = "Jäljet";
+			break;
+		case "kasvatusosio":
+			$ret->single = "Kasvatusosio";
+			$ret->plural = "Kasvatusosiot";
+			break;
+		case "ilmansuunta":
+			$ret->single = "Ilmansuunta";
+			$ret->plural = "Ilmansuunnat";
+			break;
+		case "taitomerkki":
+			$ret->single = "Taitomerkki";
+			$ret->plural = "Taitomerkit";
+			break;
+		case "tarppo":
+			$ret->single = "Tarppo";
+			$ret->plural = "Tarpot";
+			break;
+		case "ryhma":
+			$ret->single = "Ryhmä";
+			$ret->plural = "Ryhmät";
+			break;
+		case "aktiviteetti":
+			$ret->single = "Aktiviteetti";
+			$ret->plural = "Aktiviteetit";
+			break;
+		case "aihe":
+			$ret->single = "Aihe";
+			$ret->plural = "Aiheet";
+			break;
+		case "tasku":
+			$ret->single = "Tasku";
+			$ret->plural = "Taskut";
+			break;
+		case "rasti":
+			$ret->single = "Rasti";
+			$ret->plural = "Rastit";
+			break;
+
+	}
+
+	return $ret;
+}
+
+function getJsonTaskTerm($term) {
+	$ret = new stdClass();
+	$ret->name = $term;
+	switch ($term) {
+		default:
+		case "":
+			return null;
+			break;
+		case "askel":
+			$ret->single = "Askel";
+			$ret->plural = "Askeleet";
+			break;
+		case "aktiviteetti":
+			$ret->single = "Aktiviteetti";
+			$ret->plural = "Aktiviteetit";
+			break;
+		case "aktiviteettitaso":
+			$ret->single = "Aktiviteettitaso";
+			$ret->plural = "Aktiviteettitasot";
+			break;
+		case "suoritus":
+			$ret->single = "Suoritus";
+			$ret->plural = "Suoritukset";
+			break;
+		case "paussi":
+			$ret->single = "Paussi";
+			$ret->plural = "Paussit";
+			break;
+
+	}
+
+	return $ret;
+}
+
+$mandatory_task_guids = array();
+
+function getJsonItemDetailsTask($jsonItem, $post) {
+	global $available_languages;
+	global $mandatory_task_guids;
+
+	if (get_field("task_mandatory", $post->ID)) {
+		array_push($mandatory_task_guids, get_post_meta( $post->ID, "post_guid", true ));
+	}
+
+	$jsonItem->mandatory = get_field("task_mandatory", $post->ID);
+	$jsonItem->mandatory_seascouts = get_field("task_mandatory_seascouts", $post->ID);
+
+	$groupsize = get_field("task_groupsize", $post->ID);
+
+	if (empty($groupsize)) {
+		$jsonItem->groupsize = array('group');
+	} else {
+		$jsonItem->groupsize = $groupsize;
+	}
+
+	$place_of_performance = get_field("task_place_of_performance", $post->ID);
+
+	if (empty($place_of_performance)) {
+		$jsonItem->place_of_performance = array('meeting_place');
+	} else {
+		$jsonItem->place_of_performance = $place_of_performance;
+	}
+
+	$post_guid = get_post_meta( $post->ID, "post_guid", true );
+
+	$lang_obj = new stdClass();
+	$lang_obj->lang = 'fi';
+	$lang_obj->details = get_site_url() . "/item-json-vinkit/?postGUID=".$post_guid."&lang=fi";
+	$lang_obj->lastModified = "2015-03-26 18:15:34";
+	array_push($jsonItem->suggestions_details, $lang_obj);
+
+	foreach ($available_languages as $available_language) {
+		$tmp = get_field("title_".strtolower($available_language), $post->ID);
+		if (!empty($tmp)) {
+			$lang_obj = new stdClass();
+			$lang_obj->lang = $available_language;
+			$lang_obj->details = get_site_url() . "/item-json-vinkit/?postGUID=".$post_guid."&lang=".$available_language;
+			$lang_obj->lastModified = "2015-03-26 18:15:34";
+			array_push($jsonItem->suggestions_details, $lang_obj);
+		}
+
+	}
+
+	$jsonItem->task_term = getJsonTaskTerm(get_field("task_task_term", $post->ID));
+
+	return $jsonItem;
+} 
+
+
+
+function get_post_tags_JSON($post_id) {
+	$ret = new stdClass();
+
+
+	$pakollisuus = array();
+
+	if (get_field("task_mandatory", $post_id)) {
+		$pakollinen = new stdClass();
+		$pakollinen->name = 'Pakollinen';
+		$pakollinen->slug = 'mandatory';
+		$pakollinen->icon = "http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/exclamatory_icon.png";
+		array_push($pakollisuus, $pakollinen);
+	}
+
+	if (get_field("task_mandatory_seascouts", $post_id)) {
+		$pakollinen = new stdClass();
+		$pakollinen->name = 'Pakollinen meripartiolaisille';
+		$pakollinen->slug = 'mandatory_seascouts';
+		$pakollinen->icon = "http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/exclamatory_icon.png";
+		array_push($pakollisuus, $pakollinen);
+	}
+	if (count($pakollisuus) > 0) {
+		$ret->pakollisuus = $pakollisuus;
+	}	
+
+	$groupsizes = get_field("task_groupsize", $post_id);
+
+	$ret_groupsizes = array();
+
+	if (empty($groupsizes)) {
+		$gropsize = new stdClass();
+		$gropsize->name = 'Laumassa';
+		$gropsize->slug = 'group';
+		
+		array_push($ret_groupsizes, $gropsize);
+	
+	} else {
+		foreach ($groupsizes as $tmp_groupsize) {
+			$gropsize = new stdClass();
+
+			switch ($tmp_groupsize) {
+				default:
+					$gropsize->name = $tmp_groupsize;
+					break;
+				case "one":
+					$gropsize->name = 'Yksin';
+					break;
+				case "two":
+					$gropsize->name = 'Kaksin';
+					break;
+				case "few":
+					$gropsize->name = 'Muutama';
+					break;
+				case "group":
+					$gropsize->name = 'Laumassa';
+					break;
+				case "big":
+					$gropsize->name = 'Isommassa porukassa';
+					break;
+			}
+
+			$gropsize->slug = $tmp_groupsize;
+		
+			array_push($ret_groupsizes, $gropsize);
+
+		}
+	}
+
+	if (count($ret_groupsizes) > 0) {
+		$ret->ryhmakoko = $ret_groupsizes;
+	}	
+
+	$place_of_performance = get_field("task_place_of_performance", $post_id);
+
+	$ret_places = array();
+
+	if (empty($place_of_performance)) {
+		$place = new stdClass();
+		$place->name = 'Kolo';
+		$place->slug = 'meeting_place';
+		
+		array_push($ret_places, $place);
+	
+	} else {
+		foreach ($place_of_performance as $tmp_place) {
+			$place = new stdClass();
+
+			switch ($tmp_place) {
+				default:
+					$place->name = $tmp_place;
+					break;
+				case "meeting_place":
+					$place->name = 'Kolo';
+					break;
+				case "hike":
+					$place->name = 'Retki';
+					break;
+				case "camp":
+					$place->name = 'Leiri';
+					$place->icon = 'http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/fac_icon_camp.png';
+					break;
+				case "boat":
+					$place->name = 'Vene';
+					$place->icon = 'http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/images.png';
+					break;
+				case "other":
+					$place->name = 'Muu';
+					break;
+			}
+
+			$place->slug = $tmp_place;
+		
+			array_push($ret_places, $place);
+
+		}
+	}
+
+	if (count($ret_places) > 0) {
+		$ret->paikka = $ret_places;
+	}	
+
+	$taitoalueet_tags = wp_get_post_terms($post_id, 'pof_tax_skillarea');
+	
+	$taitoalueet = array();
+
+	foreach ($taitoalueet_tags as $taitoalue_tag) {
+		$taitoalue = new stdClass();
+//		$taitoalue->type = 'taitoalue';
+		$taitoalue->name = $taitoalue_tag->name;
+		$taitoalue->slug = $taitoalue_tag->slug;
+//		$taitoalue->id = $taitoalue_tag->term_taxonomy_id;
+
+		array_push($taitoalueet, $taitoalue);
+	}
+	if (count($taitoalueet) > 0) {
+		$ret->taitoalueet = $taitoalueet;
+	}
+	
+
+	$suoritus_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskduration');
+	
+	$suoritus_kestot = array();
+	
+	foreach ($suoritus_kesto_tags as $suoritus_kesto_tag) {
+		$suoritus_kesto = new stdClass();
+//		$suoritus_kesto->type= 'duration';
+		$suoritus_kesto->name = $suoritus_kesto_tag->name;
+		$suoritus_kesto->slug = $suoritus_kesto_tag->slug;
+//		$suoritus_kesto->id = $suoritus_kesto_tag->term_taxonomy_id;
+		array_push($suoritus_kestot, $suoritus_kesto);
+	}
+	
+
+	if (count($suoritus_kestot) > 0) {
+		$ret->suoritus_kesto = $suoritus_kestot;
+	}
+
+	$suoritus_valmistelu_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskpreparationduration');
+	
+	$suoritus_valmistelu_kestot = array();
+	
+	foreach ($suoritus_valmistelu_kesto_tags as $suoritus_valmistelu_kesto_tag) {
+		$suoritus_valmistelu_kesto = new stdClass();
+//		$suoritus_valmistelu_kesto->type = 'duration_preparation';
+		$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tag->name;
+		$suoritus_valmistelu_kesto->slug = $suoritus_valmistelu_kesto_tag->slug;
+//		$suoritus_valmistelu_kesto->id = $suoritus_valmistelu_kesto_tag->term_taxonomy_id;
+		array_push($suoritus_valmistelu_kestot, $suoritus_valmistelu_kesto);
+	}
+	
+	if (count($suoritus_valmistelu_kestot)) {
+		$ret->suoritus_valmistelu_kesto = $suoritus_valmistelu_kestot;
+	}
+	$tarvike_tags = wp_get_post_terms($post_id, 'pof_tax_equipment');
+	
+	$tarvikkeet = array();
+	
+	foreach ($tarvike_tags as $tarvike_tag) {
+		$tarvike = new stdClass();
+//		$tarvike->type = 'equipment';
+		$tarvike->name = $tarvike_tag->name;
+		$tarvike->slug = $tarvike_tag->slug;
+//		$tarvike->id = $tarvike_tag->term_taxonomy_id;
+		array_push($tarvikkeet, $tarvike);
+	}
+	if (count($tarvikkeet)) {
+		$ret->tarvikkeet = $tarvikkeet;
+	}
+
+	return $ret;
+}
+
+function get_post_images_JSON($post_id) {
+	$ret = new stdClass();
+	$ret->logo = new stdClass();
+	$ret->main_image = new stdClass();
+
+	$logo = get_field('logo_image', $post_id);
+	if ($logo) {
+
+		$ret->logo->type = 'logo';
+		$ret->logo->title = $logo['title'];
+		$ret->logo->mime_type = $logo['mime_type'];
+		$ret->logo->height = $logo['height'];
+		$ret->logo->width = $logo['width'];
+		$ret->logo->url = $logo['url'];
+
+		if (!empty($logo['sizes'])) {
+			if (!empty($logo['sizes']['thumbnail'])) {		
+				$thumbnail = new stdClass();
+				$thumbnail->height = $logo['sizes']['thumbnail-height'];
+				$thumbnail->width = $logo['sizes']['thumbnail-width'];
+				$thumbnail->url = $logo['sizes']['thumbnail'];
+				$ret->logo->thumbnail = $thumbnail;
+			}
+			if (!empty($logo['sizes']['medium'])) {		
+				$medium = new stdClass();
+				$medium->height = $logo['sizes']['medium-height'];
+				$medium->width = $logo['sizes']['medium-width'];
+				$medium->url = $logo['sizes']['medium'];
+				$ret->logo->medium = $medium;
+			}
+			if (!empty($logo['sizes']['large'])) {		
+				$large = new stdClass();
+				$large->height = $logo['sizes']['large-height'];
+				$large->width = $logo['sizes']['large-width'];
+				$large->url = $logo['sizes']['large'];
+				$ret->logo->large = $large;
+			}
+		}
+
+	}
+
+	$main_image = get_field('main_image', $post_id);
+
+
+	if ($main_image) {
+		$ret->main_image->type = 'main_image';
+		$ret->main_image->title = $main_image['title'];
+		$ret->main_image->mime_type = $main_image['mime_type'];
+		$ret->main_image->height = $main_image['height'];
+		$ret->main_image->width = $main_image['width'];
+		$ret->main_image->url = $main_image['url'];
+
+		if (!empty($main_image['sizes'])) {
+			if (!empty($main_image['sizes']['thumbnail'])) {		
+				$thumbnail = new stdClass();
+				$thumbnail->height = $main_image['sizes']['thumbnail-height'];
+				$thumbnail->width = $main_image['sizes']['thumbnail-width'];
+				$thumbnail->url = $main_image['sizes']['thumbnail'];
+				$ret->main_image->thumbnail = $thumbnail;
+			}
+			if (!empty($main_image['sizes']['medium'])) {		
+				$medium = new stdClass();
+				$medium->height = $main_image['sizes']['medium-height'];
+				$medium->width = $main_image['sizes']['medium-width'];
+				$medium->url = $main_image['sizes']['medium'];
+				$ret->main_image->medium = $medium;
+			}
+			if (!empty($main_image['sizes']['large'])) {		
+				$large = new stdClass();
+				$large->height = $main_image['sizes']['large-height'];
+				$large->width = $main_image['sizes']['large-width'];
+				$large->url = $main_image['sizes']['large'];
+				$ret->main_image->large = $large;
+			}
+		}
+
+	}
+
+	return $ret;
+}
+
+function get_post_additional_content_JSON($post_id) {
+	$ret = new stdClass();
+
+	$images = simple_fields_fieldgroup("additional_images_fg", $post_id);
+
+	$images_arr = array();
+
+	if ($images) {
+		foreach ($images as $additional_image) {
+			if ($additional_image['additional_image']) {
+				$image = $additional_image['additional_image'];
+
+				$image_obj = new stdClass();
+				$image_obj->description = $additional_image['additional_image_text'];
+				$image_obj->mime_type = $image['mime'];
+				$image_obj->height = $image['metadata']['height'];
+				$image_obj->width = $image['metadata']['width'];
+				$image_obj->url = $image['url'];
+
+
+				if (!empty($image['image_src'])) {
+					if (!empty($image['image_src']['thumbnail'])) {		
+						$thumbnail = new stdClass();
+						$thumbnail->height = $image['image_src']['thumbnail'][1];
+						$thumbnail->width = $image['image_src']['thumbnail'][2];
+						$thumbnail->url = $image['image_src']['thumbnail'][0];
+						$image_obj->thumbnail = $thumbnail;
+					}
+					if (!empty($image['image_src']['medium'])) {		
+						$medium = new stdClass();
+						$medium->height = $image['image_src']['medium'][1];
+						$medium->width = $image['image_src']['medium'][2];
+						$medium->url = $image['image_src']['medium'][0];
+						$image_obj->medium = $medium;
+					}
+					if (!empty($image['image_src']['large'])) {		
+						$large = new stdClass();
+						$large->height = $image['image_src']['large'][1];
+						$large->width = $image['image_src']['large'][2];
+						$large->url = $image['image_src']['large'][0];
+						$image_obj->large = $large;
+					}
+				}
+
+
+				array_push($images_arr, $image_obj);
+			}
+		}
+	}
+
+	if (count($images_arr) > 0) {
+		$ret->images = $images_arr;
+	}
+
+	$files = simple_fields_fieldgroup("additional_files_fg", $post_id);
+
+	$files_arr = array();
+
+	if ($files) {
+		foreach ($files as $additional_file) {
+			if ($additional_file['additional_file']) {
+	
+				$file = $additional_file['additional_file'];
+
+				$file_obj = new stdClass();
+				$file_obj->description = $additional_file['additional_file_text'];
+				$file_obj->mime_type = $image['mime'];
+				$file_obj->url = $file['url'];
+				array_push($files_arr, $file_obj);
+			}
+		}
+	}
+
+	if (count($files_arr) > 0) {
+		$ret->files = $files_arr;
+	}
+
+	$links = simple_fields_fieldgroup("additional_links_fg", $post_id);
+
+	$links_arr = array();
+
+	if ($links) {
+		foreach ($links as $additional_link) {
+			if ($additional_link['additional_link_url']) {
+	
+				$link = $additional_link['additional_link_url'];
+
+				$link_obj = new stdClass();
+				$link_obj->description = $additional_link['additional_link_text'];
+				$link_obj->url = $link;
+				array_push($links_arr, $link_obj);
+			}
+		}
+	}
+
+	if (count($links_arr) > 0) {
+		$ret->links = $links_arr;
+	}
+
+	return $ret;
+}
+
+
+function getMandatoryTasksForTaskGroup($parent_id) {
+	$args = array(
+		'numberposts' => -1,
+		'post_type' => 'pof_post_task',
+		'meta_key' => 'suoritepaketti',
+		'meta_value' => $parent_id
+	);
+
+	$the_query = new WP_Query( $args );
+
+	$ret = new stdClass();
+
+	$ret->ids = array();
+	$ret->hashes = array();
+
+	if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+			$the_query->the_post();
+
+			if (get_field("task_mandatory", $the_query->post->ID)) {
+				array_push($ret->ids, $the_query->post->ID);
+				array_push($ret->hashes, wp_hash($the_query->post->ID));
+			}
+		}
+	}
+
+	return $ret;
+}
+
+
+
+function set_post_guid($post_id) {
+	// If this is a revision, get real post ID
+	if ( $parent_id = wp_is_post_revision( $post_id ) ) {
+		$post_id = $parent_id;
+	}
+
+
+	$post_guid = get_post_meta( $post_id, "post_guid", true );
+
+	if (!$post_guid) {
+		remove_action( 'save_post', 'set_post_guid' );
+		update_post_meta($post_id, "post_guid", wp_hash($post_id));
+		add_action( 'save_post', 'set_post_guid' );
+	}
+
+}
+
+add_action( 'save_post', 'set_post_guid' );
+
+function pof_item_guid_add_meta_box() {
+
+	$screens = array('pof_post_task', 'pof_post_taskgroup', 'pof_post_program', 'pof_post_agegroup' );
+
+	foreach ( $screens as $screen ) {
+
+		add_meta_box(
+			'pof_item_guid_add_meta_box_sectionid',
+			__( 'GUID', 'pof' ),
+			'pof_item_guid_add_meta_box_callback',
+			$screen, 'side', 'high'
+		);
+	}
+}
+
+function pof_item_guid_add_meta_box_callback($post) {
+	echo get_post_meta( $post->ID, "post_guid", true );
+}
+
+add_action( 'add_meta_boxes', 'pof_item_guid_add_meta_box' );
