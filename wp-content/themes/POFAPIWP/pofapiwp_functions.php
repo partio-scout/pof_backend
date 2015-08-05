@@ -435,8 +435,8 @@ function getJsonSubtaskgroupTerm($term) {
 			return null;
 			break;
 		case "jalki":
-			$ret->single = "Jälki";
-			$ret->plural = "Jäljet";
+			$ret->single = mb_convert_encoding("Jälki","UTF-8", "auto");
+			$ret->plural = mb_convert_encoding("Jäljet","UTF-8", "auto");
 			break;
 		case "kasvatusosio":
 			$ret->single = "Kasvatusosio";
@@ -455,8 +455,8 @@ function getJsonSubtaskgroupTerm($term) {
 			$ret->plural = "Tarpot";
 			break;
 		case "ryhma":
-			$ret->single = "Ryhmä";
-			$ret->plural = "Ryhmät";
+			$ret->single = mb_convert_encoding("Ryhmä","UTF-8", "auto");
+			$ret->plural = mb_convert_encoding("Ryhmät","UTF-8", "auto");
 			break;
 		case "aktiviteetti":
 			$ret->single = "Aktiviteetti";
@@ -975,9 +975,55 @@ function getMandatoryTasksForTaskGroup($parent_id) {
 	return $ret;
 }
 
+function pof_get_parent_tree($post_item, $tree_array) {
+	$post_type = str_replace('pof_post_', '', $post_item->post_type);
+	$post_id = $post_item->ID;
+
+	switch ($post_type) {
+		case "program":
+//			$post_class = $classProgram;
+		break;
+		case "agegroup":
+			$ohjelma_id = get_post_meta( $post_id, "suoritusohjelma", true );
+			if (!is_null($ohjelma_id) && $ohjelma_id != "null" && $ohjelma_id != "" ) {
+				$ohjelma = get_post($ohjelma_id);
+				array_push($tree_array, $ohjelma);
+//				$tree_array = pof_get_parent_tree($ohjelma, $tree_array);
+			}
+		break;
+		case "taskgroup":
+			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
+
+			if (!is_null($taskgroup_id) && $taskgroup_id != "null") {
+				$taskgroup = get_post($taskgroup_id);
+				array_push($tree_array, $taskgroup);
+				$tree_array = pof_get_parent_tree($taskgroup, $tree_array);
+			} else {
+				$ikaryhma_id = get_post_meta( $post_id, "ikakausi", true );
+				if (!is_null($ikaryhma_id) && $ikaryhma_id != "null") {
+					$ikaryhma = get_post($ikaryhma_id);
+					array_push($tree_array, $ikaryhma);
+					$tree_array = pof_get_parent_tree($ikaryhma, $tree_array);
+				}
+			}
+		break;
+		case "task":
+			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
+
+			if (!is_null($taskgroup_id) && $taskgroup_id != "null") {
+				$taskgroup = get_post($taskgroup_id);
+				array_push($tree_array, $taskgroup);
+				$tree_array = pof_get_parent_tree($taskgroup, $tree_array);
+			}
+		break;
+	}
 
 
-function set_post_guid($post_id) {
+	return $tree_array;
+}
+
+
+function pof_save_post_hook($post_id) {
 	// If this is a revision, get real post ID
 	if ( $parent_id = wp_is_post_revision( $post_id ) ) {
 		$post_id = $parent_id;
@@ -987,14 +1033,16 @@ function set_post_guid($post_id) {
 	$post_guid = get_post_meta( $post_id, "post_guid", true );
 
 	if (!$post_guid) {
-		remove_action( 'save_post', 'set_post_guid' );
+		remove_action( 'save_post', 'pof_save_post_hook' );
 		update_post_meta($post_id, "post_guid", wp_hash($post_id));
-		add_action( 'save_post', 'set_post_guid' );
+		add_action( 'save_post', 'pof_save_post_hook' );
 	}
 
+//	$tmp_post = get_post($post_id);
 }
 
-add_action( 'save_post', 'set_post_guid' );
+
+add_action( 'save_post', 'pof_save_post_hook' );
 
 function pof_item_guid_add_meta_box() {
 
@@ -1016,3 +1064,40 @@ function pof_item_guid_add_meta_box_callback($post) {
 }
 
 add_action( 'add_meta_boxes', 'pof_item_guid_add_meta_box' );
+
+
+function pof_item_task_parenttree_meta_box() {
+
+	$screens = array('pof_post_task');
+
+	foreach ( $screens as $screen ) {
+
+		add_meta_box(
+			'pof_item_task_parenttree_meta_box_sectionid',
+			__( 'Parent tree', 'pof' ),
+			'pof_item_task_parenttree_meta_box_callback',
+			$screen, 'side', 'high'
+		);
+	}
+}
+
+function pof_item_task_parenttree_meta_box_callback($post) {
+	$tree_array = array();
+	array_push($tree_array, $post);
+	$tree_array = array_reverse(pof_get_parent_tree($post, $tree_array));
+
+	foreach ($tree_array as $tree_key => $tree_post) {
+		echo "<ul style=\"margin-left: 10px; list-style-type: round;\">";
+		echo "<li>";
+		echo "<a href=\"/wp-admin/post.php?post=" . $tree_post->ID . "&action=edit\" target=\"_blank\">" . $tree_post->post_title . "</a>";
+
+	}
+
+	foreach ($tree_array as $tree_post) {
+		echo "</li>";
+		echo "</ul>";
+	}
+}
+
+add_action( 'add_meta_boxes', 'pof_item_task_parenttree_meta_box' );
+

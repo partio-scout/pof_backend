@@ -81,6 +81,8 @@ function getJsonAgeGroups($parent_id) {
 	$args = array(
 		'numberposts' => -1,
 		'post_type' => 'pof_post_agegroup',
+		'orderby' => 'title',
+		'order' => 'ASC',
 		'meta_key' => 'suoritusohjelma',
 		'meta_value' => $parent_id
 	);
