@@ -33,24 +33,37 @@ $post_type = str_replace('pof_post_', '', $mypost->post_type);
 
 $post_class = $classTask;
 
+$agegroup = null;
+
+$tree_array = array();
+$tree_array = array_reverse(pof_get_parent_tree($mypost, $tree_array));
+
 switch ($post_type) {
 	case "program":
 		$post_class = $classProgram;
 	break;
 	case "agegroup":
 		$post_class = $classAgegroup;
+		$agegroup = $my_post;
 	break;
 	case "taskgroup":
 		$post_class = $classTaskGroup;
+		$agegroup = pof_get_agegroup_from_tree_arr($tree_array);
 	break;
 	case "task":
 		$post_class = $classTask;
+		$agegroup = pof_get_agegroup_from_tree_arr($tree_array);
 	break;
 }
 
 $jsonItem = new $post_class;
 $jsonItem->type = $post_type;
 
+if (empty($tree_array)) {
+	$jsonItem->parents = array();
+} else {
+	$jsonItem->parents = pof_output_parents_arr_json($tree_array);
+}
 
 $jsonItem = getJsonItemBaseDetailsItem($jsonItem, $mypost);
 
@@ -102,12 +115,16 @@ switch ($post_type) {
 	break;
 }
 
+$agegroup_id = 0;
+if (!empty($agegroup)) {
+	$agegroup_id = $agegroup->ID;
+}
 
 $jsonItem->title = $title;
 $jsonItem->ingress = $ingress;
 $jsonItem->content = $content;
 $jsonItem->lang = $lang;
-$jsonItem->tags = get_post_tags_JSON($mypost->ID);
+$jsonItem->tags = get_post_tags_JSON($mypost->ID, $agegroup_id);
 $jsonItem->images = get_post_images_JSON($mypost->ID);
 $jsonItem->additional_content = get_post_additional_content_JSON($mypost->ID);
 

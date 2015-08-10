@@ -112,16 +112,29 @@ function pof_taxonomy_icons_frontpage() {
 	echo '</div>';
 }
 
-function pof_taxonomy_icons_get_icon($icon_key, $agegroup_id) {
+function pof_taxonomy_icons_get_icon($taxonomy, $icon_key, $agegroup_id, $fallback = false) {
 	global $wpdb;
 	$icon_res = $wpdb->get_results( 
 		"
 		SELECT * 
 		FROM " . pof_taxonomy_icons_get_table_name() . "
-		WHERE taxonomy_slug = '" . $icon_key . "' 
+		WHERE taxonomy_slug = '" . $taxonomy . '::' . $icon_key . "' 
 			AND agegroup_id = ".$agegroup_id."
 		"
 	);
+
+	if (   $fallback 
+		&& $agegroup_id != 0
+		&& empty($icon_res)) {
+		$icon_res = $wpdb->get_results( 
+			"
+			SELECT * 
+			FROM " . pof_taxonomy_icons_get_table_name() . "
+			WHERE taxonomy_slug = '" . $taxonomy . '::' . $icon_key . "' 
+				AND agegroup_id = 0
+			"
+		);
+	}
 
 	return $icon_res;
 }
@@ -139,7 +152,27 @@ function pof_taxonomy_icons_get_places() {
 
 }
 
+function pof_taxonomy_icons_parser_taxomony_key($tmpkey) {
+	$tmpkey = str_replace("delete_", "", $tmpkey);
+	$tmpkey = str_replace("taxonomy_icon_", "", $tmpkey);
+	$tmp = explode("_", $tmpkey);
+
+	$agegroup_id = $tmp[count($tmp)-1];
+	
+	$key = str_replace("_".$agegroup_id, "", $tmpkey);
+
+	$ret = array();
+	$ret["key"] = $key;
+	$ret["agegroup_id"] = $agegroup_id;
+
+	return $ret;
+}
+
+
 function pof_taxonomy_icons_places() {
+	$taxonomy_base_key = "place_of_performance";
+
+
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
@@ -148,50 +181,96 @@ function pof_taxonomy_icons_places() {
 	$table_name = pof_taxonomy_icons_get_table_name();
 
 	if(isset($_POST['Submit'])) {
-		echo 'uploading';
 		// These files need to be included as dependencies when on the front end.
 		require_once( ABSPATH . 'wp-admin/includes/image.php' );
 		require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		require_once( ABSPATH . 'wp-admin/includes/media.php' );
-	
-		// Let WordPress handle the upload.
-		// Remember, 'my_image_upload' is the name of our file input in our form above.
-		$attachment_id = media_handle_upload( 'taxonomy_icon', 0);
-	
-		if ( is_wp_error( $attachment_id ) ) {
-			// There was an error uploading the image.
-			echo '<h1>ERROR</h1>';
-			echo '<pre>';
-			print_r($attachment_id);
-			print_r($_POST);
-			print_r($_FILES);
-			echo '</pre>';
 
-		} else {
-			$icon = pof_taxonomy_icons_get_icon($_POST['taxonomy_key'], $_POST['agegroup_id']);
-			if (empty($icon)) {
-				$tmp = $wpdb->insert( 
+		foreach ($_FILES as $key => $file) {
+			$tmp = pof_taxonomy_icons_parser_taxomony_key($key);
+
+			$taxonomy_key = $tmp["key"];
+			$taxonomy_full_key = $taxonomy_base_key . "::" . $tmp["key"];
+			$agegroup_id = $tmp["agegroup_id"];
+
+
+			if (   array_key_exists("delete_".$key, $_POST)
+				&& $_POST["delete_".$key] == "delete") {
+				$icon = pof_taxonomy_icons_get_icon($taxonomy_base_key, $taxonomy_key, $agegroup_id);
+
+				if (!empty($icon)) {
+					wp_delete_attachment( $icon[0]->attachment_id, false );
+				}
+
+				$wpdb->delete( 
 					$table_name, 
 					array( 
-						'taxonomy_slug' => $_POST['taxonomy_key'], 
-						'agegroup_id' => (int) $_POST['agegroup_id'],
-						'attachment_id' => $attachment_id
+						'taxonomy_slug' => $taxonomy_full_key, 
+						'agegroup_id' => (int) $tmp["agegroup_id"] 
 					), 
-					array( 
-						'%s', 
-						'%d', 
-						'%d'
-					) 
+					array( '%s', '%d' )	
 				);
 
-				echo $tmp;
+				echo "<br />Deleted " . $key . "";
 
 			}
-		}		
+			else if (!empty($file['name'])) {
+			
+				$attachment_id = media_handle_upload( $key, 0);
+
+				if ( is_wp_error( $attachment_id ) ) {
+					// There was an error uploading the image.
+					echo '<h1>ERROR '.$key.'</h1>';
+	/*				echo '<pre>';
+					print_r($attachment_id);
+					print_r($_POST);
+					print_r($_FILES);
+					echo '</pre>';*/
+
+				} else {
+					$icon = pof_taxonomy_icons_get_icon($taxonomy_base_key, $taxonomy_key, $agegroup_id);
+					if (empty($icon)) {
+						$tmp = $wpdb->insert( 
+							$table_name, 
+							array( 
+								'taxonomy_slug' => $taxonomy_full_key, 
+								'agegroup_id' => (int) $agegroup_id,
+								'attachment_id' => $attachment_id
+							), 
+							array( 
+								'%s', 
+								'%d', 
+								'%d'
+							) 
+						);
+						echo "<br />Added " . $key . "";
+					} else {
+						$tmp = $wpdb->update( 
+							$table_name, 
+							array( 
+
+								'attachment_id' => $attachment_id
+							), 
+							array(
+								'taxonomy_slug' => $taxonomy_full_key, 
+								'agegroup_id' => (int) $agegroup_id
+							),
+							array( 
+								'%s'
+							),
+							array( 
+								'%d', 
+								'%d'
+							) 
+						);
+						echo "<br />Updated" . $key . "";
+					}
+				}				
+			}
+	
+		}
 
 
-	} else if (isset($_POST['Delete'])) {
-		echo 'deleting';
 	}
 
 	$agegroups = pof_taxonomy_icons_get_agegroups();
@@ -199,6 +278,7 @@ function pof_taxonomy_icons_places() {
 
 	echo '<div class="wrap">';
 	echo '<h1>Suorituspaikat</h1>';
+	echo '<form id="featured_upload" method="post" action="" enctype="multipart/form-data">';
 
 	echo '<table cellpadding="2" cellspacing="2" border="2">';
 	echo '<thead>';
@@ -212,11 +292,11 @@ function pof_taxonomy_icons_places() {
 	echo '<tbody>';
 	foreach ($places as $tmp_key => $tmp_title) {
 		echo '<tr>';
-		echo '<th>'.$tmp_title.'</th>';
+		echo '<th>'.$tmp_title.'<br /> ('.$tmp_key.')</th>';
 		foreach ($agegroups as $agegroup) {
 
 			echo '<td>';
-			$icon = pof_taxonomy_icons_get_icon($tmp_key, $agegroup->id);
+			$icon = pof_taxonomy_icons_get_icon('place_of_performance',$tmp_key, $agegroup->id);
 
 			if (empty($icon)) {
 				echo "ei kuvaa<br />";
@@ -224,19 +304,17 @@ function pof_taxonomy_icons_places() {
 				echo wp_get_attachment_image($icon[0]->attachment_id);
 			}
 
-			echo '<form id="featured_upload" method="post" action="" enctype="multipart/form-data">';
-			echo '<input type="file" name="taxonomy_icon" id="taxonomy_icon"  multiple="false" />';
-			echo '<input type="hidden" name="agegroup_id" id="agegroup_id" value="'.$agegroup->id.'" />';
-			echo '<input type="hidden" name="taxonomy_key" id="taxonomy_key" value="'.$tmp_key.'" />';
-			echo '<br /><input type="submit" name="Submit" value="Upload new" />';
-			echo '<br /><input type="submit" name="Delete" value="Delete" />';
-			echo '</form>';
+
+			echo '<input type="file" name="taxonomy_icon_'.$tmp_key.'_'.$agegroup->id.'" id="taxonomy_icon_'.$tmp_key.'_'.$agegroup->id.'"  multiple="false" />';
+			echo '<br /><input type="checkbox" name="delete_taxonomy_icon_'.$tmp_key.'_'.$agegroup->id.'" value="delete" /> Delete';
 			echo '</td>';
 		}
 		echo '</tr>';
 	}
+
 	echo '</tbody>';
 	echo '</table>';
-
+	echo '<br /><input type="submit" name="Submit" value="Submit" />';
+	echo '</form>';
 	echo '</div>';	
 }
