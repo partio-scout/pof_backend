@@ -650,23 +650,23 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	$ret_groupsizes = array();
 
 	if (empty($groupsizes)) {
-		$gropsize = new stdClass();
+		$groupsize = new stdClass();
 		
 		$tmp_name = pof_taxonomy_translate_get_translation('groupsize', 'group', $agegroup_id, $lang, true);
 
 		if (!empty($tmp_name)) {
-			$gropsize->name = $tmp_name[0]->content;
+			$groupsize->name = $tmp_name[0]->content;
 		} else {
-			$gropsize->name = 'Laumassa';
+			$groupsize->name = 'Laumassa';
 		}
-		$gropsize->name = 'Laumassa';
-		$gropsize->slug = 'group';
+		$groupsize->name = 'Laumassa';
+		$groupsize->slug = 'group';
 		
-		array_push($ret_groupsizes, $gropsize);
+		array_push($ret_groupsizes, $groupsize);
 	
 	} else {
 		foreach ($groupsizes as $tmp_groupsize) {
-			$gropsize = new stdClass();
+			$groupsize = new stdClass();
 
 			$icon = pof_taxonomy_icons_get_icon('groupsize', $tmp_groupsize, $agegroup_id, true);
 
@@ -681,33 +681,33 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 
 
 			if (!empty($tmp_name)) {
-				$gropsize->name = $tmp_name[0]->content;
+				$groupsize->name = $tmp_name[0]->content;
 			} else {
 				switch ($tmp_groupsize) {
 					default:
-						$gropsize->name = $tmp_groupsize;
+						$groupsize->name = $tmp_groupsize;
 						break;
 					case "one":
-						$gropsize->name = 'Yksin';
+						$groupsize->name = 'Yksin';
 						break;
 					case "two":
-						$gropsize->name = 'Kaksin';
+						$groupsize->name = 'Kaksin';
 						break;
 					case "few":
-						$gropsize->name = 'Muutama';
+						$groupsize->name = 'Muutama';
 						break;
 					case "group":
-						$gropsize->name = 'Laumassa';
+						$groupsize->name = 'Laumassa';
 						break;
 					case "big":
-						$gropsize->name = 'Isommassa porukassa';
+						$groupsize->name = 'Isommassa porukassa';
 						break;
 				}
 			}
 
-			$gropsize->slug = $tmp_groupsize;
+			$groupsize->slug = $tmp_groupsize;
 		
-			array_push($ret_groupsizes, $gropsize);
+			array_push($ret_groupsizes, $groupsize);
 
 		}
 	}
