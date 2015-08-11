@@ -36,7 +36,10 @@ $post_class = $classTask;
 $agegroup = null;
 
 $tree_array = array();
-$tree_array = array_reverse(pof_get_parent_tree($mypost, $tree_array));
+$tree_array_orig = pof_get_parent_tree($mypost, $tree_array);
+
+$tree_array = array_reverse($tree_array_orig);
+
 
 switch ($post_type) {
 	case "program":
@@ -109,9 +112,67 @@ switch ($post_type) {
 
 		$jsonItem->mandatory_task_hashes = implode(",", $mandatory_tasks->hashes);
 
+
+		$subtask_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $mypost->ID));
+		if (empty($task_term)) {
+			foreach ($tree_array_orig as $tree_item) {
+				$task_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $tree_item->ID));
+
+				if ($task_term) {
+					$jsonItem->subtask_term = $task_term;
+					break;
+				}
+			}
+		} else {
+			$jsonItem->subtask_term = $task_term;
+		}
+
+		$subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $post->ID));
+		if (empty($subtaskgroup_term)) {
+			foreach ($tree_array_orig as $tree_item) {
+				$subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $tree_item->ID));
+
+				if ($task_term) {
+					$jsonItem->subtaskgroup_term = $subtaskgroup_term;
+					break;
+				}
+			}
+		} else {
+			$jsonItem->subtaskgroup_term = $subtaskgroup_term;
+		}
+
+		$taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $post->ID));
+		if (empty($taskgroup_term)) {
+			foreach ($tree_array_orig as $tree_item) {
+				$taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $tree_item->ID));
+
+				if ($task_term) {
+					$jsonItem->taskgroup_term = $taskgroup_term;
+					break;
+				}
+			}
+		} else {
+			$jsonItem->taskgroup_term = $taskgroup_term;
+		}
+
 	break;
 	case "task":
 		$jsonItem = getJsonItemDetailsTask($jsonItem, $mypost);
+
+		$task_term = getJsonTaskTerm(get_field("task_task_term", $mypost->ID));
+		if (empty($task_term)) {
+			foreach ($tree_array_orig as $tree_item) {
+				$task_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $tree_item->ID));
+
+				if ($task_term) {
+					$jsonItem->task_term = $task_term;
+					break;
+				}
+			}
+		} else {
+			$jsonItem->task_term = $task_term;
+		}
+
 	break;
 }
 

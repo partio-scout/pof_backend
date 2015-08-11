@@ -425,8 +425,6 @@ function getJsonItemDetailsAgegroup($jsonItem, $post) {
 
 function getJsonItemDetailsTaskgroup($jsonItem, $post) {
 	$jsonItem->additional_tasks_count = get_field("taskgroup_additional_tasks_count", $post->ID);
-	$jsonItem->subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $post->ID));
-	$jsonItem->taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $post->ID));
 	$jsonItem->subtask_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $post->ID));
 	return $jsonItem;
 }
@@ -568,8 +566,6 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 		}
 
 	}
-
-	$jsonItem->task_term = getJsonTaskTerm(get_field("task_task_term", $post->ID));
 
 	return $jsonItem;
 } 
@@ -1094,8 +1090,7 @@ function pof_get_parent_tree($post_item, $tree_array) {
 		break;
 		case "taskgroup":
 			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
-
-			if (!is_null($taskgroup_id) && $taskgroup_id != "null") {
+			if (!is_null($taskgroup_id) && $taskgroup_id != "null" && $taskgroup_id != "") {
 				$taskgroup = get_post($taskgroup_id);
 				array_push($tree_array, $taskgroup);
 				$tree_array = pof_get_parent_tree($taskgroup, $tree_array);
