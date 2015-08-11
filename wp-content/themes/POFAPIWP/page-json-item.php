@@ -124,7 +124,7 @@ $jsonItem->title = $title;
 $jsonItem->ingress = $ingress;
 $jsonItem->content = $content;
 $jsonItem->lang = $lang;
-$jsonItem->tags = get_post_tags_JSON($mypost->ID, $agegroup_id);
+$jsonItem->tags = get_post_tags_JSON($mypost->ID, $agegroup_id, strtolower($lang));
 $jsonItem->images = get_post_images_JSON($mypost->ID);
 $jsonItem->additional_content = get_post_additional_content_JSON($mypost->ID);
 

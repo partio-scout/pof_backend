@@ -30,7 +30,7 @@ function AddPofApiCustomTaxonomies() {
 			'hierarchical' => false
 		)
 	));
-	
+	/*
 	register_taxonomy('pof_tax_taskduration', array('pof_post_task'), array(
 		'hierarchical' => false,
 		'labels' => array(
@@ -57,7 +57,7 @@ function AddPofApiCustomTaxonomies() {
 			'with_front' => false,
 			'hierarchical' => false
 		)
-	));
+	));*/
 /*
 	register_taxonomy('pof_tax_taskplace', array('pof_post_task'), array(
 		'hierarchical' => false,

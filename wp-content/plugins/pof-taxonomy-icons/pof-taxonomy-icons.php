@@ -78,7 +78,7 @@ function pof_taxonomy_icons_get_agegroups() {
 	$tmp->id = 0;
 	$tmp->title = "Default";
 
-	array_push($agegroups, $tmp);
+	$agegroups[0] = $tmp;
 
 	if( $the_query->have_posts() ) {
 		while ( $the_query->have_posts() ) {
@@ -87,10 +87,13 @@ function pof_taxonomy_icons_get_agegroups() {
 			$tmp = new stdClass();
 			$tmp->id = $the_query->post->ID;
 			$tmp->title = $the_query->post->post_title;
-
-			array_push($agegroups, $tmp);
+			$min_age = get_field("agegroup_min_age");
+			
+			$agegroups[$min_age] = $tmp;
 		}
 	}
+
+	ksort($agegroups);
 
 	return $agegroups;
 }
@@ -99,6 +102,13 @@ function pof_taxonomy_icons_get_agegroups() {
 function pof_taxonomy_icons_menu() {
 	add_menu_page('POF Taxonomy icons', 'Ikonit', 'manage_options', 'pof_taxonomy_icons_frontpage-handle', 'pof_taxonomy_icons_frontpage');
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suorituspaikat', 'Suorituspaikat', 'manage_options', 'pof_taxonomy_icons_places-handle', 'pof_taxonomy_icons_places');
+	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Ryhm&auml;koko', 'Ryhm&auml;koot', 'manage_options', 'pof_taxonomy_icons_groupsizes-handle', 'pof_taxonomy_icons_groupsizes');
+	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Pakollisuus', 'Pakollisuus', 'manage_options', 'pof_taxonomy_icons_mandatory-handle', 'pof_taxonomy_icons_mandatory');
+	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suorituksen kestot', 'Suorituksen kestot', 'manage_options', 'pof_taxonomy_icons_taskduration-handle', 'pof_taxonomy_icons_taskduration');
+	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suorituksen valmistelun kestot', 'Suorituksen valmistelun kestot', 'manage_options', 'pof_taxonomy_icons_taskpreparationduration-handle', 'pof_taxonomy_icons_taskpreparationduration');
+
+	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_icons_equpments-handle', 'pof_taxonomy_icons_equpments');
+	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_icons_skillareas-handle', 'pof_taxonomy_icons_skillareas');
 }
 
 function pof_taxonomy_icons_frontpage() {
@@ -139,20 +149,7 @@ function pof_taxonomy_icons_get_icon($taxonomy, $icon_key, $agegroup_id, $fallba
 	return $icon_res;
 }
 
-function pof_taxonomy_icons_get_places() {
-	$ret = array();
-
-	$ret['meeting_place'] = 'Kolo';
-	$ret['hike'] = 'Retki';
-	$ret['camp'] = 'Leiri';
-	$ret['boat'] = 'Vene';
-	$ret['other'] = 'Muu';
-	
-	return $ret;
-
-}
-
-function pof_taxonomy_icons_parser_taxomony_key($tmpkey) {
+function pof_taxonomy_icons_parser_taxonomy_key($tmpkey) {
 	$tmpkey = str_replace("delete_", "", $tmpkey);
 	$tmpkey = str_replace("taxonomy_icon_", "", $tmpkey);
 	$tmp = explode("_", $tmpkey);
@@ -169,16 +166,14 @@ function pof_taxonomy_icons_parser_taxomony_key($tmpkey) {
 }
 
 
-function pof_taxonomy_icons_places() {
-	$taxonomy_base_key = "place_of_performance";
-
-
+function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
 	global $wpdb;
 	$table_name = pof_taxonomy_icons_get_table_name();
+	$agegroups = pof_taxonomy_icons_get_agegroups();
 
 	if(isset($_POST['Submit'])) {
 		// These files need to be included as dependencies when on the front end.
@@ -187,7 +182,7 @@ function pof_taxonomy_icons_places() {
 		require_once( ABSPATH . 'wp-admin/includes/media.php' );
 
 		foreach ($_FILES as $key => $file) {
-			$tmp = pof_taxonomy_icons_parser_taxomony_key($key);
+			$tmp = pof_taxonomy_icons_parser_taxonomy_key($key);
 
 			$taxonomy_key = $tmp["key"];
 			$taxonomy_full_key = $taxonomy_base_key . "::" . $tmp["key"];
@@ -222,7 +217,6 @@ function pof_taxonomy_icons_places() {
 					// There was an error uploading the image.
 					echo '<h1>ERROR '.$key.'</h1>';
 	/*				echo '<pre>';
-					print_r($attachment_id);
 					print_r($_POST);
 					print_r($_FILES);
 					echo '</pre>';*/
@@ -245,6 +239,10 @@ function pof_taxonomy_icons_places() {
 						);
 						echo "<br />Added " . $key . "";
 					} else {
+						if (empty($icon)) {
+							wp_delete_attachment( $icon[0]->attachment_id, false );
+						}
+
 						$tmp = $wpdb->update( 
 							$table_name, 
 							array( 
@@ -256,10 +254,10 @@ function pof_taxonomy_icons_places() {
 								'agegroup_id' => (int) $agegroup_id
 							),
 							array( 
-								'%s'
+								'%d'
 							),
 							array( 
-								'%d', 
+								'%s', 
 								'%d'
 							) 
 						);
@@ -273,30 +271,27 @@ function pof_taxonomy_icons_places() {
 
 	}
 
-	$agegroups = pof_taxonomy_icons_get_agegroups();
-	$places = pof_taxonomy_icons_get_places();
-
 	echo '<div class="wrap">';
-	echo '<h1>Suorituspaikat</h1>';
+	echo '<h1>'.$title.'</h1>';
 	echo '<form id="featured_upload" method="post" action="" enctype="multipart/form-data">';
 
 	echo '<table cellpadding="2" cellspacing="2" border="2">';
 	echo '<thead>';
 	echo '<tr>';
-	echo '<th><h2>Suorituspaikka</h2></th>';
+	echo '<th><h2>'.$title2.'</h2></th>';
 	foreach ($agegroups as $agegroup) {
 		echo '<th><h2>'.$agegroup->title.'</h2></th>';
 	}
 	echo '<tr>';
 	echo '</thead>';
 	echo '<tbody>';
-	foreach ($places as $tmp_key => $tmp_title) {
+	foreach ($items as $tmp_key => $tmp_title) {
 		echo '<tr>';
 		echo '<th>'.$tmp_title.'<br /> ('.$tmp_key.')</th>';
 		foreach ($agegroups as $agegroup) {
 
 			echo '<td>';
-			$icon = pof_taxonomy_icons_get_icon('place_of_performance',$tmp_key, $agegroup->id);
+			$icon = pof_taxonomy_icons_get_icon($taxonomy_base_key,$tmp_key, $agegroup->id);
 
 			if (empty($icon)) {
 				echo "ei kuvaa<br />";
@@ -317,4 +312,170 @@ function pof_taxonomy_icons_places() {
 	echo '<br /><input type="submit" name="Submit" value="Submit" />';
 	echo '</form>';
 	echo '</div>';	
+}
+
+function pof_taxonomy_icons_get_places() {
+	$ret = array();
+
+	$ret['meeting_place'] = 'Kolo';
+	$ret['hike'] = 'Retki';
+	$ret['camp'] = 'Leiri';
+	$ret['boat'] = 'Vene';
+	$ret['other'] = 'Muu';
+	
+	return $ret;
+
+}
+
+
+function pof_taxonomy_icons_places() {
+	$taxonomy_base_key = "place_of_performance";
+	$items = pof_taxonomy_icons_get_places();
+	$title = "Suorituspaikat";
+	$title2 = "Suorituspaikka";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_icons_get_groupsizes() {
+	$ret = array();
+
+	$ret['one'] = 'Yksin';
+	$ret['two'] = 'Kaksin';
+	$ret['few'] = 'Muutama';
+	$ret['group'] = 'Laumassa tai vartiossa';
+	$ret['big'] = 'Isommassa porukassa';
+	$ret['other'] = 'Muu';
+	
+	return $ret;
+
+}
+
+
+function pof_taxonomy_icons_groupsizes() {
+	$taxonomy_base_key = "groupsize";
+	$items = pof_taxonomy_icons_get_groupsizes();
+	$title = "Ryhm&auml;koot";
+	$title2 = "Ryhm&auml;koko";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+
+function pof_taxonomy_icons_get_mandatory() {
+	$ret = array();
+
+	$ret['not_mandatory'] = 'Ei pakollinen';
+	$ret['optional'] = 'Valinnainen';
+	$ret['mandatory'] = 'Pakollinen';
+	$ret['mandatory_seascouts'] = 'Pakollinen meripartiolaisille';
+	
+	return $ret;
+
+}
+
+
+function pof_taxonomy_icons_mandatory() {
+	$taxonomy_base_key = "mandatory";
+	$items = pof_taxonomy_icons_get_mandatory();
+	$title = "Pakollisuus";
+	$title2 = "Pakollisuus";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_icons_get_taskduration() {
+	$ret = array();
+
+	$ret['10'] = '10 min';
+	$ret['20'] = '20 min';
+	$ret['30'] = '30 min';
+	$ret['45'] = '45 min';
+	$ret['60'] = '1 h';
+	$ret['90'] = '1,5 h';
+	$ret['120'] = '2 h';
+	$ret['180'] = '3 h';
+	$ret['240'] = '4 h';
+	
+	return $ret;
+
+}
+
+
+function pof_taxonomy_icons_taskduration() {
+	$taxonomy_base_key = "taskduration";
+	$items = pof_taxonomy_icons_get_taskduration();
+	$title = "Suorituksen kestot";
+	$title2 = "Kesto";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_icons_get_taskpreparationduration() {
+	$ret = array();
+
+	$ret['10'] = '10 min';
+	$ret['20'] = '20 min';
+	$ret['30'] = '30 min';
+	$ret['45'] = '45 min';
+	$ret['60'] = '1 h';
+	$ret['90'] = '1,5 h';
+	$ret['120'] = '2 h';
+	$ret['180'] = '3 h';
+	$ret['240'] = '4 h';
+	
+	return $ret;
+
+}
+
+
+function pof_taxonomy_icons_taskpreparationduration() {
+	$taxonomy_base_key = "taskpreaparationduration";
+	$items = pof_taxonomy_icons_get_taskpreparationduration();
+	$title = "Suorituksen valmistelun kestot";
+	$title2 = "Kesto";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_icons_get_equpments() {
+	$ret = array();
+
+	foreach (get_terms('pof_tax_equipment') as $term) {
+		$ret[$term->slug] = $term->name;
+	}
+	
+	return $ret;
+
+}
+
+
+function pof_taxonomy_icons_equpments() {
+	$taxonomy_base_key = "equpment";
+	$items = pof_taxonomy_icons_get_equpments();
+	$title = "Tarvikkeet";
+	$title2 = "Tarvike";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_icons_get_skillareas() {
+	$ret = array();
+
+	foreach (get_terms('pof_tax_skillarea') as $term) {
+		$ret[$term->slug] = $term->name;
+	}
+	
+	return $ret;
+
+}
+
+
+function pof_taxonomy_icons_skillareas() {
+	$taxonomy_base_key = "skillarea";
+	$items = pof_taxonomy_icons_get_skillareas();
+	$title = "Taitoalueet";
+	$title2 = "Taitoalue";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
 }

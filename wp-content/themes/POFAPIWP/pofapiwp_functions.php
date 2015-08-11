@@ -576,7 +576,7 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 
 
 
-function get_post_tags_JSON($post_id, $agegroup_id) {
+function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	$ret = new stdClass();
 
 
@@ -584,22 +584,48 @@ function get_post_tags_JSON($post_id, $agegroup_id) {
 
 	if (get_field("task_mandatory", $post_id)) {
 		$pakollinen = new stdClass();
-		$pakollinen->name = 'Pakollinen';
+		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$pakollinen->name = $tmp_name[0]->content;
+		} else {
+			$pakollinen->name = 'Pakollinen';
+		}
 		$pakollinen->slug = 'mandatory';
-		$pakollinen->icon = "http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/exclamatory_icon.png";
+		$icon = pof_taxonomy_icons_get_icon('mandatory', 'mandatory', $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$pakollinen->icon = $icon_src[0];
+			}
+		}
 		array_push($pakollisuus, $pakollinen);
 	}
 
 	if (get_field("task_mandatory_seascouts", $post_id)) {
 		$pakollinen = new stdClass();
-		$pakollinen->name = 'Pakollinen meripartiolaisille';
+		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory_seascouts', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$pakollinen->name = $tmp_name[0]->content;
+		} else {
+			$pakollinen->name = 'Pakollinen meripartiolaisille';
+		}
 		$pakollinen->slug = 'mandatory_seascouts';
-		$pakollinen->icon = "http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/exclamatory_icon.png";
+		$icon = pof_taxonomy_icons_get_icon('mandatory', 'mandatory_seascouts', $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$pakollinen->icon = $icon_src[0];
+			}
+		}
 		array_push($pakollisuus, $pakollinen);
 	}
 	if (count($pakollisuus) > 0) {
 		$ret->pakollisuus = $pakollisuus;
-	}	
+	}
 
 	$groupsizes = get_field("task_groupsize", $post_id);
 
@@ -607,6 +633,14 @@ function get_post_tags_JSON($post_id, $agegroup_id) {
 
 	if (empty($groupsizes)) {
 		$gropsize = new stdClass();
+		
+		$tmp_name = pof_taxonomy_translate_get_translation('groupsize', 'group', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$gropsize->name = $tmp_name[0]->content;
+		} else {
+			$gropsize->name = 'Laumassa';
+		}
 		$gropsize->name = 'Laumassa';
 		$gropsize->slug = 'group';
 		
@@ -625,25 +659,32 @@ function get_post_tags_JSON($post_id, $agegroup_id) {
 				}
 			}
 
-			switch ($tmp_groupsize) {
-				default:
-					$gropsize->name = $tmp_groupsize;
-					break;
-				case "one":
-					$gropsize->name = 'Yksin';
-					break;
-				case "two":
-					$gropsize->name = 'Kaksin';
-					break;
-				case "few":
-					$gropsize->name = 'Muutama';
-					break;
-				case "group":
-					$gropsize->name = 'Laumassa';
-					break;
-				case "big":
-					$gropsize->name = 'Isommassa porukassa';
-					break;
+			$tmp_name = pof_taxonomy_translate_get_translation('groupsize', $tmp_groupsize, $agegroup_id, $lang, true);
+
+
+			if (!empty($tmp_name)) {
+				$gropsize->name = $tmp_name[0]->content;
+			} else {
+				switch ($tmp_groupsize) {
+					default:
+						$gropsize->name = $tmp_groupsize;
+						break;
+					case "one":
+						$gropsize->name = 'Yksin';
+						break;
+					case "two":
+						$gropsize->name = 'Kaksin';
+						break;
+					case "few":
+						$gropsize->name = 'Muutama';
+						break;
+					case "group":
+						$gropsize->name = 'Laumassa';
+						break;
+					case "big":
+						$gropsize->name = 'Isommassa porukassa';
+						break;
+				}
 			}
 
 			$gropsize->slug = $tmp_groupsize;
@@ -663,7 +704,13 @@ function get_post_tags_JSON($post_id, $agegroup_id) {
 
 	if (empty($place_of_performance)) {
 		$place = new stdClass();
-		$place->name = 'Kolo';
+		$tmp_name = pof_taxonomy_translate_get_translation('place_of_performance', 'meeting_place', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$place->name = $tmp_name[0]->content;
+		} else {
+			$place->name = 'Kolo';
+		}
 		$place->slug = 'meeting_place';
 		
 		array_push($ret_places, $place);
@@ -680,25 +727,32 @@ function get_post_tags_JSON($post_id, $agegroup_id) {
 				}
 			}
 
-			switch ($tmp_place) {
-				default:
-					$place->name = $tmp_place;
-					break;
-				case "meeting_place":
-					$place->name = 'Kolo';
-					break;
-				case "hike":
-					$place->name = 'Retki';
-					break;
-				case "camp":
-					$place->name = 'Leiri';
-					break;
-				case "boat":
-					$place->name = 'Vene';
-					break;
-				case "other":
-					$place->name = 'Muu';
-					break;
+			$tmp_name = pof_taxonomy_translate_get_translation('place_of_performance', $tmp_place, $agegroup_id, $lang, true);
+
+			if (!empty($tmp_name)) {
+				$place->name = $tmp_name[0]->content;
+			} else {
+
+				switch ($tmp_place) {
+					default:
+						$place->name = $tmp_place;
+						break;
+					case "meeting_place":
+						$place->name = 'Kolo';
+						break;
+					case "hike":
+						$place->name = 'Retki';
+						break;
+					case "camp":
+						$place->name = 'Leiri';
+						break;
+					case "boat":
+						$place->name = 'Vene';
+						break;
+					case "other":
+						$place->name = 'Muu';
+						break;
+				}
 			}
 
 			$place->slug = $tmp_place;
@@ -718,7 +772,12 @@ function get_post_tags_JSON($post_id, $agegroup_id) {
 
 	foreach ($taitoalueet_tags as $taitoalue_tag) {
 		$taitoalue = new stdClass();
-		$taitoalue->name = $taitoalue_tag->name;
+		$tmp_name = pof_taxonomy_translate_get_translation('skillarea', $taitoalue_tag->slug, $agegroup_id, $lang, true);
+		if (!empty($tmp_name)) {
+			$taitoalue->name = $tmp_name[0]->content;
+		} else {
+			$taitoalue->name = $taitoalue_tag->name;
+		}
 		$taitoalue->slug = $taitoalue_tag->slug;
 
 		array_push($taitoalueet, $taitoalue);
@@ -726,45 +785,52 @@ function get_post_tags_JSON($post_id, $agegroup_id) {
 	if (count($taitoalueet) > 0) {
 		$ret->taitoalueet = $taitoalueet;
 	}
-	
 
-	$suoritus_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskduration');
-	
-	$suoritus_kestot = array();
-	
-	foreach ($suoritus_kesto_tags as $suoritus_kesto_tag) {
+	$suoritus_kesto_tmp = get_field("task_duration", $post_id);
+	if ($suoritus_kesto_tmp) {
 		$suoritus_kesto = new stdClass();
-		$suoritus_kesto->name = $suoritus_kesto_tag->name;
-		$suoritus_kesto->slug = $suoritus_kesto_tag->slug;
-		array_push($suoritus_kestot, $suoritus_kesto);
-	}
-	
+		$suoritus_kesto->name = $suoritus_kesto_tmp;
+		$suoritus_kesto->slug = $suoritus_kesto_tmp;
+		$icon = pof_taxonomy_icons_get_icon('taskduration', $suoritus_kesto_tmp, $agegroup_id, true);
 
-	if (count($suoritus_kestot) > 0) {
-		$ret->suoritus_kesto = $suoritus_kestot;
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$suoritus_kesto->icon = $icon_src[0];
+			}
+		}
+		$ret->suoritus_kesto = $suoritus_kesto;
 	}
 
-	$suoritus_valmistelu_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskpreparationduration');
-	
-	$suoritus_valmistelu_kestot = array();
-	
-	foreach ($suoritus_valmistelu_kesto_tags as $suoritus_valmistelu_kesto_tag) {
+	$suoritus_valmistelu_kesto_tmp = get_field("task_preparationduration", $post_id);
+	if ($suoritus_valmistelu_kesto_tmp) {
 		$suoritus_valmistelu_kesto = new stdClass();
-		$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tag->name;
-		$suoritus_valmistelu_kesto->slug = $suoritus_valmistelu_kesto_tag->slug;
-		array_push($suoritus_valmistelu_kestot, $suoritus_valmistelu_kesto);
+		$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tmp;
+		$suoritus_valmistelu_kesto->slug = $suoritus_valmistelu_kesto_tmp;
+		$icon = pof_taxonomy_icons_get_icon('taskpreaparationduration', $suoritus_valmistelu_kesto_tmp, $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$suoritus_valmistelu_kesto->icon = $icon_src[0];
+			}
+		}
+		$ret->suoritus_valmistelu_kesto = $suoritus_valmistelu_kesto;
 	}
 	
-	if (count($suoritus_valmistelu_kestot)) {
-		$ret->suoritus_valmistelu_kesto = $suoritus_valmistelu_kestot;
-	}
 	$tarvike_tags = wp_get_post_terms($post_id, 'pof_tax_equipment');
 	
 	$tarvikkeet = array();
 	
 	foreach ($tarvike_tags as $tarvike_tag) {
 		$tarvike = new stdClass();
-		$tarvike->name = $tarvike_tag->name;
+
+		$tmp_name = pof_taxonomy_translate_get_translation('equpment', $tarvike_tag->slug, $agegroup_id, $lang, true);
+		if (!empty($tmp_name)) {
+			$tarvike->name = $tmp_name[0]->content;
+		} else {
+			$tarvike->name = $tarvike_tag->name;
+		}
 		$tarvike->slug = $tarvike_tag->slug;
 		array_push($tarvikkeet, $tarvike);
 	}
