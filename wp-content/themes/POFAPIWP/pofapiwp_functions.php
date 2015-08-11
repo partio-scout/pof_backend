@@ -425,8 +425,6 @@ function getJsonItemDetailsAgegroup($jsonItem, $post) {
 
 function getJsonItemDetailsTaskgroup($jsonItem, $post) {
 	$jsonItem->additional_tasks_count = get_field("taskgroup_additional_tasks_count", $post->ID);
-	$jsonItem->subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $post->ID));
-	$jsonItem->taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $post->ID));
 	$jsonItem->subtask_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $post->ID));
 	return $jsonItem;
 }
@@ -568,8 +566,6 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 		}
 
 	}
-
-	$jsonItem->task_term = getJsonTaskTerm(get_field("task_task_term", $post->ID));
 
 	return $jsonItem;
 } 
