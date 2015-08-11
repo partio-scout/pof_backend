@@ -623,7 +623,29 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		}
 		array_push($pakollisuus, $pakollinen);
 	}
+
+
 	if (count($pakollisuus) > 0) {
+		$ret->pakollisuus = $pakollisuus;
+	} else {
+		$pakollinen = new stdClass();
+		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'not_mandatory', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$pakollinen->name = $tmp_name[0]->content;
+		} else {
+			$pakollinen->name = 'Ei pakollinen';
+		}
+		$pakollinen->slug = 'not_mandatory';
+		$icon = pof_taxonomy_icons_get_icon('mandatory', 'not_mandatory', $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$pakollinen->icon = $icon_src[0];
+			}
+		}
+		array_push($pakollisuus, $pakollinen);
 		$ret->pakollisuus = $pakollisuus;
 	}
 
