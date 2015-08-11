@@ -95,10 +95,11 @@ namespace POFITEM {
 	}
 
 	class task extends basedetails {
-		public $mandatory;
+/*		public $mandatory;
 		public $mandatory_seascouts;
 		public $groupsize;
 		public $place_of_performance;
+*/
 		public $suggestions_details = array();
 		public $task_term;
 	}

@@ -342,6 +342,7 @@ function getLastModifiedBy($userId) {
 	return $tmp;
 }
 
+
 function getJsonItemBaseDetails($jsonItem, $post) {
 	global $available_languages;
 
@@ -354,8 +355,12 @@ function getJsonItemBaseDetails($jsonItem, $post) {
 
 	$lang_obj = new stdClass();
 	$lang_obj->lang = 'fi';
+	$lang_obj->title = $post->post_title;
 	$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=fi";
 	$lang_obj->lastModified = $post->post_modified;
+	if (empty($jsonItem->languages)) {
+		$jsonItem->languages = array();
+	}
 	array_push($jsonItem->languages, $lang_obj);
 
 	foreach ($available_languages as $available_language) {
@@ -363,6 +368,7 @@ function getJsonItemBaseDetails($jsonItem, $post) {
 		if (!empty($tmp)) {
 			$lang_obj = new stdClass();
 			$lang_obj->lang = $available_language;
+			$lang_obj->title = $tmp;
 			$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=".$available_language;
 			$lang_obj->lastModified = $post->post_modified;
 			array_push($jsonItem->languages, $lang_obj);
@@ -523,7 +529,7 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 	if (get_field("task_mandatory", $post->ID)) {
 		array_push($mandatory_task_guids, get_post_meta( $post->ID, "post_guid", true ));
 	}
-
+/*
 	$jsonItem->mandatory = get_field("task_mandatory", $post->ID);
 	$jsonItem->mandatory_seascouts = get_field("task_mandatory_seascouts", $post->ID);
 
@@ -541,7 +547,7 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 		$jsonItem->place_of_performance = array('meeting_place');
 	} else {
 		$jsonItem->place_of_performance = $place_of_performance;
-	}
+	}*/
 
 	$post_guid = get_post_meta( $post->ID, "post_guid", true );
 
@@ -570,7 +576,7 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 
 
 
-function get_post_tags_JSON($post_id) {
+function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	$ret = new stdClass();
 
 
@@ -578,22 +584,70 @@ function get_post_tags_JSON($post_id) {
 
 	if (get_field("task_mandatory", $post_id)) {
 		$pakollinen = new stdClass();
-		$pakollinen->name = 'Pakollinen';
+		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$pakollinen->name = $tmp_name[0]->content;
+		} else {
+			$pakollinen->name = 'Pakollinen';
+		}
 		$pakollinen->slug = 'mandatory';
-		$pakollinen->icon = "http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/exclamatory_icon.png";
+		$icon = pof_taxonomy_icons_get_icon('mandatory', 'mandatory', $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$pakollinen->icon = $icon_src[0];
+			}
+		}
 		array_push($pakollisuus, $pakollinen);
 	}
 
 	if (get_field("task_mandatory_seascouts", $post_id)) {
 		$pakollinen = new stdClass();
-		$pakollinen->name = 'Pakollinen meripartiolaisille';
+		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory_seascouts', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$pakollinen->name = $tmp_name[0]->content;
+		} else {
+			$pakollinen->name = 'Pakollinen meripartiolaisille';
+		}
 		$pakollinen->slug = 'mandatory_seascouts';
-		$pakollinen->icon = "http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/exclamatory_icon.png";
+		$icon = pof_taxonomy_icons_get_icon('mandatory', 'mandatory_seascouts', $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$pakollinen->icon = $icon_src[0];
+			}
+		}
 		array_push($pakollisuus, $pakollinen);
 	}
+
+
 	if (count($pakollisuus) > 0) {
 		$ret->pakollisuus = $pakollisuus;
-	}	
+	} else {
+		$pakollinen = new stdClass();
+		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'not_mandatory', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$pakollinen->name = $tmp_name[0]->content;
+		} else {
+			$pakollinen->name = 'Ei pakollinen';
+		}
+		$pakollinen->slug = 'not_mandatory';
+		$icon = pof_taxonomy_icons_get_icon('mandatory', 'not_mandatory', $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$pakollinen->icon = $icon_src[0];
+			}
+		}
+		array_push($pakollisuus, $pakollinen);
+		$ret->pakollisuus = $pakollisuus;
+	}
 
 	$groupsizes = get_field("task_groupsize", $post_id);
 
@@ -601,6 +655,14 @@ function get_post_tags_JSON($post_id) {
 
 	if (empty($groupsizes)) {
 		$gropsize = new stdClass();
+		
+		$tmp_name = pof_taxonomy_translate_get_translation('groupsize', 'group', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$gropsize->name = $tmp_name[0]->content;
+		} else {
+			$gropsize->name = 'Laumassa';
+		}
 		$gropsize->name = 'Laumassa';
 		$gropsize->slug = 'group';
 		
@@ -610,25 +672,41 @@ function get_post_tags_JSON($post_id) {
 		foreach ($groupsizes as $tmp_groupsize) {
 			$gropsize = new stdClass();
 
-			switch ($tmp_groupsize) {
-				default:
-					$gropsize->name = $tmp_groupsize;
-					break;
-				case "one":
-					$gropsize->name = 'Yksin';
-					break;
-				case "two":
-					$gropsize->name = 'Kaksin';
-					break;
-				case "few":
-					$gropsize->name = 'Muutama';
-					break;
-				case "group":
-					$gropsize->name = 'Laumassa';
-					break;
-				case "big":
-					$gropsize->name = 'Isommassa porukassa';
-					break;
+			$icon = pof_taxonomy_icons_get_icon('groupsize', $tmp_groupsize, $agegroup_id, true);
+
+			if (!empty($icon)) {
+				$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+				if (!empty($icon_src)) {
+					$groupsize->icon = $icon_src[0];
+				}
+			}
+
+			$tmp_name = pof_taxonomy_translate_get_translation('groupsize', $tmp_groupsize, $agegroup_id, $lang, true);
+
+
+			if (!empty($tmp_name)) {
+				$gropsize->name = $tmp_name[0]->content;
+			} else {
+				switch ($tmp_groupsize) {
+					default:
+						$gropsize->name = $tmp_groupsize;
+						break;
+					case "one":
+						$gropsize->name = 'Yksin';
+						break;
+					case "two":
+						$gropsize->name = 'Kaksin';
+						break;
+					case "few":
+						$gropsize->name = 'Muutama';
+						break;
+					case "group":
+						$gropsize->name = 'Laumassa';
+						break;
+					case "big":
+						$gropsize->name = 'Isommassa porukassa';
+						break;
+				}
 			}
 
 			$gropsize->slug = $tmp_groupsize;
@@ -648,7 +726,13 @@ function get_post_tags_JSON($post_id) {
 
 	if (empty($place_of_performance)) {
 		$place = new stdClass();
-		$place->name = 'Kolo';
+		$tmp_name = pof_taxonomy_translate_get_translation('place_of_performance', 'meeting_place', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$place->name = $tmp_name[0]->content;
+		} else {
+			$place->name = 'Kolo';
+		}
 		$place->slug = 'meeting_place';
 		
 		array_push($ret_places, $place);
@@ -656,28 +740,41 @@ function get_post_tags_JSON($post_id) {
 	} else {
 		foreach ($place_of_performance as $tmp_place) {
 			$place = new stdClass();
+			$icon = pof_taxonomy_icons_get_icon('place_of_performance',$tmp_place, $agegroup_id, true);
 
-			switch ($tmp_place) {
-				default:
-					$place->name = $tmp_place;
-					break;
-				case "meeting_place":
-					$place->name = 'Kolo';
-					break;
-				case "hike":
-					$place->name = 'Retki';
-					break;
-				case "camp":
-					$place->name = 'Leiri';
-					$place->icon = 'http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/fac_icon_camp.png';
-					break;
-				case "boat":
-					$place->name = 'Vene';
-					$place->icon = 'http://pofapiwp.azurewebsites.net/wp-content/uploads/2015/07/images.png';
-					break;
-				case "other":
-					$place->name = 'Muu';
-					break;
+			if (!empty($icon)) {
+				$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+				if (!empty($icon_src)) {
+					$place->icon = $icon_src[0];
+				}
+			}
+
+			$tmp_name = pof_taxonomy_translate_get_translation('place_of_performance', $tmp_place, $agegroup_id, $lang, true);
+
+			if (!empty($tmp_name)) {
+				$place->name = $tmp_name[0]->content;
+			} else {
+
+				switch ($tmp_place) {
+					default:
+						$place->name = $tmp_place;
+						break;
+					case "meeting_place":
+						$place->name = 'Kolo';
+						break;
+					case "hike":
+						$place->name = 'Retki';
+						break;
+					case "camp":
+						$place->name = 'Leiri';
+						break;
+					case "boat":
+						$place->name = 'Vene';
+						break;
+					case "other":
+						$place->name = 'Muu';
+						break;
+				}
 			}
 
 			$place->slug = $tmp_place;
@@ -697,62 +794,66 @@ function get_post_tags_JSON($post_id) {
 
 	foreach ($taitoalueet_tags as $taitoalue_tag) {
 		$taitoalue = new stdClass();
-//		$taitoalue->type = 'taitoalue';
-		$taitoalue->name = $taitoalue_tag->name;
+		$tmp_name = pof_taxonomy_translate_get_translation('skillarea', $taitoalue_tag->slug, $agegroup_id, $lang, true);
+		if (!empty($tmp_name)) {
+			$taitoalue->name = $tmp_name[0]->content;
+		} else {
+			$taitoalue->name = $taitoalue_tag->name;
+		}
 		$taitoalue->slug = $taitoalue_tag->slug;
-//		$taitoalue->id = $taitoalue_tag->term_taxonomy_id;
 
 		array_push($taitoalueet, $taitoalue);
 	}
 	if (count($taitoalueet) > 0) {
 		$ret->taitoalueet = $taitoalueet;
 	}
-	
 
-	$suoritus_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskduration');
-	
-	$suoritus_kestot = array();
-	
-	foreach ($suoritus_kesto_tags as $suoritus_kesto_tag) {
+	$suoritus_kesto_tmp = get_field("task_duration", $post_id);
+	if ($suoritus_kesto_tmp) {
 		$suoritus_kesto = new stdClass();
-//		$suoritus_kesto->type= 'duration';
-		$suoritus_kesto->name = $suoritus_kesto_tag->name;
-		$suoritus_kesto->slug = $suoritus_kesto_tag->slug;
-//		$suoritus_kesto->id = $suoritus_kesto_tag->term_taxonomy_id;
-		array_push($suoritus_kestot, $suoritus_kesto);
-	}
-	
+		$suoritus_kesto->name = $suoritus_kesto_tmp;
+		$suoritus_kesto->slug = $suoritus_kesto_tmp;
+		$icon = pof_taxonomy_icons_get_icon('taskduration', $suoritus_kesto_tmp, $agegroup_id, true);
 
-	if (count($suoritus_kestot) > 0) {
-		$ret->suoritus_kesto = $suoritus_kestot;
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$suoritus_kesto->icon = $icon_src[0];
+			}
+		}
+		$ret->suoritus_kesto = $suoritus_kesto;
 	}
 
-	$suoritus_valmistelu_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskpreparationduration');
-	
-	$suoritus_valmistelu_kestot = array();
-	
-	foreach ($suoritus_valmistelu_kesto_tags as $suoritus_valmistelu_kesto_tag) {
+	$suoritus_valmistelu_kesto_tmp = get_field("task_preparationduration", $post_id);
+	if ($suoritus_valmistelu_kesto_tmp) {
 		$suoritus_valmistelu_kesto = new stdClass();
-//		$suoritus_valmistelu_kesto->type = 'duration_preparation';
-		$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tag->name;
-		$suoritus_valmistelu_kesto->slug = $suoritus_valmistelu_kesto_tag->slug;
-//		$suoritus_valmistelu_kesto->id = $suoritus_valmistelu_kesto_tag->term_taxonomy_id;
-		array_push($suoritus_valmistelu_kestot, $suoritus_valmistelu_kesto);
+		$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tmp;
+		$suoritus_valmistelu_kesto->slug = $suoritus_valmistelu_kesto_tmp;
+		$icon = pof_taxonomy_icons_get_icon('taskpreaparationduration', $suoritus_valmistelu_kesto_tmp, $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$suoritus_valmistelu_kesto->icon = $icon_src[0];
+			}
+		}
+		$ret->suoritus_valmistelu_kesto = $suoritus_valmistelu_kesto;
 	}
 	
-	if (count($suoritus_valmistelu_kestot)) {
-		$ret->suoritus_valmistelu_kesto = $suoritus_valmistelu_kestot;
-	}
 	$tarvike_tags = wp_get_post_terms($post_id, 'pof_tax_equipment');
 	
 	$tarvikkeet = array();
 	
 	foreach ($tarvike_tags as $tarvike_tag) {
 		$tarvike = new stdClass();
-//		$tarvike->type = 'equipment';
-		$tarvike->name = $tarvike_tag->name;
+
+		$tmp_name = pof_taxonomy_translate_get_translation('equpment', $tarvike_tag->slug, $agegroup_id, $lang, true);
+		if (!empty($tmp_name)) {
+			$tarvike->name = $tmp_name[0]->content;
+		} else {
+			$tarvike->name = $tarvike_tag->name;
+		}
 		$tarvike->slug = $tarvike_tag->slug;
-//		$tarvike->id = $tarvike_tag->term_taxonomy_id;
 		array_push($tarvikkeet, $tarvike);
 	}
 	if (count($tarvikkeet)) {
@@ -1101,3 +1202,31 @@ function pof_item_task_parenttree_meta_box_callback($post) {
 
 add_action( 'add_meta_boxes', 'pof_item_task_parenttree_meta_box' );
 
+function pof_output_parents_arr_json($tree_array) {
+	$ret = array();
+	foreach ($tree_array as $tree_item) {
+		$tmp = new stdClass();
+		$tmp->type = str_replace('pof_post_', '',$tree_item->post_type);
+		$tmp->title = $tree_item->post_title;
+		$tmp = getJsonItemBaseDetails($tmp, $tree_item);
+		array_push($ret, $tmp);
+	}
+
+	return $ret;
+}
+
+function pof_get_agegroup_from_tree_arr($tree_array) {
+	$agegropup = null;
+
+	foreach ($tree_array as $tree_item) {
+		if (empty($tree_item)) {
+			continue;
+		}
+		if ($tree_item->post_type == 'pof_post_agegroup') {
+			$agegroup = $tree_item;
+			break;
+		}
+	}
+
+	return $agegroup;
+}
