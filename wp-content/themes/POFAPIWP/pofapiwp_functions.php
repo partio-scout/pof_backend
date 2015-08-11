@@ -1094,8 +1094,7 @@ function pof_get_parent_tree($post_item, $tree_array) {
 		break;
 		case "taskgroup":
 			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
-
-			if (!is_null($taskgroup_id) && $taskgroup_id != "null") {
+			if (!is_null($taskgroup_id) && $taskgroup_id != "null" && $taskgroup_id != "") {
 				$taskgroup = get_post($taskgroup_id);
 				array_push($tree_array, $taskgroup);
 				$tree_array = pof_get_parent_tree($taskgroup, $tree_array);
