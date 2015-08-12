@@ -437,9 +437,10 @@ function getJsonSubtaskgroupTerm($term, $lang = 'fi') {
 	$tmp_name_single = pof_taxonomy_translate_get_translation('taskgroup_term', $term.'_single', 0, $lang, true);
 	$tmp_name_plural = pof_taxonomy_translate_get_translation('taskgroup_term', $term.'_plural', 0, $lang, true);
 
-	if (!empty($tmp_name_single)) {
-		$ret->single = $tmp_name_single;
-		$ret->plural = $tmp_name_plural;
+	if (   !empty($tmp_name_single)
+		&& !empty($tmp_name_plural)) {
+		$ret->single = $tmp_name_single[0]->content;
+		$ret->plural = $tmp_name_plural[0]->content;
 	} else {
 		switch ($term) {
 			default:
@@ -502,9 +503,10 @@ function getJsonTaskTerm($term, $lang = 'fi') {
 	$tmp_name_single = pof_taxonomy_translate_get_translation('task_term', $term.'_single', 0, $lang, true);
 	$tmp_name_plural = pof_taxonomy_translate_get_translation('task_term', $term.'_plural', 0, $lang, true);
 
-	if (!empty($tmp_name_single)) {
-		$ret->single = $tmp_name_single;
-		$ret->plural = $tmp_name_plural;
+	if (   !empty($tmp_name_single)
+		&& !empty($tmp_name_plural)) {
+		$ret->single = $tmp_name_single[0]->content;
+		$ret->plural = $tmp_name_plural[0]->content;
 	} else {
 
 		switch ($term) {
