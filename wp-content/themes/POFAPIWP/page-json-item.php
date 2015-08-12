@@ -105,7 +105,7 @@ switch ($post_type) {
 		$jsonItem = getJsonItemDetailsAgegroup($jsonItem, $mypost);
 	break;
 	case "taskgroup":
-		$jsonItem = getJsonItemDetailsTaskgroup($jsonItem, $mypost);
+		$jsonItem = getJsonItemDetailsTaskgroup($jsonItem, $mypost, strtolower($lang));
 
 
 		$mandatory_tasks = getMandatoryTasksForTaskGroup($mypost->ID);
@@ -127,10 +127,10 @@ switch ($post_type) {
 			$jsonItem->subtask_term = $task_term;
 		}
 
-		$subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $post->ID));
+		$subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $post->ID), strtolower($lang));
 		if (empty($subtaskgroup_term)) {
 			foreach ($tree_array_orig as $tree_item) {
-				$subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $tree_item->ID));
+				$subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $tree_item->ID), strtolower($lang));
 
 				if ($task_term) {
 					$jsonItem->subtaskgroup_term = $subtaskgroup_term;
@@ -141,10 +141,10 @@ switch ($post_type) {
 			$jsonItem->subtaskgroup_term = $subtaskgroup_term;
 		}
 
-		$taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $post->ID));
+		$taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $post->ID), strtolower($lang));
 		if (empty($taskgroup_term)) {
 			foreach ($tree_array_orig as $tree_item) {
-				$taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $tree_item->ID));
+				$taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $tree_item->ID), strtolower($lang));
 
 				if ($task_term) {
 					$jsonItem->taskgroup_term = $taskgroup_term;
@@ -157,12 +157,12 @@ switch ($post_type) {
 
 	break;
 	case "task":
-		$jsonItem = getJsonItemDetailsTask($jsonItem, $mypost);
+		$jsonItem = getJsonItemDetailsTask($jsonItem, $mypost, strtolower($lang));
 
-		$task_term = getJsonTaskTerm(get_field("task_task_term", $mypost->ID));
+		$task_term = getJsonTaskTerm(get_field("task_task_term", $mypost->ID), strtolower($lang));
 		if (empty($task_term)) {
 			foreach ($tree_array_orig as $tree_item) {
-				$task_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $tree_item->ID));
+				$task_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $tree_item->ID), strtolower($lang));
 
 				if ($task_term) {
 					$jsonItem->task_term = $task_term;

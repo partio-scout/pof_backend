@@ -95,7 +95,7 @@ function getJsonAgeGroups($parent_id) {
 			
 			$child = new $classAgeGroup;
 			$child = getJsonItemBaseDetails($child, $the_query->post);
-			$child = getJsonItemDetailsAgegroup($child, $the_query->post);
+			$child = getJsonItemDetailsAgegroup($child, $the_query->post, 'fi');
 			$child->title = $the_query->post->post_title;
 			$child->taskgroups = getJsonTaskGroups($the_query->post->ID);
 
@@ -136,7 +136,7 @@ function getJsonTaskGroups($parent_id) {
 			
 			$child = new $classTaskGroup;
 			$child = getJsonItemBaseDetails($child, $the_query->post);
-			$child = getJsonItemDetailsTaskgroup($child, $the_query->post);
+			$child = getJsonItemDetailsTaskgroup($child, $the_query->post, 'fi');
 			$child->title = $the_query->post->post_title;
 
 
@@ -187,12 +187,12 @@ function getJsonTaskGroupsForTaskGroup($parent_id) {
 			
 			$child = new $classTaskGroup;
 			$child = getJsonItemBaseDetails($child, $the_querysub->post);
-			$child = getJsonItemDetailsTaskgroup($child, $the_querysub->post);
+			$child = getJsonItemDetailsTaskgroup($child, $the_querysub->post, 'fi');
 			$child->title = $the_querysub->post->post_title;
 
 
 
-			$child->taskgroups = getJsonTaskGroupsForTaskGroup($the_querysub->post->ID);
+			$child->taskgroups = getJsonTaskGroupsForTaskGroup($the_querysub->post->ID, 'fi');
 
 
 			$mandatory_task_guids = array();
