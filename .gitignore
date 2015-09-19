@@ -12,3 +12,4 @@ wp-content/upgrade/
 wp-content/uploads/
 wp-content/wp-cache-config.php
 *.p12
+wp-content/plugins/pof-importer/googleDriveDownloads/
