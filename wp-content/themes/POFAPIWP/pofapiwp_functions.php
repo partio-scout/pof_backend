@@ -331,7 +331,10 @@ function getXML($data) {
 /** JSON FUNCTIONS */
 
 
-$available_languages = array('sv', 'en');
+//$pof_available_languages = array('sv', 'en');
+$pof_settings_langs = array();
+$pof_available_languages = pof_settigs_get_active_lang_codes();
+
 
 function getLastModifiedBy($userId) {
 	$tmp = new stdClass();
@@ -344,7 +347,7 @@ function getLastModifiedBy($userId) {
 
 
 function getJsonItemBaseDetails($jsonItem, $post) {
-	global $available_languages;
+	global $pof_available_languages;
 
 	$jsonItem->lastModified = $post->post_modified;
 	$jsonItem->lastModifiedBy = getLastModifiedBy(get_post_meta( $post->ID, '_edit_last', true));
@@ -363,7 +366,7 @@ function getJsonItemBaseDetails($jsonItem, $post) {
 	}
 	array_push($jsonItem->languages, $lang_obj);
 
-	foreach ($available_languages as $available_language) {
+	foreach ($pof_available_languages as $available_language) {
 		$tmp = get_field("title_".strtolower($available_language), $post->ID);
 		if (!empty($tmp)) {
 			$lang_obj = new stdClass();
@@ -380,7 +383,7 @@ function getJsonItemBaseDetails($jsonItem, $post) {
 }
 
 function getJsonItemBaseDetailsItem($jsonItem, $post) {
-	global $available_languages;
+	global $pof_available_languages;
 
 	$jsonItem->lastModified = $post->post_modified;
 	$jsonItem->lastModifiedBy = getLastModifiedBy(get_post_meta( $post->ID, '_edit_last', true));
@@ -395,7 +398,7 @@ function getJsonItemBaseDetailsItem($jsonItem, $post) {
 	$lang_obj->lastModified = $post->post_modified;
 	array_push($jsonItem->languages, $lang_obj);
 
-	foreach ($available_languages as $available_language) {
+	foreach ($pof_available_languages as $available_language) {
 		$tmp = get_field("title_".strtolower($available_language), $post->ID);
 		if (!empty($tmp)) {
 			$lang_obj = new stdClass();
@@ -544,7 +547,7 @@ function getJsonTaskTerm($term, $lang = 'fi') {
 $mandatory_task_guids = array();
 
 function getJsonItemDetailsTask($jsonItem, $post) {
-	global $available_languages;
+	global $pof_available_languages;
 	global $mandatory_task_guids;
 
 	if (get_field("task_mandatory", $post->ID)) {
@@ -578,7 +581,7 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 	$lang_obj->lastModified = "2015-03-26 18:15:34";
 	array_push($jsonItem->suggestions_details, $lang_obj);
 
-	foreach ($available_languages as $available_language) {
+	foreach ($pof_available_languages as $available_language) {
 		$tmp = get_field("title_".strtolower($available_language), $post->ID);
 		if (!empty($tmp)) {
 			$lang_obj = new stdClass();
@@ -1105,7 +1108,7 @@ function pof_get_parent_tree($post_item, $tree_array) {
 		break;
 		case "agegroup":
 			$ohjelma_id = get_post_meta( $post_id, "suoritusohjelma", true );
-			if (!is_null($ohjelma_id) && $ohjelma_id != "null" && $ohjelma_id != "" ) {
+			if (!is_null($ohjelma_id) && $ohjelma_id != "null" && $ohjelma_id != "" && !empty($ohjelma_id)) {
 				$ohjelma = get_post($ohjelma_id);
 				array_push($tree_array, $ohjelma);
 //				$tree_array = pof_get_parent_tree($ohjelma, $tree_array);
@@ -1113,13 +1116,13 @@ function pof_get_parent_tree($post_item, $tree_array) {
 		break;
 		case "taskgroup":
 			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
-			if (!is_null($taskgroup_id) && $taskgroup_id != "null" && $taskgroup_id != "") {
+			if (!is_null($taskgroup_id) && $taskgroup_id != "null" && $taskgroup_id != "" && !empty($taskgroup_id)) {
 				$taskgroup = get_post($taskgroup_id);
 				array_push($tree_array, $taskgroup);
 				$tree_array = pof_get_parent_tree($taskgroup, $tree_array);
 			} else {
 				$ikaryhma_id = get_post_meta( $post_id, "ikakausi", true );
-				if (!is_null($ikaryhma_id) && $ikaryhma_id != "null") {
+				if (!is_null($ikaryhma_id) && $ikaryhma_id != "null" && !empty($ikaryhma_id)) {
 					$ikaryhma = get_post($ikaryhma_id);
 					array_push($tree_array, $ikaryhma);
 					$tree_array = pof_get_parent_tree($ikaryhma, $tree_array);
@@ -1129,7 +1132,7 @@ function pof_get_parent_tree($post_item, $tree_array) {
 		case "task":
 			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
 
-			if (!is_null($taskgroup_id) && $taskgroup_id != "null") {
+			if (!is_null($taskgroup_id) && $taskgroup_id != "null" && !empty($taskgroup_id)) {
 				$taskgroup = get_post($taskgroup_id);
 				array_push($tree_array, $taskgroup);
 				$tree_array = pof_get_parent_tree($taskgroup, $tree_array);

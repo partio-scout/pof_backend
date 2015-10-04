@@ -121,8 +121,8 @@ function pof_taxonomy_translate_menu() {
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_translate_equpments-handle', 'pof_taxonomy_translate_equpments');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_translate_skillareas-handle', 'pof_taxonomy_translate_skillareas');
 
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Suoritepaketin yläkäsite', 'Suoritepaketin yläkäsite', 'manage_options', 'pof_taxonomy_translate_taskgroupterm-handle', 'pof_taxonomy_translate_taskgroupterm');
-add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Suoritteen yläkäsite', 'Suoritteen yläkäsite', 'manage_options', 'pof_taxonomy_translate_taskterm-handle', 'pof_taxonomy_translate_taskterm');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Suoritepaketin yl&auml;k&auml;site', 'Suoritepaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_translate_taskgroupterm-handle', 'pof_taxonomy_translate_taskgroupterm');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Suoritteen yl&auml;k&auml;site', 'Suoritteen yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_translate_taskterm-handle', 'pof_taxonomy_translate_taskterm');
 }
 
 function pof_taxonomy_translate_frontpage() {
@@ -525,8 +525,8 @@ function pof_taxonomy_translate_skillareas() {
 function pof_taxonomy_translate_get_taskgroupterms() {
 	$ret = array();
 
-	$ret["jalki_single"] = mb_convert_encoding("Jälki","UTF-8", "auto");
-	$ret["jalki_plural"] = mb_convert_encoding("Jäljet","UTF-8", "auto");
+	$ret["jalki_single"] = mb_convert_encoding("J&auml;lki","UTF-8", "auto");
+	$ret["jalki_plural"] = mb_convert_encoding("J&auml;ljet","UTF-8", "auto");
 
 	$ret["kasvatusosio_single"] = "Kasvatusosio";
 	$ret["kasvatusosio_plural"] = "Kasvatusosiot";
@@ -540,8 +540,8 @@ function pof_taxonomy_translate_get_taskgroupterms() {
 	$ret["tarppo_single"] = "Tarppo";
 	$ret["tarppo_plural"] = "Tarpot";
 
-	$ret["ryhma_single"] = mb_convert_encoding("Ryhmä","UTF-8", "auto");
-	$ret["ryhma_plural"] = mb_convert_encoding("Ryhmät","UTF-8", "auto");
+	$ret["ryhma_single"] = mb_convert_encoding("Ryhm&auml;","UTF-8", "auto");
+	$ret["ryhma_plural"] = mb_convert_encoding("Ryhm&auml;t","UTF-8", "auto");
 
 	$ret["aktiviteetti_single"] = "Aktiviteetti";
 	$ret["aktiviteetti_plural"] = "Aktiviteetit";
@@ -563,7 +563,7 @@ function pof_taxonomy_translate_get_taskgroupterms() {
 function pof_taxonomy_translate_taskgroupterm() {
 	$taxonomy_base_key = "taskgroup_term";
 	$items = pof_taxonomy_translate_get_taskgroupterms();
-	$title = "Suoritepaketin yläkäsite";
+	$title = "Suoritepaketin yl&auml;k&auml;site";
 	$title2 = "Termi";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
@@ -595,7 +595,7 @@ function pof_taxonomy_translate_get_taskterms() {
 function pof_taxonomy_translate_taskterm() {
 	$taxonomy_base_key = "task_term";
 	$items = pof_taxonomy_translate_get_taskterms();
-	$title = "Suoritepaketin yläkäsite";
+	$title = "Suoritepaketin yl&auml;k&auml;site";
 	$title2 = "Termi";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
