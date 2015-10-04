@@ -54,5 +54,17 @@ function AddPofApiCustomPostTypes() {
 			'menu_icon' => 'dashicons-star-filled'
 		)
 	);
+
+	register_post_type( 'pof_post_suggestion',
+		array(
+			'labels' => array(
+				'name' => __( 'Vinkit' ),
+				'singular_name' => __( 'Vinkki' ),
+				),
+			'public' => true,
+			'has_archive' => true,
+			'menu_icon' => 'dashicons-smiley'
+		)
+	);
 }
  
