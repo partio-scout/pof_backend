@@ -47,7 +47,7 @@ switch ($post_type) {
 	break;
 	case "agegroup":
 		$post_class = $classAgegroup;
-		$agegroup = $my_post;
+		$agegroup = $mypost;
 	break;
 	case "taskgroup":
 		$post_class = $classTaskGroup;
@@ -102,7 +102,7 @@ switch ($post_type) {
 		$jsonItem = getJsonItemDetailsProgram($jsonItem, $mypost);
 	break;
 	case "agegroup":
-		$jsonItem = getJsonItemDetailsAgegroup($jsonItem, $mypost);
+		$jsonItem = getJsonItemDetailsAgegroup($jsonItem, $mypost, strtolower($lang));
 	break;
 	case "taskgroup":
 		$jsonItem = getJsonItemDetailsTaskgroup($jsonItem, $mypost, strtolower($lang));
