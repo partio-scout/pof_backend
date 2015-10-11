@@ -120,6 +120,7 @@ function get_childs_for_suoritusohjelma($parent_id) {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_agegroup',
 		'meta_key' => 'suoritusohjelma',
 		'meta_value' => $parent_id
@@ -193,6 +194,7 @@ $ret = array(
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_taskgroup',
 		'meta_key' => 'ikakausi',
 		'meta_value' => $parent_id
@@ -238,6 +240,7 @@ $ret = array(
 	
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_task',
 		'meta_key' => 'ikakausi',
 		'meta_value' => $parent_id
@@ -283,12 +286,13 @@ $ret = array(
 }
 
 function get_childs_for_suoritepaketti($parent_id) {
-$ret = array(
-	'name'=>'childs'
-);
+	$ret = array(
+		'name'=>'childs'
+	);
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_taskgroup',
 		'meta_key' => 'suoritepaketti',
 		'meta_value' => $parent_id
@@ -333,6 +337,7 @@ $ret = array(
 	
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_task',
 		'meta_key' => 'suoritepaketti',
 		'meta_value' => $parent_id

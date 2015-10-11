@@ -234,6 +234,7 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => array('pof_post_task' ),
 		'meta_key' => 'suoritepaketti',
 		'meta_value' => $taskgroup_obj->id,
@@ -346,6 +347,7 @@ function pof_importer_get_agegroups_and_taskgroups() {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => array('pof_post_agegroup' )
 	);
 
@@ -375,6 +377,7 @@ function pof_importer_get_agegroups_and_taskgroups_get_taskgroups($agegroup_id) 
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => array('pof_post_taskgroup' ),
 		'orderby' => 'title',
 		'order' => 'ASC',
@@ -414,6 +417,7 @@ function pof_importer_get_agegroups_and_taskgroups_get_subtaskgroups($parent_id)
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => array('pof_post_taskgroup' ),
 		'orderby' => 'title',
 		'order' => 'ASC',
@@ -595,6 +599,7 @@ function pof_importer_suggestionssdriveimport_importRow($row, $row_index, $saveT
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => array('pof_post_task' ),
 		'meta_key' => 'suoritepaketti',
 		'meta_value' => $taskgroup_obj->id,
@@ -622,6 +627,7 @@ function pof_importer_suggestionssdriveimport_importRow($row, $row_index, $saveT
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => array('pof_post_suggestion' ),
 		'meta_key' => 'pof_suggestion_task',
 		'meta_value' => $task->ID,

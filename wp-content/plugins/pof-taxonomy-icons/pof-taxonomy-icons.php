@@ -67,6 +67,7 @@ function pof_taxonomy_icons_get_agegroups() {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_agegroup',
 		'orderby' => 'title',
 		'order' => 'ASC'
