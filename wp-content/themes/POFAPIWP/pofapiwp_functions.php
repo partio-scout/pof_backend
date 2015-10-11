@@ -1191,7 +1191,7 @@ add_action( 'add_meta_boxes', 'pof_item_guid_add_meta_box' );
 
 function pof_item_task_parenttree_meta_box() {
 
-	$screens = array('pof_post_task');
+	$screens = array('pof_post_task', 'pof_post_taskgroup', 'pof_post_agegroup', 'pof_post_program');
 
 	foreach ( $screens as $screen ) {
 
@@ -1222,7 +1222,90 @@ function pof_item_task_parenttree_meta_box_callback($post) {
 	}
 }
 
+function pof_item_siblings_meta_box() {
+
+	$screens = array('pof_post_task', 'pof_post_taskgroup', 'pof_post_agegroup', 'pof_post_program');
+
+	foreach ( $screens as $screen ) {
+
+		add_meta_box(
+			'pof_item_siblings_meta_box_sectionid',
+			__( 'Sibings', 'pof' ),
+			'pof_item_siblings_meta_box_callback',
+			$screen, 'side', 'high'
+		);
+	}
+}
+
+function pof_item_siblings_meta_box_callback($post) {
+	$siblings = pof_get_siblings($post);
+
+
+	foreach ($siblings as $sibling_key => $sibling_post) {
+		echo "<ul style=\"margin-left: 10px; list-style-type: round;\">";
+		echo "<li>";
+		echo "<a href=\"/wp-admin/post.php?post=" . $sibling_post->ID . "&action=edit\" target=\"_blank\">" . $sibling_post->post_title . "</a>";
+		echo "</li>";
+		echo "</ul>";
+	}
+}
+
+function pof_get_siblings($post_item) {
+	$post_type = str_replace('pof_post_', '', $post_item->post_type);
+	$post_id = $post_item->ID;
+
+	$to_ret = array();
+
+	$args = array(
+		'numberposts' => -1,
+		'posts_per_page' => -1,
+		'post_type' => $post_item->post_type
+	);
+
+	switch ($post_type) {
+		case "agegroup":
+
+			$args['meta_key'] = "suoritusohjelma";
+			$args['meta_value'] = get_post_meta( $post_id, "suoritusohjelma", true );;
+
+		break;
+		case "taskgroup":
+			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
+			if (!is_null($taskgroup_id) && $taskgroup_id != "null" && !empty($taskgroup_id)) {
+				$args['meta_key'] = "suoritepaketti";
+				$args['meta_value'] = $taskgroup_id;
+			} else {
+				$args['meta_key'] = "ikakausi";
+				$args['meta_value'] = get_post_meta( $post_id, "ikakausi", true );
+			}
+
+		break;
+		case "task":
+			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
+
+			$args['meta_key'] = "suoritepaketti";
+			$args['meta_value'] = $taskgroup_id;
+		break;
+	}
+
+	$the_query = new WP_Query( $args );
+
+	if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+			$the_query->the_post();
+			if ($post_id != $the_query->post->ID) {
+				array_push($to_ret, $the_query->post);
+			}
+		}
+	}
+
+
+	return $to_ret;
+}
+
+
 add_action( 'add_meta_boxes', 'pof_item_task_parenttree_meta_box' );
+add_action( 'add_meta_boxes', 'pof_item_siblings_meta_box' );
 
 function pof_output_parents_arr_json($tree_array) {
 	$ret = array();
