@@ -215,7 +215,7 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 }
 
 
-function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2) {
+function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2, $additional_text = "") {
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
@@ -292,7 +292,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 						), 
 						array( '%d' )	
 					);
-					echo "<br />Deleted" . $key . "";
+					echo "<br />Deleted " . $key . "";
 				}
 				
 			}
@@ -346,10 +346,10 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 						) 
 					);
 				}
-
 			}
 		}
-
+		// reload items:
+		$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	}
 
 	echo '<div class="wrap">';
@@ -413,6 +413,12 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 		echo '</td>';
 	}
 	echo '</tr>';
+
+	if ($additional_text != "") {
+		echo '<tr>';
+		echo '<th align="left" colspan="'.(count($agegroups) + 1).'"><strong>'.$additional_text.'</strong></th>';
+		echo '</tr>';
+	}
 
 	echo '</tbody>';
 	echo '</table>';
@@ -580,11 +586,22 @@ function pof_taxonomy_translate_get_taskgroupterms() {
 
 function pof_taxonomy_translate_taskgroupterm() {
 	$taxonomy_base_key = "taskgroup_term";
-	$items = pof_taxonomy_translate_get_taskgroupterms();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+
+	$items2 = pof_taxonomy_translate_get_taskgroupterms();
+
+	foreach ($items2 as $item2key => $item2) {
+		if (!array_key_exists ($item2key, $items)) {
+			$items[$item2key] = $item2;
+		}
+	}
+
+//	$items = pof_taxonomy_translate_get_taskgroupterms();
 	$title = "Suoritepaketin yl&auml;k&auml;site";
 	$title2 = "Termi";
+	$additional_text = "Kun lis&auml;&auml;t, lis&auml;&auml; aina kaksi. Yksikk&ouml;muodon per&auml;ss&auml; oltava _single, monikkomuodon per&auml;ss&auml; _plural";
 
-	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2, $additional_text);
 }
 
 function pof_taxonomy_translate_get_taskterms() {
@@ -612,9 +629,20 @@ function pof_taxonomy_translate_get_taskterms() {
 
 function pof_taxonomy_translate_taskterm() {
 	$taxonomy_base_key = "task_term";
-	$items = pof_taxonomy_translate_get_taskterms();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+
+	$items2 = pof_taxonomy_translate_get_taskterms();
+
+	foreach ($items2 as $item2key => $item2) {
+		if (!array_key_exists ($item2key, $items)) {
+			$items[$item2key] = $item2;
+		}
+	}
+
+//	$items = pof_taxonomy_translate_get_taskterms();
 	$title = "Suoritepaketin yl&auml;k&auml;site";
 	$title2 = "Termi";
+	$additional_text = "Kun lis&auml;&auml;t, lis&auml;&auml; aina kaksi. Yksikk&ouml;muodon per&auml;ss&auml; oltava _single, monikkomuodon per&auml;ss&auml; _plural";
 
-	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2, $additional_text);
 }

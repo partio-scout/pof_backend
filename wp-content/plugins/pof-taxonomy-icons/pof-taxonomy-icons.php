@@ -110,6 +110,10 @@ function pof_taxonomy_icons_menu() {
 
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_icons_equpments-handle', 'pof_taxonomy_icons_equpments');
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_icons_skillareas-handle', 'pof_taxonomy_icons_skillareas');
+
+	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suoritepaketin yl&auml;k&auml;site', 'Suoritepaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_icons_taskgroupterm-handle', 'pof_taxonomy_icons_taskgroupterm');
+	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suoritteen yl&auml;k&auml;site', 'Suoritteen yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_icons_taskterm-handle', 'pof_taxonomy_icons_taskterm');
+
 }
 
 function pof_taxonomy_icons_frontpage() {
@@ -401,6 +405,24 @@ function pof_taxonomy_icons_skillareas() {
 	$items = pof_taxonomy_icons_get_skillareas();
 	$title = "Taitoalueet";
 	$title2 = "Taitoalue";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_icons_taskgroupterm() {
+	$taxonomy_base_key = "taskgroup_term";
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$title = "Suoritepaketin yl&auml;k&auml;site";
+	$title2 = "Termi";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_icons_taskterm() {
+	$taxonomy_base_key = "task_term";
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$title = "Suoritepaketin yl&auml;k&auml;site";
+	$title2 = "Termi";
 
 	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
 }
