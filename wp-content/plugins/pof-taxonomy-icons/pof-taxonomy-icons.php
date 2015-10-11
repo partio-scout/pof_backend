@@ -314,47 +314,18 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 	echo '</div>';	
 }
 
-function pof_taxonomy_icons_get_places() {
-	$ret = array();
-
-	$ret['meeting_place'] = 'Kolo';
-	$ret['hike'] = 'Retki';
-	$ret['camp'] = 'Leiri';
-	$ret['boat'] = 'Vene';
-	$ret['other'] = 'Muu';
-	
-	return $ret;
-
-}
-
-
 function pof_taxonomy_icons_places() {
 	$taxonomy_base_key = "place_of_performance";
-	$items = pof_taxonomy_icons_get_places();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Suorituspaikat";
 	$title2 = "Suorituspaikka";
 
 	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
 }
 
-function pof_taxonomy_icons_get_groupsizes() {
-	$ret = array();
-
-	$ret['one'] = 'Yksin';
-	$ret['two'] = 'Kaksin';
-	$ret['few'] = 'Muutama';
-	$ret['group'] = 'Laumassa tai vartiossa';
-	$ret['big'] = 'Isommassa porukassa';
-	$ret['other'] = 'Muu';
-	
-	return $ret;
-
-}
-
-
 function pof_taxonomy_icons_groupsizes() {
 	$taxonomy_base_key = "groupsize";
-	$items = pof_taxonomy_icons_get_groupsizes();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Ryhm&auml;koot";
 	$title2 = "Ryhm&auml;koko";
 
@@ -362,76 +333,29 @@ function pof_taxonomy_icons_groupsizes() {
 }
 
 
-function pof_taxonomy_icons_get_mandatory() {
-	$ret = array();
-
-	$ret['not_mandatory'] = 'Ei pakollinen';
-	$ret['optional'] = 'Valinnainen';
-	$ret['mandatory'] = 'Pakollinen';
-	$ret['mandatory_seascouts'] = 'Pakollinen meripartiolaisille';
-	
-	return $ret;
-
-}
-
-
 function pof_taxonomy_icons_mandatory() {
 	$taxonomy_base_key = "mandatory";
-	$items = pof_taxonomy_icons_get_mandatory();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Pakollisuus";
 	$title2 = "Pakollisuus";
 
 	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
 }
 
-function pof_taxonomy_icons_get_taskduration() {
-	$ret = array();
-
-	$ret['10'] = '10 min';
-	$ret['20'] = '20 min';
-	$ret['30'] = '30 min';
-	$ret['45'] = '45 min';
-	$ret['60'] = '1 h';
-	$ret['90'] = '1,5 h';
-	$ret['120'] = '2 h';
-	$ret['180'] = '3 h';
-	$ret['240'] = '4 h';
-	
-	return $ret;
-
-}
-
 
 function pof_taxonomy_icons_taskduration() {
 	$taxonomy_base_key = "taskduration";
-	$items = pof_taxonomy_icons_get_taskduration();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Suorituksen kestot";
 	$title2 = "Kesto";
 
 	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
 }
 
-function pof_taxonomy_icons_get_taskpreparationduration() {
-	$ret = array();
-
-	$ret['10'] = '10 min';
-	$ret['20'] = '20 min';
-	$ret['30'] = '30 min';
-	$ret['45'] = '45 min';
-	$ret['60'] = '1 h';
-	$ret['90'] = '1,5 h';
-	$ret['120'] = '2 h';
-	$ret['180'] = '3 h';
-	$ret['240'] = '4 h';
-	
-	return $ret;
-
-}
-
 
 function pof_taxonomy_icons_taskpreparationduration() {
 	$taxonomy_base_key = "taskpreaparationduration";
-	$items = pof_taxonomy_icons_get_taskpreparationduration();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Suorituksen valmistelun kestot";
 	$title2 = "Kesto";
 

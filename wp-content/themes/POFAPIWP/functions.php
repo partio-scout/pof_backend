@@ -342,7 +342,9 @@ if (!function_exists("AddPofApiCustomTaxonomies")) {
 
 if (!function_exists("getXML")) {
 	require_once( get_template_directory() . '/pofapiwp_functions.php');
+	require_once( get_template_directory() . '/pofapiwp_acf_functions.php');
 }
+
 
 if (!class_exists("POFTREE\\program")) {
 	require_once( get_template_directory() . '/pofapiwp_jsonclasses.php');

@@ -36,39 +36,39 @@ function pof_pages_get_tags($languages, $items, $item_tax_key)
 
 
 // Places
-$items = pof_taxonomy_translate_get_places();
 $item_tax_key = 'place_of_performance';
+$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
 $ret->paikka = pof_pages_get_tags($languages, $items, $item_tax_key);
 
 // Groupsizes
-$items = pof_taxonomy_translate_get_groupsizes();
 $item_tax_key = 'groupsize';
-$ret->ryhmakoko = pof_pages_get_tags($languages, $items, $item_tax_key);
+$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+$ret->ryhmakoko = pof_pages_get_tags($agegroups, $items, $item_tax_key);
 
 // Mandatory
-$items = pof_taxonomy_translate_get_mandatory();
 $item_tax_key = 'mandatory';
-$ret->pakollisuus = pof_pages_get_tags($languages, $items, $item_tax_key);
+$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+$ret->pakollisuus = pof_pages_get_tags($agegroups, $items, $item_tax_key);
 
 //TaskDuration
-$items = pof_taxonomy_translate_get_taskduration();
 $item_tax_key = 'taskduration';
-$ret->suoritus_kesto = pof_pages_get_tags($languages, $items, $item_tax_key);
+$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+$ret->suoritus_kesto = pof_pages_get_tags($agegroups, $items, $item_tax_key);
 
 //TaskPreparationDuration
-$items = pof_taxonomy_translate_get_taskpreparationduration();
 $item_tax_key = 'taskpreparationduration';
-$ret->suoritus_valmistelu_kesto = pof_pages_get_tags($languages, $items, $item_tax_key);
+$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+$ret->suoritus_valmistelu_kesto = pof_pages_get_tags($agegroups, $items, $item_tax_key);
 
 //Equipments
-$items = pof_taxonomy_translate_get_equpments();
 $item_tax_key = 'equpments';
-$ret->tarvikkeet = pof_pages_get_tags($languages, $items, $item_tax_key);
+$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+$ret->tarvikkeet = pof_pages_get_tags($agegroups, $items, $item_tax_key);
 
 //Taitoalueet
-$items = pof_taxonomy_translate_get_skillareas();
 $item_tax_key = 'skillarea';
-$ret->taitoalueet = pof_pages_get_tags($languages, $items, $item_tax_key);
+$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+$ret->taitoalueet = pof_pages_get_tags($agegroups, $items, $item_tax_key);
 
 
 echo json_encode($ret);
