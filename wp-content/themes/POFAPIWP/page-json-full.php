@@ -18,6 +18,7 @@ if (!empty($_GET["postGUID"])) {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => array('pof_post_program' ),
 		'meta_key' => 'post_guid',
 		'meta_value' => $post_guid
@@ -80,6 +81,7 @@ function getJsonAgeGroups($parent_id) {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_agegroup',
 		'orderby' => 'title',
 		'order' => 'ASC',
@@ -116,6 +118,7 @@ function getJsonTaskGroups($parent_id) {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_taskgroup',
 		'orderby' => 'title',
 		'order' => 'ASC',
@@ -167,6 +170,7 @@ function getJsonTaskGroupsForTaskGroup($parent_id) {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_taskgroup',
 		'orderby' => 'title',
 		'order' => 'ASC',
@@ -217,6 +221,7 @@ function getJsonTasks($parent_id) {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_task',
 		'meta_key' => 'suoritepaketti',
 		'meta_value' => $parent_id

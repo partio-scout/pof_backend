@@ -78,6 +78,7 @@ function pof_taxonomy_translate_get_agegroups() {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_agegroup',
 		'orderby' => 'title',
 		'order' => 'ASC'
@@ -214,7 +215,7 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 }
 
 
-function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2) {
+function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2, $additional_text = "") {
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
@@ -291,12 +292,64 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 						), 
 						array( '%d' )	
 					);
-					echo "<br />Deleted" . $key . "";
+					echo "<br />Deleted " . $key . "";
 				}
 				
 			}
-
 		}
+		if (   isset($_POST['add_taxonomy_translate_key'])
+			&& !empty($_POST['add_taxonomy_translate_key'])
+			&& strlen($_POST['add_taxonomy_translate_key']) > 0) {
+
+			$taxonomy_key = trim($_POST['add_taxonomy_translate_key']);
+			$taxonomy_key = str_replace(" ", "_", $taxonomy_key);
+			
+			$default = pof_taxonomy_translate_get_translation($taxonomy_base_key, $taxonomy_key, 0, 0, false);
+
+			if (count($default) == 0) {
+
+				$taxonomy_full_key = $taxonomy_base_key . "::" . $taxonomy_key;
+
+				$tmp = $wpdb->insert( 
+					$table_name, 
+					array( 
+						'taxonomy_slug' => $taxonomy_full_key, 
+						'agegroup_id' => 0,
+						'lang' => 'fi',
+						'content' => $_POST['add_taxonomy_translate_key_0']
+					), 
+					array( 
+						'%s', 
+						'%d', 
+						'%s',
+						'%s',
+					) 
+				);
+
+				foreach ($agegroups as $agegroup) {
+					if ($agegroup->id == 0) {
+						continue;
+					}
+					$tmp = $wpdb->insert( 
+						$table_name, 
+						array( 
+							'taxonomy_slug' => $taxonomy_full_key, 
+							'agegroup_id' => $agegroup->id,
+							'lang' => 'fi',
+							'content' => $_POST['add_taxonomy_translate_key_'.$agegroup->id]
+						), 
+						array( 
+							'%s', 
+							'%d', 
+							'%s',
+							'%s',
+						) 
+					);
+				}
+			}
+		}
+		// reload items:
+		$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	}
 
 	echo '<div class="wrap">';
@@ -348,6 +401,25 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 		echo '</tr>';
 	}
 
+	echo '<tr>';
+	echo '<th align="left" colspan="'.(count($agegroups) + 1).'"><h3>Lis&auml;&auml; uusi</h3></th>';
+	echo '</tr>';
+
+	echo '<tr>';
+	echo '<th valign="bottom">Koodi:<br /><input type="text" name="add_taxonomy_translate_key" id="add_taxonomy_translate_key" /></th>';
+	foreach ($agegroups as $agegroup) {
+		echo '<td valign="bottom">';
+		echo '<input type="text" name="add_taxonomy_translate_key_'.$agegroup->id.'" id="add_taxonomy_translate_key_'.$agegroup->id.'" />';
+		echo '</td>';
+	}
+	echo '</tr>';
+
+	if ($additional_text != "") {
+		echo '<tr>';
+		echo '<th align="left" colspan="'.(count($agegroups) + 1).'"><strong>'.$additional_text.'</strong></th>';
+		echo '</tr>';
+	}
+
 	echo '</tbody>';
 	echo '</table>';
 	echo '<br /><input type="submit" name="Submit" value="Submit" />';
@@ -355,48 +427,46 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	echo '</div>';	
 }
 
-function pof_taxonomy_translate_get_places() {
+
+function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key) {
 	$ret = array();
 
-	$ret['meeting_place'] = 'Kolo';
-	$ret['hike'] = 'Retki';
-	$ret['camp'] = 'Leiri';
-	$ret['boat'] = 'Vene';
-	$ret['other'] = 'Muu';
-	
-	return $ret;
+	global $wpdb;
 
+	$table_name = pof_taxonomy_translate_get_table_name();
+
+
+	$translate_res = $wpdb->get_results( 
+		"
+		SELECT taxonomy_slug, content
+		FROM " . pof_taxonomy_translate_get_table_name() . "
+		WHERE lang = 'fi'
+			AND agegroup_id = 0
+			AND taxonomy_slug LIKE '".$taxonomy_base_key."::%'
+		"
+	);
+
+	foreach ($translate_res as $item) {
+		$ret[str_replace($taxonomy_base_key.'::', "", $item->taxonomy_slug)] = $item->content;
+	}
+
+	return $ret;
 }
 
 
 function pof_taxonomy_translate_places() {
 	$taxonomy_base_key = "place_of_performance";
 	
-	$items = pof_taxonomy_translate_get_places();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Suorituspaikat";
 	$title2 = "Suorituspaikka";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
 }
 
-function pof_taxonomy_translate_get_groupsizes() {
-	$ret = array();
-
-	$ret['one'] = 'Yksin';
-	$ret['two'] = 'Kaksin';
-	$ret['few'] = 'Muutama';
-	$ret['group'] = 'Laumassa tai vartiossa';
-	$ret['big'] = 'Isommassa porukassa';
-	$ret['other'] = 'Muu';
-	
-	return $ret;
-
-}
-
-
 function pof_taxonomy_translate_groupsizes() {
 	$taxonomy_base_key = "groupsize";
-	$items = pof_taxonomy_translate_get_groupsizes();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Ryhm&auml;koot";
 	$title2 = "Ryhm&auml;koko";
 
@@ -404,76 +474,30 @@ function pof_taxonomy_translate_groupsizes() {
 }
 
 
-function pof_taxonomy_translate_get_mandatory() {
-	$ret = array();
-
-	$ret['not_mandatory'] = 'Ei pakollinen';
-	$ret['optional'] = 'Valinnainen';
-	$ret['mandatory'] = 'Pakollinen';
-	$ret['mandatory_seascouts'] = 'Pakollinen meripartiolaisille';
-	
-	return $ret;
-
-}
-
-
 function pof_taxonomy_translate_mandatory() {
 	$taxonomy_base_key = "mandatory";
-	$items = pof_taxonomy_translate_get_mandatory();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Pakollisuus";
 	$title2 = "Pakollisuus";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
 }
 
-function pof_taxonomy_translate_get_taskduration() {
-	$ret = array();
-
-	$ret['10'] = '10 min';
-	$ret['20'] = '20 min';
-	$ret['30'] = '30 min';
-	$ret['45'] = '45 min';
-	$ret['60'] = '1 h';
-	$ret['90'] = '1,5 h';
-	$ret['120'] = '2 h';
-	$ret['180'] = '3 h';
-	$ret['240'] = '4 h';
-	
-	return $ret;
-
-}
-
 
 function pof_taxonomy_translate_taskduration() {
 	$taxonomy_base_key = "taskduration";
-	$items = pof_taxonomy_translate_get_taskduration();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Suorituksen kestot";
 	$title2 = "Kesto";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
 }
 
-function pof_taxonomy_translate_get_taskpreparationduration() {
-	$ret = array();
-
-	$ret['10'] = '10 min';
-	$ret['20'] = '20 min';
-	$ret['30'] = '30 min';
-	$ret['45'] = '45 min';
-	$ret['60'] = '1 h';
-	$ret['90'] = '1,5 h';
-	$ret['120'] = '2 h';
-	$ret['180'] = '3 h';
-	$ret['240'] = '4 h';
-	
-	return $ret;
-
-}
 
 
 function pof_taxonomy_translate_taskpreparationduration() {
 	$taxonomy_base_key = "taskpreaparationduration";
-	$items = pof_taxonomy_translate_get_taskpreparationduration();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Suorituksen valmistelun kestot";
 	$title2 = "Kesto";
 
@@ -562,11 +586,22 @@ function pof_taxonomy_translate_get_taskgroupterms() {
 
 function pof_taxonomy_translate_taskgroupterm() {
 	$taxonomy_base_key = "taskgroup_term";
-	$items = pof_taxonomy_translate_get_taskgroupterms();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+
+	$items2 = pof_taxonomy_translate_get_taskgroupterms();
+
+	foreach ($items2 as $item2key => $item2) {
+		if (!array_key_exists ($item2key, $items)) {
+			$items[$item2key] = $item2;
+		}
+	}
+
+//	$items = pof_taxonomy_translate_get_taskgroupterms();
 	$title = "Suoritepaketin yl&auml;k&auml;site";
 	$title2 = "Termi";
+	$additional_text = "Kun lis&auml;&auml;t, lis&auml;&auml; aina kaksi. Yksikk&ouml;muodon per&auml;ss&auml; oltava _single, monikkomuodon per&auml;ss&auml; _plural";
 
-	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2, $additional_text);
 }
 
 function pof_taxonomy_translate_get_taskterms() {
@@ -594,9 +629,20 @@ function pof_taxonomy_translate_get_taskterms() {
 
 function pof_taxonomy_translate_taskterm() {
 	$taxonomy_base_key = "task_term";
-	$items = pof_taxonomy_translate_get_taskterms();
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+
+	$items2 = pof_taxonomy_translate_get_taskterms();
+
+	foreach ($items2 as $item2key => $item2) {
+		if (!array_key_exists ($item2key, $items)) {
+			$items[$item2key] = $item2;
+		}
+	}
+
+//	$items = pof_taxonomy_translate_get_taskterms();
 	$title = "Suoritepaketin yl&auml;k&auml;site";
 	$title2 = "Termi";
+	$additional_text = "Kun lis&auml;&auml;t, lis&auml;&auml; aina kaksi. Yksikk&ouml;muodon per&auml;ss&auml; oltava _single, monikkomuodon per&auml;ss&auml; _plural";
 
-	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2, $additional_text);
 }

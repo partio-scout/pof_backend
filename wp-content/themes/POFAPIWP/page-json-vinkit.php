@@ -10,6 +10,7 @@ $post_guid = $_GET["postGUID"];
 
 $args = array(
 	'numberposts' => -1,
+	'posts_per_page' => -1,
 	'post_type' => array('pof_post_task', 'pof_post_taskgroup', 'pof_post_program', 'pof_post_agegroup' ),
 	'meta_key' => 'post_guid',
 	'meta_value' => $post_guid

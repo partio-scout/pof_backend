@@ -1072,6 +1072,7 @@ function get_post_additional_content_JSON($post_id) {
 function getMandatoryTasksForTaskGroup($parent_id) {
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_task',
 		'meta_key' => 'suoritepaketti',
 		'meta_value' => $parent_id

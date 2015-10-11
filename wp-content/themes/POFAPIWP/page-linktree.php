@@ -47,6 +47,7 @@ if (!empty($_GET["postGUID"])) {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => array('pof_post_program' ),
 		'meta_key' => 'post_guid',
 		'meta_value' => $post_guid
@@ -72,6 +73,7 @@ $root_post = get_post($post_id);
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'orderby' => 'title',
 		'order' => 'ASC',
 		'post_type' => 'pof_post_agegroup',
@@ -118,6 +120,7 @@ function linkTreeGetTaskgroups($parent_id) {
 
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'orderby' => 'title',
 		'order' => 'ASC',
 		'post_type' => 'pof_post_taskgroup',
@@ -150,6 +153,7 @@ function linkTreeGetTaskgroups2($parent_id) {
 	$ret = "";
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_taskgroup',
 		'orderby' => 'title',
 		'order' => 'ASC',
@@ -181,6 +185,7 @@ function linkTreeGetTasks($parent_id) {
 	$ret = "";
 	$args = array(
 		'numberposts' => -1,
+		'posts_per_page' => -1,
 		'post_type' => 'pof_post_task',
 		'orderby' => 'title',
 		'order' => 'ASC',
