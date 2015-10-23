@@ -776,27 +776,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 			if (!empty($tmp_name)) {
 				$place->name = $tmp_name[0]->content;
 			} else {
-
-				switch ($tmp_place) {
-					default:
-						$place->name = $tmp_place;
-						break;
-					case "meeting_place":
-						$place->name = 'Kolo';
-						break;
-					case "hike":
-						$place->name = 'Retki';
-						break;
-					case "camp":
-						$place->name = 'Leiri';
-						break;
-					case "boat":
-						$place->name = 'Vene';
-						break;
-					case "other":
-						$place->name = 'Muu';
-						break;
-				}
+				$place->name = $tmp_place;
 			}
 
 			$place->slug = $tmp_place;

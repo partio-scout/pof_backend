@@ -194,6 +194,9 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 		if (!empty($row['D'])) {
 			echo "Not importing, because row not setted to be imported: " . $row['D'];
 		} else {
+			if (empty($row['A'])) {
+				return;
+			}
 			echo "Not importing, because row not setted to be imported, empty title. Row " . $row_index;
 		}
 		
@@ -202,8 +205,7 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 		return;
 	}
 	echo "<br />";
-	echo "to be imported:" . $row['D'];
-	echo "<br />";
+	echo "to be imported: " . $row['D'];
 
 /*
 	echo "<pre>";
@@ -238,7 +240,7 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 		'post_type' => array('pof_post_task' ),
 		'meta_key' => 'suoritepaketti',
 		'meta_value' => $taskgroup_obj->id,
-		'search_post_title' => $row['D']
+		'search_post_title' => trim($row['D'])
 	);
 
 	add_filter( 'posts_where', 'pof_importer_title_filter', 10, 2 );
@@ -256,7 +258,7 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 
 	if (empty($post)) {
-		echo "POST NOT FOUND; TO BE CREATED<br />";
+		echo "  POST NOT FOUND; TO BE CREATED";
 		if ($saveToDataBase) {
 			$post = array(
 				'post_title'    => trim($row['D']),
@@ -268,13 +270,12 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 			$post_id = wp_insert_post( $post, $wp_error );
 
 			echo "imported, post_id: " . $post_id;
-			echo "<br />";
 
 			$post = get_post($post_id);
 		}
 
 	} else {
-		echo "POST FOUND; TO BE UPDATED<br />";
+		echo "  POST FOUND; TO BE UPDATED";
 		$post_id = $post->ID;
 	}
 
@@ -285,6 +286,8 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 
 		update_field("ingress", $row['E'], $post_id);
+		update_field("leader_tasks_fi", $row['G'], $post_id);
+		update_field("growth_target_fi", $row['H'], $post_id);
 		$post->post_title = trim($row['D']);
 		$post->post_content = $row['F'];
 		$post->post_author = get_current_user_id();
@@ -297,38 +300,130 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 			update_field("task_mandatory", 0, $post_id);
 		}
 
-		update_field("task_place_of_performance", pof_importer_get_places($row['L']), $post_id);
+		$places = pof_importer_get_places($row['L']);
+
+		update_field("task_place_of_performance", $places, $post_id);
+
+		echo " updated places, ".count($places)." items,";
 
 		// TODO: read taitoalueet
-		// TODO: read language content
-		// TODO: read added fields
+
+		$terms = pof_importer_get_skillareas(trim($row['I']));
+
+		wp_set_post_terms( $post_id, $terms, "pof_tax_skillarea", false );
 
 		wp_update_post($post, $wp_error);
 	}
+	echo "<br />";
+}
+
+function pof_importer_normalize_key($string) {
+	$string = strtolower($string);
+	$string = mb_convert_encoding($string, "UTF-8", "auto");
+	$string = str_replace(" ", "_", $string);
+	$string = str_replace(mb_convert_encoding("ä", "UTF-8", "auto"), "_", $string);
+//	$string = str_replace(mb_convert_encoding("ö", "UTF-8", "auto"), "_", $string);
+//	$string = str_replace(mb_convert_encoding("å", "UTF-8", "auto"), "_", $string);
+
+	return $string;
 }
 
 
+$pof_importer_driveimport_skillareas = array();
+
+function pof_importer_get_skillareas($areas_str) {
+
+	global $wpdb;
+
+	global $pof_importer_driveimport_skillareas;
+
+	if (count($pof_importer_driveimport_skillareas) == 0)
+	{
+		$pof_importer_driveimport_skillareas = pof_taxonomy_translate_get_skillareas();
+	}
+
+	$ret = array();
+
+	$parts = explode(',', $areas_str);	
+
+	foreach ($parts as $part) 
+	{
+		$part = trim($part);
+
+		$sanitized_part = sanitize_title_with_dashes($part);
+
+		$part_key = array_search(strtolower($part), $pof_importer_driveimport_skillareas);
+
+		if ($part_key == false) {
+			wp_insert_term($part, "pof_tax_skillarea", array("slug" => $sanitized_part));
+			array_push($ret, $sanitized_part);
+			$pof_importer_driveimport_skillareas = pof_taxonomy_translate_get_skillareas();
+
+		} else {
+			array_push($ret, $part_key);
+		}
+
+	}
+
+	return $ret;
+	
+}
+
+
+$pof_importer_driveimporter_places = array();
 function pof_importer_get_places($places_str) {
+
+	global $wpdb;
+
+	$taxonomy_base_key = "place_of_performance";
+
+	global $pof_importer_driverimporter_places;
+
+	if (count($pof_importer_driverimporter_places) == 0)
+	{
+		$pof_importer_driverimporter_places = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, true);
+	}
+
+
 	$ret = array();
 
 	$parts = explode(',', $places_str);
 
-	foreach ($parts as $part) {
+	foreach ($parts as $part) 
+	{
+		$part = trim($part);
 
-		if (strtolower($part) == 'kolo') {
-			array_push($ret, 'meeting_place');
-		} elseif (strtolower($part) == 'vene') {
-			array_push($ret, 'boat');
-		} elseif (strtolower($part) == 'retki') {
-			array_push($ret, 'hike');
-		} elseif (strtolower($part) == 'leiri') {
-			array_push($ret, 'camp');
-		} else {
-			array_push($ret, 'other');
-			array_push($ret, $part);
+		$part_key = array_search(strtolower($part), $pof_importer_driverimporter_places);
+
+		if ($part_key == false) {
+
+			$part_tmp = str_replace(" ", "_", strtolower($part));
+		
+			$taxonomy_full_key = $taxonomy_base_key . "::" . pof_importer_normalize_key($part_tmp);
+
+			$tmp = $wpdb->insert( 
+				pof_taxonomy_translate_get_table_name(), 
+				array( 
+					'taxonomy_slug' => $taxonomy_full_key, 
+					'agegroup_id' => 0,
+					'lang' => 'fi',
+					'content' => $part
+				), 
+				array( 
+					'%s', 
+					'%d', 
+					'%s',
+					'%s',
+				) 
+			);
+
+			$pof_importer_driverimporter_places = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, true);
 		}
+	
+		$part_key = str_replace($taxonomy_base_key . '::', "", $part_key);
+		array_push($ret, $part_key);
 	}
-
+	
 	return $ret;
 
 }

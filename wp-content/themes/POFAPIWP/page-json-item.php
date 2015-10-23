@@ -174,6 +174,10 @@ switch ($post_type) {
 			$jsonItem->task_term = $task_term;
 		}
 
+		$jsonItem->leader_tasks = get_field("leader_tasks_".strtolower($lang));
+		$jsonItem->growth_target = get_field("growth_target_".strtolower($lang));
+
+
 	break;
 }
 

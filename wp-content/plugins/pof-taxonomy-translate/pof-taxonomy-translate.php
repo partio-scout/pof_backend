@@ -428,7 +428,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 }
 
 
-function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key) {
+function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower = false) {
 	$ret = array();
 
 	global $wpdb;
@@ -447,7 +447,11 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
 	);
 
 	foreach ($translate_res as $item) {
-		$ret[str_replace($taxonomy_base_key.'::', "", $item->taxonomy_slug)] = $item->content;
+		if ($tolower) {
+			$ret[str_replace($taxonomy_base_key.'::', "", $item->taxonomy_slug)] = strtolower($item->content);
+		} else {
+			$ret[str_replace($taxonomy_base_key.'::', "", $item->taxonomy_slug)] = $item->content;
+		}
 	}
 
 	return $ret;

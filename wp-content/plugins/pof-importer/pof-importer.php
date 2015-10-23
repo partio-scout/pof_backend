@@ -293,7 +293,6 @@ print_r(pof_importer_get_agegroups_and_taskgroups());
 echo "</pre>";
 */
 
-
 	if (   !isset($_POST)
 		|| !isset($_POST["drive_file_id"])) {
 
@@ -304,7 +303,7 @@ echo "</pre>";
 		// Print the names and IDs for up to 10 files.
 		$optParams = array(
 			'maxResults' => 999,
-			'q' => "mimeType = 'application/vnd.google-apps.spreadsheet'",
+			'q' => "mimeType = 'application/vnd.google-apps.spreadsheet' and title contains 'fi_'",
 			'orderBy' => 'folder,modifiedDate desc,title'
 		);
 		$results = $service->files->listFiles($optParams);
@@ -367,7 +366,7 @@ function pof_importer_suggestionsdriveimport() {
 		// Print the names and IDs for up to 10 files.
 		$optParams = array(
 			'maxResults' => 999,
-			'q' => "mimeType = 'application/vnd.google-apps.spreadsheet'",
+			'q' => "mimeType = 'application/vnd.google-apps.spreadsheet' and (title contains 'vinki' or title contains 'vinkki')",
 			'orderBy' => 'folder,modifiedDate desc,title'
 		);
 		$results = $service->files->listFiles($optParams);
