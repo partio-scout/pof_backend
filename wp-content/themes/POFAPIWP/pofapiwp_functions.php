@@ -1315,3 +1315,136 @@ function pof_get_agegroup_from_tree_arr($tree_array) {
 
 	return $agegroup;
 }
+
+
+function pof_item_task_get_childs($post) {
+
+	$args = array(
+		'numberposts' => -1,
+		'posts_per_page' => -1,
+		'post_type' => array('pof_post_task', 'pof_post_taskgroup', 'pof_post_agegroup'),
+		'meta_key' => 'suoritepaketti',
+		'meta_value' => $post->ID
+	);
+
+	switch ($post->post_type) {
+		case "pof_post_program":
+			$args['meta_key'] = 'suoritusohjelma';
+		break;
+
+		case "pof_post_agegroup":
+			$args['meta_key'] = 'ikakausi';
+		break;
+
+		case "pof_post_taskgroup":
+			$args['meta_key'] = 'suoritepaketti';
+		break;
+	}
+
+	$the_query = new WP_Query( $args );
+
+	$ret = array();
+
+	if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+			$the_query->the_post();
+
+			array_push($ret, $the_query->post);
+		}
+	}
+
+	return $ret;
+}
+
+function pof_item_task_get_menu($post) {
+
+	$post_type = $post->post_type;
+
+	$tree_array = array();
+	array_push($tree_array, $post);
+	$tree_array = array_reverse(pof_get_parent_tree_for_menu($post, $tree_array));
+
+	$counter = 0;
+
+	foreach ($tree_array as $tree_key => $tree_post) {
+		$counter++;
+
+		echo "<ul>";
+
+		$siblings = pof_get_siblings($tree_post);
+		foreach ($siblings as $sibling) {
+			echo "<li>";
+			echo "<a href=\"" . $sibling->guid . "\">" . $sibling->post_title . "</a>";
+			echo "</li>";
+		}
+
+		echo "<li>";
+		echo "<a class=\"active_item\" href=\"" . $tree_post->guid . "\">" . $tree_post->post_title . "</a>";
+
+		if ($counter == count($tree_array) && $post_type != 'pof_post_task') {
+			$childs = pof_item_task_get_childs($post);
+
+			if (count($childs) > 0) {
+				echo "<ul>";
+				foreach ($childs as $child) {
+					echo "<li>";
+					echo "<a href=\"" . $child->guid . "\">" . $child->post_title . "</a>";
+					echo "</li>";
+
+				}
+				echo "<ul>";
+			}
+		}
+
+	}
+
+	foreach ($tree_array as $tree_post) {
+		echo "</li>";
+		echo "</ul>";
+	}
+}
+
+function pof_get_parent_tree_for_menu($post_item, $tree_array) {
+	$post_type = str_replace('pof_post_', '', $post_item->post_type);
+	$post_id = $post_item->ID;
+
+	switch ($post_type) {
+		case "program":
+		break;
+		case "agegroup":
+			$ohjelma_id = get_post_meta( $post_id, "suoritusohjelma", true );
+			if (!is_null($ohjelma_id) && $ohjelma_id != "null" && $ohjelma_id != "" && !empty($ohjelma_id)) {
+				$ohjelma = get_post($ohjelma_id);
+				array_push($tree_array, $ohjelma);
+				
+			}
+		break;
+		case "taskgroup":
+			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
+			if (!is_null($taskgroup_id) && $taskgroup_id != "null" && $taskgroup_id != "" && !empty($taskgroup_id)) {
+				$taskgroup = get_post($taskgroup_id);
+				array_push($tree_array, $taskgroup);
+				$tree_array = pof_get_parent_tree_for_menu($taskgroup, $tree_array);
+			} else {
+				$ikaryhma_id = get_post_meta( $post_id, "ikakausi", true );
+				if (!is_null($ikaryhma_id) && $ikaryhma_id != "null" && !empty($ikaryhma_id)) {
+					$ikaryhma = get_post($ikaryhma_id);
+					array_push($tree_array, $ikaryhma);
+					$tree_array = pof_get_parent_tree_for_menu($ikaryhma, $tree_array);
+				}
+			}
+		break;
+		case "task":
+			$taskgroup_id = get_post_meta( $post_id, "suoritepaketti", true );
+
+			if (!is_null($taskgroup_id) && $taskgroup_id != "null" && !empty($taskgroup_id)) {
+				$taskgroup = get_post($taskgroup_id);
+				array_push($tree_array, $taskgroup);
+				$tree_array = pof_get_parent_tree_for_menu($taskgroup, $tree_array);
+			}
+		break;
+	}
+
+
+	return $tree_array;
+}

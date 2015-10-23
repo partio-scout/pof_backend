@@ -5747,3 +5747,11 @@ p > video {
 	text-decoration: none;
 	border-bottom: 0;
 }
+
+.main-navigation #task_navigation ul ul {
+	display: inline-block;
+}
+
+.main-navigation #task_navigation a.active_item {
+	font-weight: bold;
+}
