@@ -37,6 +37,18 @@
 			) );
 		?>
 
+		<h3>Taitoalueet</h3>
+		<p>
+		<?php
+			$taitoalueet_tags = wp_get_post_terms($post->ID, 'pof_tax_skillarea');
+			foreach ($taitoalueet_tags as $taitoalue_tag) {
+				echo '<a href="/skillarea/'.$taitoalue_tag->slug .'">' . $taitoalue_tag->name . "</a>, ";
+
+			}
+		?>
+		</p>
+
+
 		<h3>Johtajan teht&auml;v&auml;t</h3>
 		<p>
 		<?php
