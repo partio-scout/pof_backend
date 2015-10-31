@@ -306,8 +306,6 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 		echo " updated places, ".count($places)." items,";
 
-		// TODO: read taitoalueet
-
 		$terms = pof_importer_get_skillareas(trim($row['I']));
 
 		wp_set_post_terms( $post_id, $terms, "pof_tax_skillarea", false );
@@ -350,7 +348,7 @@ function pof_importer_get_skillareas($areas_str) {
 	{
 		$part = trim($part);
 
-		$sanitized_part = sanitize_title_with_dashes($part);
+		$sanitized_part = sanitize_title_with_dashes(pof_importer_normalize_key($part));
 
 		$part_key = array_search(strtolower($part), $pof_importer_driveimport_skillareas);
 
@@ -399,7 +397,7 @@ function pof_importer_get_places($places_str) {
 
 			$part_tmp = str_replace(" ", "_", strtolower($part));
 		
-			$taxonomy_full_key = $taxonomy_base_key . "::" . pof_importer_normalize_key($part_tmp);
+			$taxonomy_full_key = $taxonomy_base_key . "::" . sanitize_title_with_dashes(pof_importer_normalize_key($part_tmp));
 
 			$tmp = $wpdb->insert( 
 				pof_taxonomy_translate_get_table_name(), 
