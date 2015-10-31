@@ -64,10 +64,25 @@ function pof_taxonomy_translate_install() {
 }
 
 function pof_taxonomy_translate_get_languages() {
+
+
+
+	$languages = pof_settings_get_all_languages();
+
 	$ret = array();
-	$ret['fi'] = "Suomi";
+
+	foreach ($languages as $lang) {
+		if ($lang->is_active || $lang->is_default) {
+			$ret[$lang->lang_code] = $lang->lang_title;
+		}
+	}
+
+
+/*
+		$ret['fi'] = "Suomi";
 	$ret['sv'] = "Ruotsi";
 	$ret['en'] = "Englanti";
+*/
 
 	return $ret;
 }

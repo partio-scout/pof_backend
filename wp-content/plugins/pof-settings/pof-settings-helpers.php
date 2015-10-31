@@ -56,7 +56,9 @@ function pof_settigs_get_active_lang_codes() {
 	}
 
 	foreach ($pof_settings_langs as $lang) {
-		array_push($toret, $lang->lang_code);
+		if ($lang->is_active || $lang->is_default) {
+			array_push($toret, $lang->lang_code);
+		}
 	}
 
 	return $toret;
