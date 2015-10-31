@@ -1179,7 +1179,7 @@ function pof_item_task_parenttree_meta_box() {
 			'pof_item_task_parenttree_meta_box_sectionid',
 			__( 'Parent tree', 'pof' ),
 			'pof_item_task_parenttree_meta_box_callback',
-			$screen, 'side', 'high'
+			$screen, 'side', 'core'
 		);
 	}
 }
@@ -1212,7 +1212,7 @@ function pof_item_siblings_meta_box() {
 			'pof_item_siblings_meta_box_sectionid',
 			__( 'Sibings', 'pof' ),
 			'pof_item_siblings_meta_box_callback',
-			$screen, 'side', 'high'
+			$screen, 'side', 'core'
 		);
 	}
 }
