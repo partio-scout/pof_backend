@@ -1268,6 +1268,10 @@ function pof_get_siblings($post_item) {
 		break;
 	}
 
+	if (is_null($args['meta_value']) || $args['meta_value'] == 0 || $args['meta_value'] == 'null') {
+		return $to_ret;
+	}
+
 	$the_query = new WP_Query( $args );
 
 	if( $the_query->have_posts() ) {
