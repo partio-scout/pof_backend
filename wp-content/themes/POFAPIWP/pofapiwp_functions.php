@@ -744,6 +744,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 
 	$place_of_performance = get_field("task_place_of_performance", $post_id);
 
+
 	$ret_places = array();
 
 	if (empty($place_of_performance)) {
@@ -1451,4 +1452,12 @@ function pof_get_parent_tree_for_menu($post_item, $tree_array) {
 
 
 	return $tree_array;
+}
+
+function pof_normalize_task_level($level_str) {
+	if (!empty($level_str) && $level_str != "") {
+		return $level_str;
+	}
+
+	return "0";
 }

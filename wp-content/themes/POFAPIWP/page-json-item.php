@@ -174,6 +174,8 @@ switch ($post_type) {
 			$jsonItem->task_term = $task_term;
 		}
 
+
+		$jsonItem->level = pof_normalize_task_level(get_field("task_level", $mypost->ID));
 		$jsonItem->leader_tasks = get_field("leader_tasks_".strtolower($lang));
 		$jsonItem->growth_target = get_field("growth_target_".strtolower($lang));
 

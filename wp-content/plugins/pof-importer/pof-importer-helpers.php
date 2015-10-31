@@ -304,6 +304,8 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 		update_field("task_place_of_performance", $places, $post_id);
 
+		update_field("task_level", pof_importer_get_level($row['N']));
+
 		echo " updated places, ".count($places)." items,";
 
 		$terms = pof_importer_get_skillareas(trim($row['I']));
@@ -313,6 +315,20 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 		wp_update_post($post, $wp_error);
 	}
 	echo "<br />";
+}
+
+function pof_importer_get_level($string) {
+	$level_num = "0";
+
+	$string = strtolower(trim($string));
+	$string = str_replace("taso", "", $string);
+	$string = trim($string);
+
+	if ($string != "") {
+		$level_num = (int) $string;
+	}
+
+	return (string) $level_num;
 }
 
 function pof_importer_normalize_key($string) {
