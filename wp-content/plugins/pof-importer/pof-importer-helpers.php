@@ -304,7 +304,7 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 		update_field("task_place_of_performance", $places, $post_id);
 
-		update_field("task_level", pof_importer_get_level($row['N']));
+		update_field("task_level", pof_importer_get_level($row['N']), $post_id);
 
 		echo " updated places, ".count($places)." items,";
 
