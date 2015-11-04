@@ -43,32 +43,32 @@ $ret->paikka = pof_pages_get_tags($languages, $items, $item_tax_key);
 // Groupsizes
 $item_tax_key = 'groupsize';
 $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-$ret->ryhmakoko = pof_pages_get_tags($agegroups, $items, $item_tax_key);
+$ret->ryhmakoko = pof_pages_get_tags($languages, $items, $item_tax_key);
 
 // Mandatory
 $item_tax_key = 'mandatory';
 $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-$ret->pakollisuus = pof_pages_get_tags($agegroups, $items, $item_tax_key);
+$ret->pakollisuus = pof_pages_get_tags($languages, $items, $item_tax_key);
 
 //TaskDuration
 $item_tax_key = 'taskduration';
 $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-$ret->suoritus_kesto = pof_pages_get_tags($agegroups, $items, $item_tax_key);
+$ret->suoritus_kesto = pof_pages_get_tags($languages, $items, $item_tax_key);
 
 //TaskPreparationDuration
 $item_tax_key = 'taskpreparationduration';
 $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-$ret->suoritus_valmistelu_kesto = pof_pages_get_tags($agegroups, $items, $item_tax_key);
+$ret->suoritus_valmistelu_kesto = pof_pages_get_tags($languages, $items, $item_tax_key);
 
 //Equipments
 $item_tax_key = 'equpments';
 $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-$ret->tarvikkeet = pof_pages_get_tags($agegroups, $items, $item_tax_key);
+$ret->tarvikkeet = pof_pages_get_tags($languages, $items, $item_tax_key);
 
 //Taitoalueet
 $item_tax_key = 'skillarea';
 $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-$ret->taitoalueet = pof_pages_get_tags($agegroups, $items, $item_tax_key);
+$ret->taitoalueet = pof_pages_get_tags($languages, $items, $item_tax_key);
 
 
 echo json_encode($ret);
