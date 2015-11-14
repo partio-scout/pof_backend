@@ -1240,14 +1240,15 @@ function pof_get_siblings($post_item) {
 	$args = array(
 		'numberposts' => -1,
 		'posts_per_page' => -1,
-		'post_type' => $post_item->post_type
+		'post_type' => $post_item->post_type,
+		'meta_value' => null
 	);
 
 	switch ($post_type) {
 		case "agegroup":
 
 			$args['meta_key'] = "suoritusohjelma";
-			$args['meta_value'] = get_post_meta( $post_id, "suoritusohjelma", true );;
+			$args['meta_value'] = get_post_meta( $post_id, "suoritusohjelma", true );
 
 		break;
 		case "taskgroup":
@@ -1288,9 +1289,89 @@ function pof_get_siblings($post_item) {
 	return $to_ret;
 }
 
+function pof_item_childs_meta_box() {
+
+	$screens = array('pof_post_task', 'pof_post_taskgroup', 'pof_post_agegroup', 'pof_post_program');
+
+	foreach ( $screens as $screen ) {
+
+		add_meta_box(
+			'pof_item_childs_meta_box_sectionid',
+			__( 'Childs', 'pof' ),
+			'pof_item_childs_meta_box_callback',
+			$screen, 'side', 'core'
+		);
+	}
+}
+
+function pof_item_childs_meta_box_callback($post) {
+	$childs = pof_get_childs($post);
+
+
+	foreach ($childs as $child_key => $child_post) {
+		echo "<ul style=\"margin-left: 10px; list-style-type: round;\">";
+		echo "<li>";
+		echo "<a href=\"/wp-admin/post.php?post=" . $child_post->ID . "&action=edit\" target=\"_blank\">" . $child_post->post_title . "</a>";
+		echo "</li>";
+		echo "</ul>";
+	}
+}
+
+function pof_get_childs($post_item) {
+	$post_type = str_replace('pof_post_', '', $post_item->post_type);
+	$post_id = $post_item->ID;
+
+	$to_ret = array();
+
+	$args = array(
+		'numberposts' => -1,
+		'posts_per_page' => -1,
+		'meta_value' => null
+	);
+
+	switch ($post_type) {
+		case "program":
+			$args['post_type'] = array('pof_post_agegroup');
+			$args['meta_key'] = "suoritusohjelma";
+			$args['meta_value'] = $post_id;
+
+		break;
+		case "agegroup":
+			$args['post_type'] = array('pof_post_taskgroup');
+			$args['meta_key'] = "ikakausi";
+			$args['meta_value'] = $post_id;
+
+		break;
+		case "taskgroup":
+			$args['post_type'] = array('pof_post_taskgroup', 'pof_post_task');
+			$args['meta_key'] = "suoritepaketti";
+			$args['meta_value'] = $post_id;
+		break;
+	}
+
+	if (is_null($args['meta_value']) || $args['meta_value'] == 0 || $args['meta_value'] == 'null') {
+		return $to_ret;
+	}
+
+	$the_query = new WP_Query( $args );
+
+	if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+			$the_query->the_post();
+			if ($post_id != $the_query->post->ID) {
+				array_push($to_ret, $the_query->post);
+			}
+		}
+	}
+
+
+	return $to_ret;
+}
+
 
 add_action( 'add_meta_boxes', 'pof_item_task_parenttree_meta_box' );
 add_action( 'add_meta_boxes', 'pof_item_siblings_meta_box' );
+add_action( 'add_meta_boxes', 'pof_item_childs_meta_box' );
 
 function pof_output_parents_arr_json($tree_array) {
 	$ret = array();
