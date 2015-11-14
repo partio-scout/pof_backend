@@ -54,7 +54,7 @@ function getJsonTree($root_id) {
 
 	$root_post = get_post($root_id);
 
-	checkDatetime($root_post);
+	pof_checkDatetime($root_post);
 
 	
 	$program = new $classProgram;
@@ -247,17 +247,6 @@ function getJsonTasks($parent_id) {
 
 	return $childs;
 
-}
-
-function checkDatetime($post_to_check) {
-	global $lastModified;
-	global $lastModifiedBy;
-	
-	$tmpTime = strtotime($post_to_check->post_modified);
-	if ($tmpTime > $lastModified) {
-		$lastModified = $tmpTime;
-		$lastModifiedBy = get_post_meta( $post_to_check->ID, '_edit_last', true);
-	}
 }
 
 

@@ -575,6 +575,23 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 
 	$post_guid = get_post_meta( $post->ID, "post_guid", true );
 
+
+	$suggestiongs_tmp = pof_order_post_suggestions_by_lang($post);
+
+	foreach ($pof_available_languages as $available_language) {
+		if (isset($suggestiongs_tmp[$available_language])) {
+			$tmp = get_field("title_".strtolower($available_language), $post->ID);
+			if (!empty($tmp) || $available_language == 'fi') {
+				$lang_obj = new stdClass();
+				$lang_obj->lang = $available_language;
+				$lang_obj->details = get_site_url() . "/item-json-vinkit/?postGUID=".$post_guid."&lang=".$available_language;
+				$lang_obj->lastModified = $suggestiongs_tmp[$available_language]->modified;
+				$lang_obj->count= $suggestiongs_tmp[$available_language]->count;
+				array_push($jsonItem->suggestions_details, $lang_obj);
+			}
+		}
+	}
+/*
 	$lang_obj = new stdClass();
 	$lang_obj->lang = 'fi';
 	$lang_obj->details = get_site_url() . "/item-json-vinkit/?postGUID=".$post_guid."&lang=fi";
@@ -592,9 +609,33 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 		}
 
 	}
-
+*/
 	return $jsonItem;
-} 
+}
+
+function pof_order_post_suggestions_by_lang($post) {
+	$suggestions = pof_get_suggestions($post);
+
+	$ret = array();
+
+	foreach ($suggestions as $suggestion) {
+		$suggestiong_lang = get_post_meta( $suggestion->ID, "pof_suggestion_language", true );
+		if (!isset($ret[$suggestiong_lang])) {
+			$tmp = new stdClass();
+			$tmp->count = 1;
+			$tmp->modified = $suggestion->post_modified;
+			$ret[$suggestiong_lang] = $tmp;
+		}
+		else {
+			$ret[$suggestiong_lang]->count = $ret[$suggestiong_lang]->count + 1;
+			if (strtotime($ret[$suggestiong_lang]->modified) < strtotime($suggestion->post_modified)) {
+				$ret[$suggestiong_lang]->modified = $suggestion->post_modified;
+			}
+		}
+	}
+
+	return $ret;
+}
 
 
 
@@ -1368,10 +1409,91 @@ function pof_get_childs($post_item) {
 	return $to_ret;
 }
 
+function pof_item_suggestions_meta_box() {
+
+	$screens = array('pof_post_task');
+
+	foreach ( $screens as $screen ) {
+
+		add_meta_box(
+			'pof_item_suggestions_meta_box_sectionid',
+			__( 'Suggestions', 'pof' ),
+			'pof_item_suggestions_meta_box_callback',
+			$screen, 'side', 'core'
+		);
+	}
+}
+
+function pof_item_suggestions_meta_box_callback($post) {
+	$suggestions = pof_get_suggestions($post);
+
+
+	foreach ($suggestions as $suggestion_key => $suggestion_post) {
+		echo "<ul style=\"margin-left: 10px; list-style-type: round;\">";
+		echo "<li>";
+		echo "<a href=\"/wp-admin/post.php?post=" . $suggestion_post->ID . "&action=edit\" target=\"_blank\">" . $suggestion_post->post_title . "</a>";
+		echo "</li>";
+		echo "</ul>";
+	}
+}
+
+function pof_get_suggestions($post_item) {
+	$post_id = $post_item->ID;
+
+	$to_ret = array();
+
+	$args = array(
+		'numberposts' => -1,
+		'posts_per_page' => -1,
+		'post_type' => 'pof_post_suggestion',
+		'meta_key' => 'pof_suggestion_task',
+		'meta_value' => $post_id
+	);
+
+	$the_query = new WP_Query( $args );
+
+	if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+			$the_query->the_post();
+			if ($post_id != $the_query->post->ID) {
+				array_push($to_ret, $the_query->post);
+			}
+		}
+	}
+
+
+	return $to_ret;
+}
+
+function pof_item_suggestion_meta_box() {
+
+	$screens = array('pof_post_suggestion');
+
+	foreach ( $screens as $screen ) {
+
+		add_meta_box(
+			'pof_item_suggestion_meta_box_sectionid',
+			__( 'Task', 'pof' ),
+			'pof_item_suggestion_meta_box_callback',
+			$screen, 'side', 'high'
+		);
+	}
+}
+
+function pof_item_suggestion_meta_box_callback($post) {
+	$task_post_id = get_post_meta( $post->ID, "pof_suggestion_task", true );
+
+	$task_post = get_post($task_post_id);
+
+	echo "<a href=\"/wp-admin/post.php?post=" . $task_post->ID . "&action=edit\" target=\"_blank\">" . $task_post->post_title . "</a>";
+}
+
 
 add_action( 'add_meta_boxes', 'pof_item_task_parenttree_meta_box' );
 add_action( 'add_meta_boxes', 'pof_item_siblings_meta_box' );
 add_action( 'add_meta_boxes', 'pof_item_childs_meta_box' );
+add_action( 'add_meta_boxes', 'pof_item_suggestions_meta_box' );
+add_action( 'add_meta_boxes', 'pof_item_suggestion_meta_box' );
 
 function pof_output_parents_arr_json($tree_array) {
 	$ret = array();
@@ -1541,4 +1663,16 @@ function pof_normalize_task_level($level_str) {
 	}
 
 	return "0";
+}
+
+
+function pof_checkDatetime($post_to_check) {
+	global $lastModified;
+	global $lastModifiedBy;
+	
+	$tmpTime = strtotime($post_to_check->post_modified);
+	if ($tmpTime > $lastModified) {
+		$lastModified = $tmpTime;
+		$lastModifiedBy = get_post_meta( $post_to_check->ID, '_edit_last', true);
+	}
 }

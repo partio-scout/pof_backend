@@ -74,7 +74,7 @@ $data = array(
 function getTree($root_id) {
 	$root_post = get_post($root_id);
 	
-	checkDatetime($root_post);
+	pof_checkDatetime($root_post);
 	
 	$ret = array(
 		'name' => 'tree',
@@ -132,7 +132,7 @@ function get_childs_for_suoritusohjelma($parent_id) {
 		while ( $the_query->have_posts() ) {
 			$the_query->the_post();
 			
-			checkDatetime($the_query->post);
+			pof_checkDatetime($the_query->post);
 			
 			$tmp = array(
 				'name' => 'node',
@@ -205,7 +205,7 @@ $ret = array(
 	if( $the_query->have_posts() ) {
 		while ( $the_query->have_posts() ) {
 			$the_query->the_post();
-			checkDatetime($the_query->post);
+			pof_checkDatetime($the_query->post);
 			$tmp = array(
 				'name' => 'node',
 					'attributes' => array(
@@ -251,7 +251,7 @@ $ret = array(
 	if( $the_query->have_posts() ) {
 		while ( $the_query->have_posts() ) {
 			$the_query->the_post();
-			checkDatetime($the_query->post);
+			pof_checkDatetime($the_query->post);
 			$tmp = array(
 				'name' => 'node',
 					'attributes' => array(
@@ -303,7 +303,7 @@ function get_childs_for_suoritepaketti($parent_id) {
 	if( $the_query->have_posts() ) {
 		while ( $the_query->have_posts() ) {
 			$the_query->the_post();
-			checkDatetime($the_query->post);
+			pof_checkDatetime($the_query->post);
 			$tmp = array(
 				'name' => 'node',
 					'attributes' => array(
@@ -348,7 +348,7 @@ function get_childs_for_suoritepaketti($parent_id) {
 	if( $the_query->have_posts() ) {
 		while ( $the_query->have_posts() ) {
 			$the_query->the_post();
-			checkDatetime($the_query->post);
+			pof_checkDatetime($the_query->post);
 			$tmp = array(
 				'name' => 'node',
 					'attributes' => array(
@@ -381,19 +381,6 @@ function get_childs_for_suoritepaketti($parent_id) {
 
 	return $ret;
 }
-
-
-function checkDatetime($post_to_check) {
-	global $lastModified;
-	global $lastModifiedBy;
-	
-	$tmpTime = strtotime($post_to_check->post_modified);
-	if ($tmpTime > $lastModified) {
-		$lastModified = $tmpTime;
-		$lastModifiedBy = get_post_meta( $post_to_check->ID, '_edit_last', true);
-	}
-}
-
 
 
 

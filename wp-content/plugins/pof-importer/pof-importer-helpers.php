@@ -785,14 +785,13 @@ function pof_importer_suggestionssdriveimport_importRow($row, $row_index, $saveT
 		update_post_meta($post_id, "pof_suggestion_task", $task->ID);
 
 
-		update_field("pof_suggestion_lang", pof_importer_suggestions_get_language($row['E']), $post_id);
+		update_post_meta($post_id, "pof_suggestion_lang", pof_importer_suggestions_get_language($row['E']));
+		update_post_meta($post_id, "pof_suggestion_writer", pof_importer_suggestions_get_language($row['G']));
 		$post->post_title = trim($row['F']);
 		$post->post_content = $row['I'];
 		$post->post_author = get_current_user_id();
 
 		// TODO: read publish time
-
-		update_field("pof_suggestion_writer", $row['G']);
 
 		wp_update_post($post, $wp_error);
 	}
@@ -803,17 +802,19 @@ function pof_importer_suggestions_get_language($language) {
 
 	$lang = 'fi';
 
-	switch ($language) {
-		case "Suomi":
+// TODO: use lang table for this
+
+	switch (strtolower($language)) {
+		case "suomi":
 			$lang = "fi";
 		break;
-		case "Ruotsi":
+		case "ruotsi":
 			$lang = "sv";
 		break;
-		case "Englanti":
+		case "englanti":
 			$lang = "en";
 		break;
-		case "Somalia":
+		case "somalia":
 			$lang = "so";
 		break;
 	}
