@@ -88,6 +88,7 @@ function pof_taxonomy_icons_get_agegroups() {
 			$tmp = new stdClass();
 			$tmp->id = $the_query->post->ID;
 			$tmp->title = $the_query->post->post_title;
+			$tmp->guid = get_post_meta( $the_query->post->ID, 'post_guid', true);
 			$min_age = get_field("agegroup_min_age");
 			
 			$agegroups[$min_age] = $tmp;
