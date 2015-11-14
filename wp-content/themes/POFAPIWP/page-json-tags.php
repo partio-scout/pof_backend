@@ -70,6 +70,11 @@ $item_tax_key = 'skillarea';
 $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
 $ret->taitoalueet = pof_pages_get_tags($languages, $items, $item_tax_key);
 
+//Yleiset
+$item_tax_key = 'common';
+$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+$ret->yleiset = pof_pages_get_tags($languages, $items, $item_tax_key);
+
 
 echo json_encode($ret);
 
