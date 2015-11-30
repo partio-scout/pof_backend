@@ -619,7 +619,7 @@ function pof_order_post_suggestions_by_lang($post) {
 	$ret = array();
 
 	foreach ($suggestions as $suggestion) {
-		$suggestiong_lang = get_post_meta( $suggestion->ID, "pof_suggestion_language", true );
+		$suggestiong_lang = get_post_meta( $suggestion->ID, "pof_suggestion_lang", true );
 		if (!isset($ret[$suggestiong_lang])) {
 			$tmp = new stdClass();
 			$tmp->count = 1;

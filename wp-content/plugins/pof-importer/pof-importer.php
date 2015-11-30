@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 /* Helper functions */
 include( plugin_dir_path( __FILE__ ) . 'pof-importer-helpers.php');
+include( plugin_dir_path( __FILE__ ) . 'pof-importer-suggestions.php');
+include( plugin_dir_path( __FILE__ ) . 'pof-importer-suggestions2.php');
 
 add_action( 'admin_menu', 'pof_importer_menu' );
 
@@ -33,6 +35,7 @@ function pof_importer_menu() {
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Suoritukset export', 'Suoritukset export', 'manage_options', 'pof_importer_tasksexport-handle', 'pof_importer_tasksexport');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Suoritukset drive import', 'Suoritukset drive import', 'manage_options', 'pof_importer_tasksdriveimport-handle', 'pof_importer_tasksdriveimport');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit drive import', 'Vinkit drive import', 'manage_options', 'pof_importer_suggestionsdriveimport-handle', 'pof_importer_suggestionsdriveimport');
+	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit drive import2', 'Vinkit drive import2', 'manage_options', 'pof_importer_suggestionsdriveimport2-handle', 'pof_importer_suggestionsdriveimport2');
 }
 
 function pof_importer_frontpage() {
@@ -407,6 +410,86 @@ function pof_importer_suggestionsdriveimport() {
 			echo '<input type="submit" name="RunAgain" value="Aja uudestaan" />';
 			echo '</form>';
 			pof_importer_suggestionsdriveimport_run($_POST["drive_file_id"], true);
+		}
+	}
+	echo "</div>";
+}
+
+function pof_importer_suggestionsdriveimport2() {
+
+
+	echo '<div class="wrap">';
+	echo '<h1>POF Importer, vinkit google drivest&auml;</h1>';
+
+
+	if (   !isset($_POST)
+		|| !isset($_POST["drive_file_id"])) {
+
+		$service = pof_importer_get_google_service();
+
+		echo '<form method="post" action="">';
+
+		// Print the names and IDs for up to 10 files.
+		$optParams = array(
+			'maxResults' => 999,
+			'q' => "mimeType = 'application/vnd.google-apps.spreadsheet' and (title contains 'vinki' or title contains 'vinkki' or title contains '_vinkit_')",
+			'orderBy' => 'folder,modifiedDate desc,title'
+		);
+		$results = $service->files->listFiles($optParams);
+
+		if (count($results->getItems()) == 0) {
+			print "No files found.\n";
+		} else {
+
+			print "Valitse importoitava tiedosto:<br />";
+			echo '<select name="drive_file_id">';
+			foreach ($results->getItems() as $file) {
+			
+				$fileLastModified = strtotime($file->getModifiedDate());
+
+				printf("<option value=\"%s\">%s (%s)</option>\n", $file->getId(), $file->getTitle(), date('d.m.Y', $fileLastModified));
+			}
+			echo "</select>";
+            
+			echo "<br />";
+            print "Valitse ik&auml;kausi: <br />";
+            echo '<select name="agegroup">';
+
+            $agegroups = pof_taxonomy_translate_get_agegroups();
+
+            foreach ($agegroups as $agegroup) {
+                if ($agegroup->id == 0) {
+                    continue;
+                }
+				printf("<option value=\"%s\">%s</option>\n", $agegroup->id, $agegroup->title);
+			}
+
+            echo '</select>';
+            
+			echo "<br />";
+			echo "<br />";
+		echo '<input type="submit" name="Submit" value="Valitse tiedosto" />';
+		echo '</form>';
+		}
+	} else {
+		if (!isset($_POST["SaveToDatabase"])) {
+			echo '<form method="post" action="">';
+			echo '<input type="hidden" name="drive_file_id" value="'.$_POST["drive_file_id"].'" />';
+            echo '<input type="hidden" name="agegroup" value="'.$_POST["agegroup"].'" />';
+			echo '<input type="submit" name="SaveToDatabase" value="Tallenna tietokantaan" />';
+			echo '<br /><br />';
+			echo '<input type="submit" name="RunAgain" value="Aja uudestaan" />';
+			echo '</form>';
+			pof_importer_suggestionsdriveimport_run2($_POST["drive_file_id"], $_POST["agegroup"]);
+		} else {
+			echo '<form method="post" action="">';
+			echo '<input type="hidden" name="drive_file_id" value="'.$_POST["drive_file_id"].'" />';
+            echo '<input type="hidden" name="agegroup" value="'.$_POST["agegroup"].'" />';
+			echo '<input type="submit" name="SaveToDatabase" value="Tallenna tietokantaan" />';
+			echo '<br /><br />';
+			echo '<input type="submit" name="RunAgain" value="Aja uudestaan" />';
+			echo '</form>';
+			pof_importer_suggestionsdriveimport_run2($_POST["drive_file_id"], $_POST["agegroup"], true);
 		}
 	}
 	echo "</div>";
