@@ -102,6 +102,10 @@ function pof_settings_general() {
 		if (isset($_POST["google_api_password"])) {
 			update_option("pof_settings_google_api_password", $_POST["google_api_password"]);
 		}
+        
+		if (isset($_POST["suggestions_emails"])) {
+			update_option("pof_settings_suggestions_emails", $_POST["suggestions_emails"]);
+		}
 	}
 	
 	echo '<div class="wrap">';
@@ -130,6 +134,13 @@ function pof_settings_general() {
 				<td><input id="google_api_password_search" autocomplete="off" type="password" name="google_api_password" value="<?php echo esc_attr( get_option('pof_settings_google_api_password') ); ?>" /></td>
 			</tr>
 		</table>
+        <h2>Vinkit<h2>
+        <table class="form-table">
+			<tr valign="top">
+				<th scope="row">Kelle l&auml;hetet&auml;&auml;n s&auml;hk&ouml;postia uuista vinkeist&auml;. Erottele pilkulla</th>
+				<td><input id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
+			</tr>
+        </table>
 	
 		<input type="submit" name="Submit" value="Submit" />
 

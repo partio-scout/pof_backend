@@ -172,6 +172,16 @@ function pof_taxonomy_translate_parser_taxonomy_key($tmpkey) {
 	return $ret;
 }
 
+function pof_taxonomy_translate_get_translation_content($taxonomy_base_key, $tmp_key, $agegroup_id = '0', $selected_lang = 'fi') {
+    $item = pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $agegroup_id, $selected_lang, true);
+
+    if (   count($item)>0
+        && array_key_exists('content', $item[0])) {
+        return $item[0]->content;
+    }
+    return "";
+}
+
 function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $agegroup_id, $selected_lang, $fallback = false) {
 	$taxonomy_slug = $taxonomy_base_key . '::' . $tmp_key;
 
@@ -188,7 +198,7 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 
 	if (   $fallback 
 		&& $agegroup_id != 0
-		&& empty($translate_res)) {
+		&& (empty($translate_res) || count($translate_res) == 0)) {
 		$translate_res = $wpdb->get_results( 
 			"
 			SELECT * 
@@ -203,7 +213,7 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 	if (   $fallback 
 		&& $agegroup_id != 0
 		&& $selected_lang != 'fi'
-		&& empty($translate_res)) {
+		&& (empty($translate_res) || count($translate_res) == 0)) {
 		$translate_res = $wpdb->get_results( 
 			"
 			SELECT * 
@@ -216,8 +226,7 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 	}
 
 	if (   $fallback 
-		&& $selected_lang != 'fi'
-		&& empty($translate_res)) {
+		&& (empty($translate_res) || count($translate_res) == 0)) {
 		$translate_res = $wpdb->get_results( 
 			"
 			SELECT * 
@@ -227,7 +236,39 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 				AND agegroup_id = 0
 			"
 		);
+
+
+        // if all have failed, then create the item so that it can be translated
+        if (empty($translate_res) || count($translate_res) == 0) {
+            $tmp = $wpdb->insert( 
+				pof_taxonomy_translate_get_table_name(), 
+				array( 
+					'taxonomy_slug' => $taxonomy_slug, 
+					'agegroup_id' => 0,
+					'lang' => 'fi',
+                    'content' => $tmp_key
+				), 
+				array( 
+					'%s', 
+					'%d', 
+					'%s',
+                    '%s'
+				) 
+			);
+
+
+            $translate_res = $wpdb->get_results( 
+			    "
+			    SELECT * 
+			    FROM " . pof_taxonomy_translate_get_table_name() . "
+			    WHERE taxonomy_slug = '" . $taxonomy_slug . "' 
+				    AND lang = 'fi'
+				    AND agegroup_id = 0
+			    "
+		    );
+        }
 	}
+
 
 	return $translate_res;
 }

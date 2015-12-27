@@ -613,6 +613,7 @@ function pof_importer_get_agegroups_and_tasks_get_tasks($taskgroup_ids) {
 			$the_query4->the_post();
 			$item->id = $the_query4->post->ID;
 			$item->title = $the_query4->post->post_title;
+			$item->guid = get_post_meta( $the_query4->post->ID, "post_guid", true );
 
 			$items[pof_importer_normalize_title($the_query4->post->post_title)] = $item;
 		}
