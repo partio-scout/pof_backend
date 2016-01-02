@@ -145,7 +145,7 @@ function pof_settings_general() {
 			</tr>
             <tr valign="top">
                 <th scope="row">Mist&auml; osoitteesta l&auml;hetet&auml;&auml;n. Muotoa "Example User" &lt;email@example.com&gt;</th>
-                <td><input id="suggestions_email_sender" autocomplete="off" type="text" name="suggestions_email_sender" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender') ); ?>" /></td>
+                <td><input id="suggestions_email_sender" autocomplete="off" type="text" name="suggestions_email_sender" value="<?php echo get_option('pof_settings_suggestions_email_sender'); ?>" /></td>
             </tr>
         </table>
 	
