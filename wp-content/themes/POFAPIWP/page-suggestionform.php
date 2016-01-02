@@ -64,7 +64,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     $emails_str = pof_settings_get_suggestions_emails();
 
-    wp_mail( $emails_str, "[POF] Uusi vinkki", "Uusi vinkki, ".get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit", 'From: ' . pof_settings_get_suggestions_email_sender());
+    wp_mail( $emails_str, "[POF] Uusi vinkki", "Uusi vinkki, ".get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit", 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
 
 	$return_val = 'json';
 	if (array_key_exists('return_val', $_POST)

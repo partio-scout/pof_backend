@@ -106,8 +106,12 @@ function pof_settings_general() {
 		if (isset($_POST["suggestions_emails"])) {
 			update_option("pof_settings_suggestions_emails", $_POST["suggestions_emails"]);
 		}
-        if (isset($_POST["suggestions_email_sender"])) {
-			update_option("pof_settings_suggestions_email_sender", $_POST["suggestions_email_sender"]);
+        if (isset($_POST["suggestions_email_sender_name"])) {
+			update_option("pof_settings_suggestions_email_sender_name", $_POST["suggestions_email_sender_name"]);
+		}
+
+        if (isset($_POST["suggestions_email_sender_email"])) {
+			update_option("pof_settings_suggestions_email_sender_email", $_POST["suggestions_email_sender_email"]);
 		}
 	}
 
@@ -144,8 +148,12 @@ function pof_settings_general() {
 				<td><input id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
 			</tr>
             <tr valign="top">
-                <th scope="row">Mist&auml; osoitteesta l&auml;hetet&auml;&auml;n. Muotoa "Example User" &lt;email@example.com&gt;</th>
-                <td><input id="suggestions_email_sender" autocomplete="off" type="text" name="suggestions_email_sender" value="<?php echo get_option('pof_settings_suggestions_email_sender'); ?>" /></td>
+                <th scope="row">Mill&auml; nimell&Auml; l&auml;hetet&auml;&auml;n</th>
+                <td><input id="suggestions_email_sender_name" autocomplete="off" type="text" name="suggestions_email_sender_name" value='<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_name') ); ?>' /></td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">Mist&auml; osoitteesta l&auml;hetet&auml;&auml;n.</th>
+                <td><input id="suggestions_email_sender_email" autocomplete="off" type="text" name="suggestions_email_sender_email" value='<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_email')); ?>' /></td>
             </tr>
         </table>
 	
