@@ -79,7 +79,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     $content .= "Kieli: ".$lang_key."\n\n";
 
-    $content .= "Lue sis&auml;lt&ouml; ja hyv&auml;ksy / hylk&auml;&auml;: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
+    $content .= "Lue: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
 
 
     wp_mail( $emails_str, "[POF] Uusi vinkki", $content, 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
