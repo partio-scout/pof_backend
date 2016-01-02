@@ -106,8 +106,11 @@ function pof_settings_general() {
 		if (isset($_POST["suggestions_emails"])) {
 			update_option("pof_settings_suggestions_emails", $_POST["suggestions_emails"]);
 		}
+        if (isset($_POST["suggestions_email_sender"])) {
+			update_option("pof_settings_suggestions_email_sender", $_POST["suggestions_email_sender"]);
+		}
 	}
-	
+
 	echo '<div class="wrap">';
 	echo '<h1>POF Settings, yleiset</h1>';
 	
@@ -134,12 +137,16 @@ function pof_settings_general() {
 				<td><input id="google_api_password_search" autocomplete="off" type="password" name="google_api_password" value="<?php echo esc_attr( get_option('pof_settings_google_api_password') ); ?>" /></td>
 			</tr>
 		</table>
-        <h2>Vinkit<h2>
+        <h2>Vinkit</h2>
         <table class="form-table">
 			<tr valign="top">
 				<th scope="row">Kelle l&auml;hetet&auml;&auml;n s&auml;hk&ouml;postia uuista vinkeist&auml;. Erottele pilkulla</th>
 				<td><input id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
 			</tr>
+            <tr valign="top">
+                <th scope="row">Mist&auml; osoitteesta l&auml;hetet&auml;&auml;n. Muotoa "Example User" &lt;email@example.com&gt;</th>
+                <td><input id="suggestions_email_sender" autocomplete="off" type="text" name="suggestions_email_sender" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender') ); ?>" /></td>
+            </tr>
         </table>
 	
 		<input type="submit" name="Submit" value="Submit" />
