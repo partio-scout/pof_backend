@@ -35,6 +35,8 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 	);
 	$suggestion_id = wp_insert_post( $suggestion, $wp_error );
 
+    $mypost = false;
+
     if ($post_guid != '') {
 
         $args = array(
@@ -64,7 +66,23 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     $emails_str = pof_settings_get_suggestions_emails();
 
-    wp_mail( $emails_str, "[POF] Uusi vinkki", "Uusi vinkki, ".get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit", 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
+    $content = "Uusi vinkki\n\n";
+    $content .= "Aktiviteetti: ";
+    if ($mypost == false) {
+        $content .= "--";
+    } else {
+        $content .= $mypost->post_title;
+    }
+    $content .= "Vinkin otsikko: ".$_POST['suggestion_title']."\n\n";
+
+    $content .= "Kirjoittaja: ".$_POST['suggestion_name']."\n\n";
+
+    $content .= "Kieli: ".$lang_key."\n\n";
+
+    $content .= "Lue sisältö ja hyväksy / hylkää: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
+
+
+    wp_mail( $emails_str, "[POF] Uusi vinkki", $content, 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
 
 	$return_val = 'json';
 	if (array_key_exists('return_val', $_POST)
