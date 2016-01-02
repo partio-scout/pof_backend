@@ -68,7 +68,7 @@ function pof_settings_install() {
 pof_settings_install();
 
 function pof_settings_menu() {
-	add_menu_page('POF Settings', 'POF Asetukset', 'manage_options', 'pof_settings_frontpage-handle', 'pof_settings_frontpage');
+	add_menu_page('POF Settings', 'POF Asetukset', 'manage_options', 'pof_settings_frontpage-handle', 'pof_settings_frontpage', 'dashicons-admin-settings');
 	add_submenu_page( 'pof_settings_frontpage-handle', 'Yleiset asetukset', 'Yleiset asetukset', 'manage_options', 'pof_settings_general-handle', 'pof_settings_general');
 	add_submenu_page( 'pof_settings_frontpage-handle', 'Kielet', 'Kielet', 'manage_options', 'pof_settings_languages-handle', 'pof_settings_languages');
 }

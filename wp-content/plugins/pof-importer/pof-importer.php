@@ -30,7 +30,7 @@ include( plugin_dir_path( __FILE__ ) . 'pof-importer-suggestions2.php');
 add_action( 'admin_menu', 'pof_importer_menu' );
 
 function pof_importer_menu() {
-	add_menu_page('POF Importer', 'Importteri', 'manage_options', 'pof_importer_frontpage-handle', 'pof_importer_frontpage');
+	add_menu_page('POF Importer', 'Importteri', 'manage_options', 'pof_importer_frontpage-handle', 'pof_importer_frontpage', 'dashicons-media-spreadsheet');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Suoritepaketit', 'Suoritepaketit', 'manage_options', 'pof_importer_taskgroups-handle', 'pof_importer_taskgroups');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Suoritukset export', 'Suoritukset export', 'manage_options', 'pof_importer_tasksexport-handle', 'pof_importer_tasksexport');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Suoritukset drive import', 'Suoritukset drive import', 'manage_options', 'pof_importer_tasksdriveimport-handle', 'pof_importer_tasksdriveimport');
