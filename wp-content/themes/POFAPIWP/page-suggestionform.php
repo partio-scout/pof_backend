@@ -69,9 +69,9 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     $content = "Uusi vinkki\n\n";
     $content .= "Aktiviteetti: ";
     if ($mypost == false) {
-        $content .= "--";
+        $content .= "--"."\n\n";
     } else {
-        $content .= $mypost->post_title;
+        $content .= $mypost->post_title."\n\n";
     }
     $content .= "Vinkin otsikko: ".$_POST['suggestion_title']."\n\n";
 
@@ -79,7 +79,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     $content .= "Kieli: ".$lang_key."\n\n";
 
-    $content .= "Lue sisältö ja hyväksy / hylkää: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
+    $content .= "Lue sis&auml;lt&ouml; ja hyv&auml;ksy / hylk&auml;&auml;: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
 
 
     wp_mail( $emails_str, "[POF] Uusi vinkki", $content, 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
