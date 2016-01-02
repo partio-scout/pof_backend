@@ -20,7 +20,7 @@ function pof_settings_get_suggestions_emails() {
 }
 
 function pof_settings_get_suggestions_email_sender() {
-	return esc_attr( get_option('pof_settings_suggestions_email_sender') );
+	return get_option('pof_settings_suggestions_email_sender');
 }
 
 function pof_settings_get_all_languages($use_cache = true) {
