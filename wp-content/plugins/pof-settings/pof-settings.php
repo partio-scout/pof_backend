@@ -148,7 +148,7 @@ function pof_settings_general() {
 				<td><input id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
 			</tr>
             <tr valign="top">
-                <th scope="row">Mill&auml; nimell&Auml; l&auml;hetet&auml;&auml;n</th>
+                <th scope="row">Mill&auml; nimell&auml; l&auml;hetet&auml;&auml;n</th>
                 <td><input id="suggestions_email_sender_name" autocomplete="off" type="text" name="suggestions_email_sender_name" value='<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_name') ); ?>' /></td>
             </tr>
             <tr valign="top">
