@@ -28,6 +28,10 @@ function pof_importer_suggestionsdriveimport_run2($fileId, $agegroup_id, $saveTo
 		echo '<th>Kieli</th>';
 		echo '<td>'.$lang.'</td>';
 		echo '</tr>';
+        echo '<tr>';
+		echo '<th>Avaa drivess&auml;</th>';
+		echo '<td><a href="'.$file->getAlternateLink().'" target="_blank">'.$file->getAlternateLink().'</a></td>';
+		echo '</tr>';
 		echo '<tr>';
 		echo '<th>Ik&auml;kausi</th>';
 		echo '<td>'.$agegroup->title.'</td>';

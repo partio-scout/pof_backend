@@ -11,6 +11,10 @@ function pof_importer_suggestionsdriveimport_run($fileId, $saveToDataBase = fals
 		echo '<th>Otsikko</th>';
 		echo '<td>'.$file->getTitle().'</td>';
 		echo '</tr>';
+        echo '<tr>';
+		echo '<th>Avaa drivess&auml;</th>';
+		echo '<td><a href="'.$file->getAlternateLink().'" target="_blank">'.$file->getAlternateLink().'</a></td>';
+		echo '</tr>';
 		echo '<tr>';
 		echo '<th>Kuvaus</th>';
 		echo '<td>'.$file->getDescription().'</td>';
