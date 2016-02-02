@@ -32,12 +32,13 @@ add_action( 'admin_menu', 'pof_importer_menu' );
 
 function pof_importer_menu() {
 	add_menu_page('POF Importer', 'Importteri', 'manage_options', 'pof_importer_frontpage-handle', 'pof_importer_frontpage', 'dashicons-media-spreadsheet');
-	add_submenu_page( 'pof_importer_frontpage-handle', 'Suoritepaketit', 'Suoritepaketit', 'manage_options', 'pof_importer_taskgroups-handle', 'pof_importer_taskgroups');
-	add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit export', 'Aktiviteetit export', 'manage_options', 'pof_importer_tasksexport-handle', 'pof_importer_tasksexport');
-	add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit drive import', 'Aktiviteetit drive import', 'manage_options', 'pof_importer_tasksdriveimport-handle', 'pof_importer_tasksdriveimport');
+    add_submenu_page( 'pof_importer_frontpage-handle', 'Suoritepaketit', 'Suoritepaketit', 'manage_options', 'pof_importer_taskgroups-handle', 'pof_importer_taskgroups');	
+    add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit import', 'Aktiviteetit import', 'manage_options', 'pof_importer_tasksdriveimport-handle', 'pof_importer_tasksdriveimport');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit kieliversio otsikot', 'Aktiviteetit kieliversio otsikot', 'manage_options', 'pof_importer_tasksdrivelocalizationtitles-handle', 'pof_importer_tasksdrivelocalizationtitles');
-	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit drive import', 'Vinkit drive import', 'manage_options', 'pof_importer_suggestionsdriveimport-handle', 'pof_importer_suggestionsdriveimport');
-	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit drive import2', 'Vinkit drive import2', 'manage_options', 'pof_importer_suggestionsdriveimport2-handle', 'pof_importer_suggestionsdriveimport2');
+	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit import yksitt&auml;set', 'Vinkit import yksitt&auml;set', 'manage_options', 'pof_importer_suggestionsdriveimport-handle', 'pof_importer_suggestionsdriveimport');
+	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit import massa', 'Vinkit import massa', 'manage_options', 'pof_importer_suggestionsdriveimport2-handle', 'pof_importer_suggestionsdriveimport2');
+    
+    add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit export', 'Aktiviteetit export', 'manage_options', 'pof_importer_tasksexport-handle', 'pof_importer_tasksexport');
 }
 
 function pof_importer_frontpage() {

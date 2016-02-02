@@ -199,15 +199,15 @@ function pof_importer_suggestionssdriveimport_importRow($row, $row_index, $saveT
 				'post_author'   => get_current_user_id()
 			);
 			$post_id = wp_insert_post( $post, $wp_error );
-
-			echo "imported, post_id: " . $post_id;
+                        
+			echo "imported, post: <a href=\"/wp-admin/post.php?post=" . $post_id . "&action=edit\" target=\"_blank\">" . $post_id . "</a>";
 			echo "<br />";
 
 			$post = get_post($post_id);
 		}
 
 	} else {
-		echo "POST FOUND; TO BE UPDATED<br />";
+		echo "POST FOUND; TO BE UPDATED: <a href=\"/wp-admin/post.php?post=" . $post_id . "&action=edit\" target=\"_blank\">" . $post_id . "</a><br />";
 		$post_id = $post->ID;
 	}
 
