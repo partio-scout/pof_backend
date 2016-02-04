@@ -68,7 +68,7 @@ function pof_settings_install() {
 pof_settings_install();
 
 function pof_settings_menu() {
-	add_menu_page('POF Settings', 'POF Asetukset', 'manage_options', 'pof_settings_frontpage-handle', 'pof_settings_frontpage');
+	add_menu_page('POF Settings', 'POF Asetukset', 'manage_options', 'pof_settings_frontpage-handle', 'pof_settings_frontpage', 'dashicons-admin-settings');
 	add_submenu_page( 'pof_settings_frontpage-handle', 'Yleiset asetukset', 'Yleiset asetukset', 'manage_options', 'pof_settings_general-handle', 'pof_settings_general');
 	add_submenu_page( 'pof_settings_frontpage-handle', 'Kielet', 'Kielet', 'manage_options', 'pof_settings_languages-handle', 'pof_settings_languages');
 }
@@ -106,8 +106,15 @@ function pof_settings_general() {
 		if (isset($_POST["suggestions_emails"])) {
 			update_option("pof_settings_suggestions_emails", $_POST["suggestions_emails"]);
 		}
+        if (isset($_POST["suggestions_email_sender_name"])) {
+			update_option("pof_settings_suggestions_email_sender_name", $_POST["suggestions_email_sender_name"]);
+		}
+
+        if (isset($_POST["suggestions_email_sender_email"])) {
+			update_option("pof_settings_suggestions_email_sender_email", $_POST["suggestions_email_sender_email"]);
+		}
 	}
-	
+
 	echo '<div class="wrap">';
 	echo '<h1>POF Settings, yleiset</h1>';
 	
@@ -134,12 +141,20 @@ function pof_settings_general() {
 				<td><input id="google_api_password_search" autocomplete="off" type="password" name="google_api_password" value="<?php echo esc_attr( get_option('pof_settings_google_api_password') ); ?>" /></td>
 			</tr>
 		</table>
-        <h2>Vinkit<h2>
+        <h2>Vinkit</h2>
         <table class="form-table">
 			<tr valign="top">
 				<th scope="row">Kelle l&auml;hetet&auml;&auml;n s&auml;hk&ouml;postia uuista vinkeist&auml;. Erottele pilkulla</th>
 				<td><input id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
 			</tr>
+            <tr valign="top">
+                <th scope="row">Mill&auml; nimell&auml; l&auml;hetet&auml;&auml;n</th>
+                <td><input id="suggestions_email_sender_name" autocomplete="off" type="text" name="suggestions_email_sender_name" value='<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_name') ); ?>' /></td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">Mist&auml; osoitteesta l&auml;hetet&auml;&auml;n.</th>
+                <td><input id="suggestions_email_sender_email" autocomplete="off" type="text" name="suggestions_email_sender_email" value='<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_email')); ?>' /></td>
+            </tr>
         </table>
 	
 		<input type="submit" name="Submit" value="Submit" />

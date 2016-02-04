@@ -19,6 +19,14 @@ function pof_settings_get_suggestions_emails() {
 	return esc_attr( get_option('pof_settings_suggestions_emails') );
 }
 
+function pof_settings_get_suggestions_email_sender_name() {
+	return get_option('pof_settings_suggestions_email_sender_name');
+}
+
+function pof_settings_get_suggestions_email_sender_email() {
+	return get_option('pof_settings_suggestions_email_sender_email');
+}
+
 function pof_settings_get_all_languages($use_cache = true) {
 	global $pof_settings_langs;
 

@@ -9,12 +9,12 @@ $post_guid = '';
 
 if (   $_SERVER['REQUEST_METHOD'] === 'POST' 
     && isset($_POST) 
-    && array_key_exists('suggetion_name', $_POST) 
-    && $_POST['suggetion_name'] != ""
-    && array_key_exists('suggetion_title', $_POST) 
-    && $_POST['suggetion_title'] != ""
-    && array_key_exists('suggetion_content', $_POST) 
-    && $_POST['suggetion_content'] != "" ) {
+    && array_key_exists('suggestion_name', $_POST) 
+    && $_POST['suggestion_name'] != ""
+    && array_key_exists('suggestion_title', $_POST) 
+    && $_POST['suggestion_title'] != ""
+    && array_key_exists('suggestion_content', $_POST) 
+    && $_POST['suggestion_content'] != "" ) {
 
     if (array_key_exists('lang', $_POST) && $_POST['lang'] != "") {
         $lang_key = $_POST['fi'];
@@ -28,12 +28,14 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     $wp_error = false;
 
     $suggestion = array(
-	    'post_title'    => trim($_POST['suggetion_title']),
-		'post_content'  => $_POST['suggetion_content'],
+	    'post_title'    => trim($_POST['suggestion_title']),
+		'post_content'  => $_POST['suggestion_content'],
 		'post_type' => 'pof_post_suggestion',
 		'post_status'   => 'draft'
 	);
 	$suggestion_id = wp_insert_post( $suggestion, $wp_error );
+
+    $mypost = false;
 
     if ($post_guid != '') {
 
@@ -57,25 +59,74 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     }
 
     update_post_meta($suggestion_id, "pof_suggestion_lang", $lang_key);
-	update_post_meta($suggestion_id, "pof_suggestion_writer", $_POST['suggetion_name']);
+	update_post_meta($suggestion_id, "pof_suggestion_writer", $_POST['suggestion_name']);
     update_post_meta($suggestion_id, "pof_suggestion_writer_id", $partio_id);
 
-    //TODO: send email
+    $suggestion_guid = get_post_meta( $suggestion_id, "post_guid", true );
 
     $emails_str = pof_settings_get_suggestions_emails();
 
-    echo "ff" . wp_mail( $emails_str, "[POF] Uusi vinkki", "Uusi vinkki, http://pof-backend.partio.fi/wp-admin/post.php?post=".$suggestion_id."&action=edit");
+    $content = "Uusi vinkki\n\n";
+    $content .= "Aktiviteetti: ";
+    if ($mypost == false) {
+        $content .= "--"."\n\n";
+    } else {
+        $content .= $mypost->post_title."\n\n";
+    }
+    $content .= "Vinkin otsikko: ".$_POST['suggestion_title']."\n\n";
+
+    $content .= "Kirjoittaja: ".$_POST['suggestion_name']."\n\n";
+
+    $content .= "Kieli: ".$lang_key."\n\n";
+
+    $content .= "Lue: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
 
 
-    echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_done", 0, $lang_key);
+    wp_mail( $emails_str, "[POF] Uusi vinkki", $content, 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
 
-} else {
+	$return_val = 'json';
+	if (array_key_exists('return_val', $_POST)
+    && $_POST['return_val'] != "") {
+		$return_val = $_POST['return_val'];
+	}
 
+    $location = "Location: " . $url=strtok($_SERVER["REQUEST_URI"],'?') . "?form_submit=ok&lang=" . $lang_key . "&return_val=" . $return_val;
+
+    if ($suggestion_guid != "") {
+        $location .= "&suggestion_guid=" . $suggestion_guid;
+    }
+
+	header($location);
+	exit();
+//    echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_done", 0, $lang_key);
+
+}
+else {
     if (array_key_exists('lang', $_GET) && $_GET['lang'] != "") {
         $lang_key = $_GET['lang'];
     }
 
-get_header(); ?>
+    if (   array_key_exists('form_submit', $_GET) && $_GET['form_submit'] != ""
+        && array_key_exists('return_val', $_GET) && $_GET['return_val'] != "html") {
+        $tmp = new stdClass();
+        if ($_GET['form_submit'] == "ok") {
+            $tmp->status = "ok";
+            $tmp->message = pof_taxonomy_translate_get_translation_content("common", "suggestion_form_done", 0, $lang_key);
+            if (   array_key_exists('suggestion_guid', $_GET) && $_GET['suggestion_guid'] != "") {
+                $tmp->suggestion_guid = $_GET['suggestion_guid'];
+            }
+        } else {
+            $tmp->status = "error";
+            $tmp->message = pof_taxonomy_translate_get_translation_content("common", "suggestion_form_error", 0, $lang_key);
+        }
+        echo json_encode($tmp);
+        exit();
+    } 
+    else {
+        
+        get_header(); 
+		
+		?>
 
 
 	<div id="primary" class="content-area">
@@ -86,15 +137,25 @@ get_header(); ?>
 	            </header><!-- .entry-header -->
 
 			    <div class="entry-content">
+                    <?php
+                    if (array_key_exists('form_submit', $_GET) && $_GET['form_submit'] != "") {
+                        if ($_GET['form_submit'] == "ok") {
+                            echo '<h2>' . pof_taxonomy_translate_get_translation_content("common", "suggestion_form_done", 0, $lang_key) . "</h2>";
+                        } else {
+                            echo '<h2>' . pof_taxonomy_translate_get_translation_content("common", "suggestion_form_error", 0, $lang_key) . "</h2>";
+                        }
+                    }
+
+                        
+                    ?>
 		            <form action="" method="POST" class="tips__form">
-				        <input class="radius" type="text" name="suggetion_name" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_name_placeholder", 0, $lang_key, true); ?> *" aria-label="Name" /><br /><br />
-				        <input class="radius" type="text" name="suggetion_title" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_title_placeholder", 0, $lang_key, true); ?> *" aria-label="Title" /><br /><br />
-				        <textarea class="radius form-textarea" name="suggetion_content" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_content_placeholder", 0, $lang_key, true); ?>"></textarea><br /><br />
+						<input type="hidden" name="return_val" value="html" />
+				        <input class="radius" type="text" name="suggestion_name" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_name_placeholder", 0, $lang_key, true); ?> *" aria-label="Name" /><br /><br />
+				        <input class="radius" type="text" name="suggestion_title" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_title_placeholder", 0, $lang_key, true); ?> *" aria-label="Title" /><br /><br />
+				        <textarea class="radius form-textarea" name="suggestion_content" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_content_placeholder", 0, $lang_key, true); ?>"></textarea><br /><br />
 				        <input class="button radius" type="submit" name="submit-tip" value="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_sendbutton", 0, $lang_key, true); ?>" aria-label="Send" />
 
 	    		    </form>
-
-
                 </div>
             </article>
 		</main><!-- .site-main -->
@@ -102,4 +163,6 @@ get_header(); ?>
 
 <?php get_footer(); ?>
 
-<?php } ?>
+<?php    }
+    } 
+?>

@@ -127,7 +127,7 @@ function pof_taxonomy_translate_get_agegroups() {
 
 
 function pof_taxonomy_translate_menu() {
-	add_menu_page('POF Taxonomy Translate', 'K&auml;&auml;nn&ouml;kset', 'manage_options', 'pof_taxonomy_translate_frontpage-handle', 'pof_taxonomy_translate_frontpage');
+	add_menu_page('POF Taxonomy Translate', 'K&auml;&auml;nn&ouml;kset', 'manage_options', 'pof_taxonomy_translate_frontpage-handle', 'pof_taxonomy_translate_frontpage', 'dashicons-translation');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Suorituspaikat', 'Suorituspaikat', 'manage_options', 'pof_taxonomy_translate_places-handle', 'pof_taxonomy_translate_places');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Ryhm&auml;koko', 'Ryhm&auml;koot', 'manage_options', 'pof_taxonomy_translate_groupsizes-handle', 'pof_taxonomy_translate_groupsizes');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Pakollisuus', 'Pakollisuus', 'manage_options', 'pof_taxonomy_translate_mandatory-handle', 'pof_taxonomy_translate_mandatory');
@@ -438,7 +438,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	foreach ($agegroups as $agegroup) {
 		echo '<th><h2>'.$agegroup->title.'</h2></th>';
 	}
-	echo '<tr>';
+	echo '</tr>';
 	echo '</thead>';
 	echo '<tbody>';
 	foreach ($items as $tmp_key => $tmp_title) {

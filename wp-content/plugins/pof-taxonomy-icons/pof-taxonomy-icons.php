@@ -102,7 +102,7 @@ function pof_taxonomy_icons_get_agegroups() {
 
 
 function pof_taxonomy_icons_menu() {
-	add_menu_page('POF Taxonomy icons', 'Ikonit', 'manage_options', 'pof_taxonomy_icons_frontpage-handle', 'pof_taxonomy_icons_frontpage');
+	add_menu_page('POF Taxonomy icons', 'Ikonit', 'manage_options', 'pof_taxonomy_icons_frontpage-handle', 'pof_taxonomy_icons_frontpage', 'dashicons-format-image');
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suorituspaikat', 'Suorituspaikat', 'manage_options', 'pof_taxonomy_icons_places-handle', 'pof_taxonomy_icons_places');
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Ryhm&auml;koko', 'Ryhm&auml;koot', 'manage_options', 'pof_taxonomy_icons_groupsizes-handle', 'pof_taxonomy_icons_groupsizes');
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Pakollisuus', 'Pakollisuus', 'manage_options', 'pof_taxonomy_icons_mandatory-handle', 'pof_taxonomy_icons_mandatory');
@@ -288,7 +288,7 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 	foreach ($agegroups as $agegroup) {
 		echo '<th><h2>'.$agegroup->title.'</h2></th>';
 	}
-	echo '<tr>';
+	echo '</tr>';
 	echo '</thead>';
 	echo '<tbody>';
 	foreach ($items as $tmp_key => $tmp_title) {

@@ -28,6 +28,10 @@ function pof_importer_suggestionsdriveimport_run2($fileId, $agegroup_id, $saveTo
 		echo '<th>Kieli</th>';
 		echo '<td>'.$lang.'</td>';
 		echo '</tr>';
+        echo '<tr>';
+		echo '<th>Avaa drivess&auml;</th>';
+		echo '<td><a href="'.$file->getAlternateLink().'" target="_blank">'.$file->getAlternateLink().'</a></td>';
+		echo '</tr>';
 		echo '<tr>';
 		echo '<th>Ik&auml;kausi</th>';
 		echo '<td>'.$agegroup->title.'</td>';
@@ -126,7 +130,7 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
 
     if (array_key_exists($task_title, $tasks)) {
         $task = $tasks[$task_title];
-        echo "<br />Task found '" . $row['A'] . "'</br>";
+        echo "<br />Task found <a href=\"/wp-admin/post.php?post=" . $task->id . "&action=edit\" target=\"_blank\">'" . $row['A'] . "'</a></br>";
 
         $title_counter = 0;
 
@@ -182,7 +186,7 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
 			        );
 			        $post_id = wp_insert_post( $post, $wp_error );
 
-			        echo "imported, post_id: " . $post_id;
+        			echo "imported, post: <a href=\"/wp-admin/post.php?post=" . $post_id . "&action=edit\" target=\"_blank\">" . $post_id . "</a>";
 			        echo "<br />";
 
 			        $post = get_post($post_id);
@@ -193,7 +197,7 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
 		        }
 
 	        } else {
-		        echo "SUGGESTION ".$title." FOUND; SKIPPING<br />";
+		        echo "SUGGESTION <a href=\"/wp-admin/post.php?post=" . $post->ID . "&action=edit\" target=\"_blank\">".$title."</a> FOUND; SKIPPING<br />";
 	        }
 
             

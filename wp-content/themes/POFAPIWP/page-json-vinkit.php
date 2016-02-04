@@ -49,6 +49,7 @@ $jsonItem->lang = strtoupper($lang);
 $jsonItem->post = new stdClass();
 $jsonItem->post->id = $task_post->ID;
 $jsonItem->post->title = $task_post->post_title;
+$jsonItem->post->guid = get_post_meta( $task_post->ID, "post_guid", true );
 
 foreach ($suggestions as $suggestion) {
 	$suggestiong_lang = get_post_meta( $suggestion->ID, "pof_suggestion_language", true );
@@ -56,6 +57,7 @@ foreach ($suggestions as $suggestion) {
 		$suggestiong_writer = get_post_meta( $suggestion->ID, "pof_suggestion_writer", true );
 		$item = new stdClass();
 		$item->title = $suggestion->post_title;
+        $item->guid = get_post_meta( $suggestion->ID, "post_guid", true );
 		$item->content = $suggestion->post_content;
 		$item->publisher = new stdClass();
 		$item->publisher->nickname = $suggestiong_writer;
