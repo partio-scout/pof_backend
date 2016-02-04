@@ -185,7 +185,16 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
 
 	$table_name = pof_taxonomy_searchpage_get_table_name();
 
-    $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower);
+    if ($taxonomy_base_key == 'equipment' || $taxonomy_base_key == 'skillarea') {
+        $all_items = array();
+        foreach (get_terms('pof_tax_'.$taxonomy_base_key) as $term) {
+		    $all_items[$term->slug] = $term->name;
+	    }
+
+    } else {
+        $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower);
+    }
+    
 
 	$searchpage_res = $wpdb->get_results( 
 		"
@@ -311,7 +320,7 @@ function pof_taxonomy_searchpage_get_equpments($taxonomy_base_key) {
 
 function pof_taxonomy_searchpage_equpments() {
 	$taxonomy_base_key = "equpment";
-	$items = pof_taxonomy_searchpage_get_equpments($taxonomy_base_key);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Tarvikkeet";
 	$title2 = "Tarvike";
 
@@ -364,7 +373,7 @@ function pof_taxonomy_searchpage_get_skillareas($taxonomy_base_key) {
 
 function pof_taxonomy_searchpage_skillareas($taxonomy_base_key) {
 	$taxonomy_base_key = "skillarea";
-	$items = pof_taxonomy_searchpage_get_skillareas($taxonomy_base_key);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Taitoalueet";
 	$title2 = "Taitoalue";
 

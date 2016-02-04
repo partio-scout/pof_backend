@@ -63,7 +63,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "suoritus_valmistelu_kesto")) 
 
 if ($filter_tags == "all" || strstr($filter_tags, "tarvikkeet")) {
 	//Equipments
-	$item_tax_key = 'equpments';
+	$item_tax_key = 'equpment';
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key);
 	$ret->tarvikkeet = pof_pages_get_tags_searchpage($items, $item_tax_key);
 }
