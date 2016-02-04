@@ -364,7 +364,7 @@ function pof_taxonomy_searchpage_get_skillareas($taxonomy_base_key) {
 
 function pof_taxonomy_searchpage_skillareas($taxonomy_base_key) {
 	$taxonomy_base_key = "skillarea";
-	$items = pof_taxonomy_searchpage_get_skillareas();
+	$items = pof_taxonomy_searchpage_get_skillareas($taxonomy_base_key);
 	$title = "Taitoalueet";
 	$title2 = "Taitoalue";
 
