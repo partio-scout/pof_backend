@@ -264,7 +264,7 @@ function pof_taxonomy_searchpage_taskpreparationduration() {
 
 	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
 }
-
+/*
 function pof_taxonomy_searchpage_get_equpments() {
 	$ret = array();
 
@@ -274,18 +274,18 @@ function pof_taxonomy_searchpage_get_equpments() {
 	
 	return $ret;
 
-}
+}*/
 
 
 function pof_taxonomy_searchpage_equpments() {
 	$taxonomy_base_key = "equpment";
-	$items = pof_taxonomy_searchpage_get_equpments();
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Tarvikkeet";
 	$title2 = "Tarvike";
 
 	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
 }
-
+/*
 function pof_taxonomy_searchpage_get_skillareas() {
 	$ret = array();
 
@@ -295,12 +295,12 @@ function pof_taxonomy_searchpage_get_skillareas() {
 	
 	return $ret;
 
-}
+}*/
 
 
 function pof_taxonomy_searchpage_skillareas() {
 	$taxonomy_base_key = "skillarea";
-	$items = pof_taxonomy_searchpage_get_skillareas();
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Taitoalueet";
 	$title2 = "Taitoalue";
 
