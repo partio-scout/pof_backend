@@ -264,43 +264,107 @@ function pof_taxonomy_searchpage_taskpreparationduration() {
 
 	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
 }
-/*
+
 function pof_taxonomy_searchpage_get_equpments() {
-	$ret = array();
+	$all_items = array();
 
 	foreach (get_terms('pof_tax_equipment') as $term) {
-		$ret[$term->slug] = $term->name;
+		$all_items[$term->slug] = $term->name;
 	}
+	
+    $ret = array();
+
+	global $wpdb;
+
+	$table_name = pof_taxonomy_searchpage_get_table_name();
+
+//    $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower);
+
+	$searchpage_res = $wpdb->get_results( 
+		"
+		SELECT taxonomy_slug
+		FROM " . pof_taxonomy_searchpage_get_table_name() . "
+		WHERE taxonomy_base = '".$taxonomy_base_key."'
+		"
+	, ARRAY_N);
+
+    $enabled_keys = array();
+
+    foreach($searchpage_res as $search_result) {
+        array_push($enabled_keys, $search_result[0]);
+    }
+
+    foreach ($all_items as $item_key => $item) {
+        $ret[$item_key] = new stdClass();
+        $ret[$item_key]->title = $item;
+        $ret[$item_key]->enabled = false;
+        if (in_array($taxonomy_base_key."::".$item_key, $enabled_keys) ) {
+            $ret[$item_key]->enabled = true;
+        }
+
+    }
 	
 	return $ret;
 
-}*/
+}
 
 
 function pof_taxonomy_searchpage_equpments() {
 	$taxonomy_base_key = "equpment";
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_searchpage_get_equpments();
 	$title = "Tarvikkeet";
 	$title2 = "Tarvike";
 
 	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
 }
-/*
+
 function pof_taxonomy_searchpage_get_skillareas() {
-	$ret = array();
+	$all_items = array();
 
 	foreach (get_terms('pof_tax_skillarea') as $term) {
-		$ret[$term->slug] = $term->name;
+		$all_items[$term->slug] = $term->name;
 	}
+
+    $ret = array();
+
+	global $wpdb;
+
+	$table_name = pof_taxonomy_searchpage_get_table_name();
+
+//    $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower);
+
+	$searchpage_res = $wpdb->get_results( 
+		"
+		SELECT taxonomy_slug
+		FROM " . pof_taxonomy_searchpage_get_table_name() . "
+		WHERE taxonomy_base = '".$taxonomy_base_key."'
+		"
+	, ARRAY_N);
+
+    $enabled_keys = array();
+
+    foreach($searchpage_res as $search_result) {
+        array_push($enabled_keys, $search_result[0]);
+    }
+
+    foreach ($all_items as $item_key => $item) {
+        $ret[$item_key] = new stdClass();
+        $ret[$item_key]->title = $item;
+        $ret[$item_key]->enabled = false;
+        if (in_array($taxonomy_base_key."::".$item_key, $enabled_keys) ) {
+            $ret[$item_key]->enabled = true;
+        }
+
+    }
 	
 	return $ret;
 
-}*/
+}
 
 
 function pof_taxonomy_searchpage_skillareas() {
 	$taxonomy_base_key = "skillarea";
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_searchpage_get_skillareas();
 	$title = "Taitoalueet";
 	$title2 = "Taitoalue";
 
