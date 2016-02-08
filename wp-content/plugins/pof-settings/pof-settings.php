@@ -27,9 +27,6 @@ include( plugin_dir_path( __FILE__ ) . 'pof-settings-helpers.php');
 
 add_action( 'admin_menu', 'pof_settings_menu' );
 
-
-register_activation_hook( __FILE__, 'pof_taxonomy_icons_install' );
-
 global $pof_settings_db_version;
 $pof_settings_db_version = '1.0';
 
