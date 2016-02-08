@@ -77,7 +77,7 @@ function pof_translation_status_content_get_tasks($lang, $taskgroup_id, $indenta
 			$the_query->the_post();
 
 			// try to avoid infinite loops
-			if ($the_query->post->ID == $parent_id) {
+			if ($the_query->post->ID == $taskgroup_id) {
 				continue;
 			}
                         
@@ -133,7 +133,7 @@ function pof_translation_status_content_get_taskgroups($lang, $taskgroup_id, $in
 			$the_query->the_post();
 
 			// try to avoid infinite loops
-			if ($the_query->post->ID == $parent_id) {
+			if ($the_query->post->ID == $taskgroup_id) {
 				continue;
 			}
                         
@@ -232,7 +232,7 @@ function pof_translation_status_get_content($lang, $agegroup_id) {
 			$the_query->the_post();
 
 			// try to avoid infinite loops
-			if ($the_query->post->ID == $parent_id) {
+			if ($the_query->post->ID == $agegroup_id) {
 				continue;
 			}
                         
