@@ -199,6 +199,7 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
 	        } else {
 		        echo "SUGGESTION <a href=\"/wp-admin/post.php?post=" . $post->ID . "&action=edit\" target=\"_blank\">".$title."</a> FOUND; SKIPPING<br />";
 	        }
+            $post = null;
 
             
 
