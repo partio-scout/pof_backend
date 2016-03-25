@@ -1,27 +1,27 @@
 <?php
 
 
-function pof_translation_status_generic() {
+function pof_content_status_generic() {
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 	echo '<div class="wrap">';
 	echo '<h1>POF Yleiset status</h1>';
 
-    echo pof_translation_status_generic_get_form();
+    echo pof_content_status_generic_get_form();
 
 	echo '</div>';
 
 	if (   isset($_POST)
 		&& isset($_POST["agegroup"])) {
 	    echo '<div class="wrap">';
-        pof_translation_status_generic_get_content($_POST["agegroup"]);
+        pof_content_status_generic_get_content($_POST["agegroup"]);
     	echo '</div>';
     }
 
 }
 
-function pof_translation_status_generic_get_form() {
+function pof_content_status_generic_get_form() {
     $ret = "";
 
     
@@ -51,29 +51,35 @@ function pof_translation_status_generic_get_form() {
 
 }
 
-function pof_translation_status_generic_get_content($agegroup_id) {
+function pof_content_status_generic_get_content($agegroup_id) {
     
 ?>
 
     <style>
     
-    #pof_translation_status_table td {
-        padding: 1px;
-
+    #pof_content_status_table td {
+        padding: 2px;
+        text-align: center;
     }
 
-    .pof_translation_status_black {
+    .pof_content_status_black {
         background: black;
         text-align: center;
         color: white;
     }
-    .pof_translation_status_green {
+    .pof_content_status_green {
         background: green;
         text-align: center;
         color: white;
     }
 
-    .pof_translation_status_counters {
+     .pof_content_status_grey {
+        background: #808080;
+        text-align: center;
+        color: white;
+    }
+
+    .pof_content_status_counters {
         text-align: center;
         font-weight: bold;
     }
@@ -86,18 +92,20 @@ function pof_translation_status_generic_get_content($agegroup_id) {
     
 ?>
 
-    <table cellpadding="1" cellspacing="1" border="1" id="pof_translation_status_table">
+    <table cellpadding="1" cellspacing="1" border="1" id="pof_content_status_table">
         <thead>
         <tr>
             <th colspan="2"></th>
             <th rowspan="2">Vapaavalintaisten<br />lukum&auml;&auml;r&auml;</th>
-            <th colspan="2">Yl&auml;k&auml;site</th>
+            <th colspan="3">Yl&auml;k&auml;site</th>
+            <th colspan="8"></th>
             <th colspan="<?php echo $langs_count; ?>">Vinkit</th>
         </tr>
             <tr>
                 <th>Tyyppi</th>
                 <th>Otsikko</th>
-                <th>Paketti</th>
+                <th>T&auml;m&auml; paketti</th>
+                <th>Ali paketti</th>
                 <th>Suorite</th>
                 <th>Taitoalueet</th>
                 <th>Tarvikkeet</th>
@@ -149,25 +157,15 @@ function pof_translation_status_generic_get_content($agegroup_id) {
                 <td>Paketti</td>
                 <td><?php echo "<a href=\"/wp-admin/post.php?post=" . $the_query->post->ID . "&action=edit\" target=\"_blank\">" . $the_query->post->post_title . "</a>"; ?></td>
                 <td><?php echo get_field("taskgroup_additional_tasks_count", $the_query->post->ID); ?></td>
-                <td><?php echo get_field("task_task_term", $the_query->post->ID); ?></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <?php
-            foreach ($langs as $lang) {
-                echo "<td></td>";
-            }
-                ?>
+                <td><?php echo get_field("taskgroup_taskgroup_term", $the_query->post->ID); ?></td>
+                <td><?php echo get_field("taskgroup_subtaskgroup_term", $the_query->post->ID); ?></td>
+                <td><?php echo get_field("taskgroup_subtask_term", $the_query->post->ID); ?></td>
+                <td colspan="8" class="pof_content_status_grey"></td>
+                <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
 
             <?php
-            pof_translation_status_generic_content_get_taskgroups($the_query->post->ID, 1);
+            pof_content_status_generic_content_get_taskgroups($the_query->post->ID, 1, get_field("taskgroup_subtaskgroup_term", $the_query->post->ID), get_field("taskgroup_subtask_term", $the_query->post->ID));
 		}
 	}
     wp_reset_query();
@@ -176,9 +174,12 @@ function pof_translation_status_generic_get_content($agegroup_id) {
         <tr>
             <td colspan="5"></td>
             <?php
-    echo pof_translation_status_get_counters_cell("pof_tax_skillarea");
-    echo pof_translation_status_get_counters_cell("pof_tax_equipment");
-    echo pof_translation_status_get_counters_cell("task_mandatory");
+    echo pof_content_status_get_counters_cell("pof_tax_skillarea");
+    echo pof_content_status_get_counters_cell("pof_tax_equipment");
+    echo pof_content_status_get_counters_cell("task_mandatory");
+    
+    echo pof_content_status_get_counters_cell("task_groupsize");
+    echo pof_content_status_get_counters_cell("task_place_of_performance");
 
             ?>
 
@@ -186,9 +187,14 @@ function pof_translation_status_generic_get_content($agegroup_id) {
         <tr>
             <td colspan="5"></td>
             <?php
-    echo pof_translation_status_get_counters_cell_pros("pof_tax_skillarea");
-    echo pof_translation_status_get_counters_cell_pros("pof_tax_equipment");
-    echo pof_translation_status_get_counters_cell_pros("task_mandatory");
+    echo pof_content_status_get_counters_cell_pros("pof_tax_skillarea");
+    echo pof_content_status_get_counters_cell_pros("pof_tax_equipment");
+    echo pof_content_status_get_counters_cell_pros("task_mandatory");
+    echo pof_content_status_get_counters_cell_pros("task_groupsize");
+    echo pof_content_status_get_counters_cell_pros("task_place_of_performance");
+
+
+
 
             ?>
         </tr>
@@ -199,7 +205,7 @@ function pof_translation_status_generic_get_content($agegroup_id) {
 
 }
 
-function pof_translation_status_generic_content_get_taskgroups($taskgroup_id, $indentation = 0) {
+function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $indentation = 0, $taskgroup_parent_term, $task_parent_term) {
     $langs = pof_settings_get_all_languages();
     $args = array(
 		'numberposts' => -1,
@@ -235,26 +241,54 @@ function pof_translation_status_generic_content_get_taskgroups($taskgroup_id, $i
                 <td>Paketti</td>
                 <td><?php echo $intendation_str . "<a href=\"/wp-admin/post.php?post=" . $the_query->post->ID . "&action=edit\" target=\"_blank\">" . $the_query->post->post_title . "</a>"; ?></td>
                 <td><?php echo get_field("taskgroup_additional_tasks_count", $the_query->post->ID); ?></td>
-                <td><?php echo get_field("task_task_term", $the_query->post->ID); ?></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <?php
-                foreach ($langs as $lang) {
-                    echo "<td></td>";
-                }
+                <td>
+                    <?php
+                        $taskgroup_term =  get_field("taskgroup_taskgroup_term", $the_query->post->ID); 
+                        if ($taskgroup_term == "" &&  $taskgroup_parent_term != "") {
+                            echo "(".$taskgroup_parent_term.")";
+                        } else {
+                            echo $taskgroup_term;
+                            $taskgroup_parent_term = $taskgroup_term;
+                        }
+
                     ?>
+
+
+                </td>
+                <td>
+                    <?php
+            $taskgroup_term =  get_field("taskgroup_subtaskgroup_term", $the_query->post->ID); 
+            if ($taskgroup_term == "" &&  $taskgroup_parent_term != "") {
+                echo "(".$taskgroup_parent_term.")";
+            } else {
+                echo $taskgroup_term;
+                $taskgroup_parent_term = $taskgroup_term;
+            }
+
+                   ?>
+
+                </td>
+                <td>
+                    <?php
+            $task_term =  get_field("taskgroup_subtask_term", $the_query->post->ID); 
+            if ($task_term == "" &&  $task_parent_term != "") {
+                echo "(".$task_parent_term.")";
+            } else {
+                echo $task_term;
+                $task_parent_term = $task_term;
+            }
+
+                    ?>
+
+                </td>
+                <td colspan="8" class="pof_content_status_grey"></td>
+
+                <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
 
             <?php
-            pof_translation_status_generic_content_get_taskgroups($the_query->post->ID, $indentation + 1);
-            pof_translation_status_generic_content_get_tasks($the_query->post->ID, $indentation + 1);
+            pof_content_status_generic_content_get_taskgroups($the_query->post->ID, $indentation + 1, $taskgroup_term, $taskgroup_parent_term);
+            pof_content_status_generic_content_get_tasks($the_query->post->ID, $indentation + 1, $task_parent_term);
 		}
 	}
 
@@ -262,7 +296,7 @@ function pof_translation_status_generic_content_get_taskgroups($taskgroup_id, $i
 }
 
 
-function pof_translation_status_generic_content_get_tasks($taskgroup_id, $indentation = 0) {
+function pof_content_status_generic_content_get_tasks($taskgroup_id, $indentation = 0, $task_parent_term) {
 
     $args = array(
 		'numberposts' => -1,
@@ -297,18 +331,27 @@ function pof_translation_status_generic_content_get_tasks($taskgroup_id, $indent
             <tr>
                 <td>Aktiviteetti</td>
                 <td><?php echo $intendation_str . "<a href=\"/wp-admin/post.php?post=" . $the_query->post->ID . "&action=edit\" target=\"_blank\">" . $the_query->post->post_title . "</a>"; ?></td>
-                <td></td>
-                <td></td>
-                <td><?php echo get_field("task_task_term", $the_query->post->ID); ?></td>
-                <?php pof_translation_status_get_tag_count_cell("pof_tax_skillarea", $the_query->post->ID); ?>
-                <?php pof_translation_status_get_tag_count_cell("pof_tax_equipment", $the_query->post->ID); ?>
-                <?php pof_translation_status_get_checkbox_cell("task_mandatory", $the_query->post->ID); ?>
-                <?php pof_translation_status_get_field_count_cell("task_groupsize", $the_query->post->ID); ?>
-                <?php pof_translation_status_get_field_count_cell("task_place_of_performance", $the_query->post->ID); ?>
+                <td colspan="3" class="pof_content_status_grey"></td>
+                <td>
+                    <?php
+                        $task_term = get_field("task_task_term", $the_query->post->ID);
+                        if ($task_term == "" && $task_parent_term != "") {
+                            $task_term = "(" . $task_parent_term . ")";
+                        }
+                        echo $task_term;
+                        ?>
+
+
+                </td>
+                <?php pof_content_status_get_tag_count_cell("pof_tax_skillarea", $the_query->post->ID); ?>
+                <?php pof_content_status_get_tag_count_cell("pof_tax_equipment", $the_query->post->ID); ?>
+                <?php pof_content_status_get_checkbox_cell("task_mandatory", $the_query->post->ID); ?>
+                <?php pof_content_status_get_field_count_cell("task_groupsize", $the_query->post->ID); ?>
+                <?php pof_content_status_get_field_count_cell("task_place_of_performance", $the_query->post->ID); ?>
                 <td><?php echo get_field("task_duration", $the_query->post->ID); ?></td>
                 <td><?php echo get_field("task_preparationduration", $the_query->post->ID); ?></td>
                 <td><?php echo get_field("task_level", $the_query->post->ID); ?></td>
-                <?php pof_translation_status_get_suggestions($the_query->post->ID); ?>
+                <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
 
             <?php
@@ -318,7 +361,7 @@ function pof_translation_status_generic_content_get_tasks($taskgroup_id, $indent
     wp_reset_query();
 }
 
-function pof_translation_status_get_suggestions($post_id) {
+function pof_content_status_get_suggestions($post_id) {
 
     $tmp = array();
 
@@ -357,7 +400,7 @@ function pof_translation_status_get_suggestions($post_id) {
 
 }
 
-function pof_translation_status_get_tag_count_cell($taxonomy, $post_id) {
+function pof_content_status_get_tag_count_cell($taxonomy, $post_id) {
     $tags = wp_get_post_terms($post_id, $taxonomy);
     $count = count($tags);
 
@@ -370,10 +413,10 @@ function pof_translation_status_get_tag_count_cell($taxonomy, $post_id) {
     }
     $field_counters[$taxonomy]->total++;
 
-    $class = "pof_translation_status_black";
+    $class = "pof_content_status_black";
 
     if ($count > 0) {
-        $class = "pof_translation_status_green";
+        $class = "pof_content_status_green";
         $field_counters[$taxonomy]->green++;
     }
 
@@ -382,25 +425,25 @@ function pof_translation_status_get_tag_count_cell($taxonomy, $post_id) {
     <?php
 }
 
-function pof_translation_status_get_field_count_cell($field, $post_id) {
+function pof_content_status_get_field_count_cell($field, $post_id) {
     $res = get_field($field, $post_id);
     
     $count = count($res);
 
     global $field_counters;
 
-    if (!array_key_exists($taxonomy, $field_counters)) {
-        $field_counters[$taxonomy] = new stdClass();
-        $field_counters[$taxonomy]->total = 0;
-        $field_counters[$taxonomy]->green = 0;
+    if (!array_key_exists($field, $field_counters)) {
+        $field_counters[$field] = new stdClass();
+        $field_counters[$field]->total = 0;
+        $field_counters[$field]->green = 0;
     }
-    $field_counters[$taxonomy]->total++;
+    $field_counters[$field]->total++;
 
-    $class = "pof_translation_status_black";
+    $class = "pof_content_status_black";
 
     if ($count > 0) {
-        $class = "pof_translation_status_green";
-        $field_counters[$taxonomy]->green++;
+        $class = "pof_content_status_green";
+        $field_counters[$field]->green++;
     }
 
     ?>
@@ -408,7 +451,7 @@ function pof_translation_status_get_field_count_cell($field, $post_id) {
     <?php
 }
 
-function pof_translation_status_get_checkbox_cell($taxonomy, $post_id) {
+function pof_content_status_get_checkbox_cell($taxonomy, $post_id) {
     global $field_counters;
 
     if (!array_key_exists($taxonomy, $field_counters)) {
@@ -418,9 +461,9 @@ function pof_translation_status_get_checkbox_cell($taxonomy, $post_id) {
     }
     $field_counters[$taxonomy]->total++;
 
-    $class = "pof_translation_status_black";
+    $class = "pof_content_status_black";
     if (get_field($taxonomy, $post_id)) {
-        $class = "pof_translation_status_green";
+        $class = "pof_content_status_green";
         $field_counters[$taxonomy]->green++;
     }
 
@@ -429,22 +472,22 @@ function pof_translation_status_get_checkbox_cell($taxonomy, $post_id) {
     <?php
 }
 
-function pof_translation_status_get_counters_cell($field) {
+function pof_content_status_get_counters_cell($field) {
     global $field_counters;
-    return '<td class="pof_translation_status_counters">'.$field_counters[$field]->green . " / " . $field_counters[$field]->total."</td>";
+    return '<td class="pof_content_status_counters">'.$field_counters[$field]->green . " / " . $field_counters[$field]->total."</td>";
 }
 
-function pof_translation_status_get_counters_cell_pros($field) {
+function pof_content_status_get_counters_cell_pros($field) {
     global $field_counters;
 
     $pros = round(($field_counters[$field]->green  /  $field_counters[$field]->total * 100), 2);
 
-    return '<td class="pof_translation_status_counters">'. $pros." %</td>";
+    return '<td class="pof_content_status_counters">'. $pros." %</td>";
 }
 
 $field_counters = array();
 
-function pof_translation_status_get_field_cell($field, $post_id) {
+function pof_content_status_get_field_cell($field, $post_id) {
 
     global $field_counters;
 
@@ -458,10 +501,10 @@ function pof_translation_status_get_field_cell($field, $post_id) {
 
     $content = get_field($field,$post_id);
 
-    $class = "pof_translation_status_black";
+    $class = "pof_content_status_black";
 
     if (strlen($content) > 3) {
-        $class = "pof_translation_status_green";
+        $class = "pof_content_status_green";
         $field_counters[$field]->green++;
     }
 
@@ -472,7 +515,7 @@ function pof_translation_status_get_field_cell($field, $post_id) {
     <?php
 }
 
-function pof_translation_status_get_content_cell($content, $post_id) {
+function pof_content_status_get_content_cell($content, $post_id) {
 
     global $field_counters;
 
@@ -484,10 +527,10 @@ function pof_translation_status_get_content_cell($content, $post_id) {
 
     $field_counters['content']->total++;
 
-    $class = "pof_translation_status_black";
+    $class = "pof_content_status_black";
 
     if (strlen($content) > 3) {
-        $class = "pof_translation_status_green";
+        $class = "pof_content_status_green";
         $field_counters['content']->green ++;
     }
 
