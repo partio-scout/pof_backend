@@ -39,7 +39,7 @@ function AddPofApiCustomTaxonomies() {
 			'menu_name' => __( 'Kasvatustavoitteen avainsanat' )
 		),
 		'rewrite' => array(
-			'slug' => 'equipment',
+			'slug' => 'growth_target',
 			'with_front' => false,
 			'hierarchical' => false
 		)

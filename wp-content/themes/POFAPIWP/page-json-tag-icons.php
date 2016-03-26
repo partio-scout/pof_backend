@@ -68,6 +68,11 @@ $item_tax_key = 'equpments';
 $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
 $ret->tarvikkeet = pof_pages_get_tag_icons($agegroups, $items, $item_tax_key);
 
+//Growth targets
+$item_tax_key = 'growth_target';
+$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+$ret->kasvatustavoitteet = pof_pages_get_tag_icons($agegroups, $items, $item_tax_key);
+
 //Taitoalueet
 $item_tax_key = 'skillarea';
 $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);

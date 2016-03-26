@@ -66,6 +66,7 @@ function pof_taxonomy_searchpage_menu() {
 
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_searchpage_equpments-handle', 'pof_taxonomy_searchpage_equpments');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_searchpage_skillareas-handle', 'pof_taxonomy_searchpage_skillareas');
+    add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'manage_options', 'pof_taxonomy_searchpage_growthtarget-handle', 'pof_taxonomy_searchpage_growthtarget');
 
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Suoritepaketin yl&auml;k&auml;site', 'Suoritepaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_searchpage_taskgroupterm-handle', 'pof_taxonomy_searchpage_taskgroupterm');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Suoritteen yl&auml;k&auml;site', 'Suoritteen yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_searchpage_taskterm-handle', 'pof_taxonomy_searchpage_taskterm');
@@ -376,6 +377,15 @@ function pof_taxonomy_searchpage_skillareas($taxonomy_base_key) {
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Taitoalueet";
 	$title2 = "Taitoalue";
+
+	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_searchpage_growthtarget($taxonomy_base_key) {
+	$taxonomy_base_key = "growth_target";
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$title = "Kasvatustavoitteen avainsanat";
+	$title2 = "Kasvatustavoitteen avainsana";
 
 	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
 }

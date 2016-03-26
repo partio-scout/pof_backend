@@ -98,6 +98,13 @@ if ($filter_tags == "all" || strstr($filter_tags, "taitoalueet")) {
 	$ret->taitoalueet = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
 
+if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
+	//Kasvatustavoitteet
+	$item_tax_key = 'growth_target';
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);
+}
+
 if ($filter_tags == "all" || strstr($filter_tags, "yleiset")) {
 	//Yleiset
 	$item_tax_key = 'common';
