@@ -154,6 +154,46 @@ function pof_importer_get_skillareas($areas_str) {
 	
 }
 
+$pof_importer_driveimport_growth_targets = array();
+
+function pof_importer_get_growth_targets($areas_str) {
+
+	global $wpdb;
+
+	global $pof_importer_driveimport_growth_targets;
+
+	if (count($pof_importer_driveimport_growth_targets) == 0)
+	{
+		$pof_importer_driveimport_growth_targets = pof_taxonomy_translate_get_growthtargets();
+	}
+
+	$ret = array();
+
+	$parts = explode(',', $areas_str);
+
+	foreach ($parts as $part)
+	{
+		$part = trim($part);
+
+		$sanitized_part = sanitize_title_with_dashes(pof_importer_normalize_key($part));
+
+		$part_key = array_search(strtolower($part), $pof_importer_driveimport_growth_targets);
+
+		if ($part_key == false) {
+			wp_insert_term($part, "pof_tax_growth_target", array("slug" => $sanitized_part));
+			array_push($ret, $sanitized_part);
+			$pof_importer_driveimport_growth_targets = pof_taxonomy_translate_get_growthtargets();
+
+		} else {
+			array_push($ret, $part_key);
+		}
+
+	}
+
+	return $ret;
+
+}
+
 
 $pof_importer_driveimporter_places = array();
 function pof_importer_get_places($places_str) {

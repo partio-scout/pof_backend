@@ -177,7 +177,7 @@ switch ($post_type) {
 
 		$jsonItem->level = pof_normalize_task_level(get_post_meta($mypost->ID, "task_level", true));
 		$jsonItem->leader_tasks = get_post_meta($mypost->ID, "leader_tasks_".strtolower($lang), true);
-		$jsonItem->growth_target = get_post_meta($mypost->ID, "growth_target_".strtolower($lang), true);
+//		$jsonItem->growth_target = get_post_meta($mypost->ID, "growth_target_".strtolower($lang), true);
 
 
 	break;

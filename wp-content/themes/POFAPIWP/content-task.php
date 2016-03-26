@@ -56,12 +56,17 @@
 		?>
 		</p>
 
-		<h3>Kasvatustavoite</h3>
+		<h3>Kasvatustavoitteet</h3>
 		<p>
 
-		<?php
-			echo get_post_meta($post->ID, "growth_target_fi", true);
-		?>
+        <?php
+		$kasvatustavoitteet_tags = wp_get_post_terms($post->ID, 'pof_tax_growth_target');
+		foreach ($kasvatustavoitteet_tags as $kasvatustavoitteet_tag) {
+			echo '<a href="/growth_target/'.$kasvatustavoitteet_tag->slug .'">' . $kasvatustavoitteet_tag->name . "</a>, ";
+
+		}
+        ?>
+
 		</p>
 
 		<h3>Pakollinen</h3>

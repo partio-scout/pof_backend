@@ -203,7 +203,7 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 		update_field("ingress", $row['E'], $post_id);
 		update_field("leader_tasks_fi", $row['G'], $post_id);
-		update_field("growth_target_fi", $row['H'], $post_id);
+		
 		$post->post_title = trim($row['D']);
 		$post->post_content = $row['F'];
 		$post->post_author = get_current_user_id();
@@ -224,9 +224,15 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 		echo " updated places, ".count($places)." items,";
 
-		$terms = pof_importer_get_skillareas(trim($row['I']));
+		$skillareas = pof_importer_get_skillareas(trim($row['I']));
 
-		wp_set_post_terms( $post_id, $terms, "pof_tax_skillarea", false );
+		wp_set_post_terms( $post_id, $skillareas, "pof_tax_skillarea", false );
+
+        $growth_targets = pof_importer_get_growth_targets(trim($row['H']));
+
+		wp_set_post_terms( $post_id, $growth_targets, "pof_tax_growth_target", false );
+
+//        update_field("growth_target_fi", $row['H'], $post_id);
 
 		wp_update_post($post, $wp_error);
 	}

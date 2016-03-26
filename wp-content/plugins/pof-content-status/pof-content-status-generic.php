@@ -109,6 +109,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
                 <th>Suorite</th>
                 <th>Taitoalueet</th>
                 <th>Tarvikkeet</th>
+                <th>Kasvatustavoitteen avainsana</th>
                 <th>Pakollinen</th>
                 <th>Ryhm&auml;koko</th>
                 <th>Paikka</th>
@@ -160,7 +161,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
                 <td><?php echo get_field("taskgroup_taskgroup_term", $the_query->post->ID); ?></td>
                 <td><?php echo get_field("taskgroup_subtaskgroup_term", $the_query->post->ID); ?></td>
                 <td><?php echo get_field("taskgroup_subtask_term", $the_query->post->ID); ?></td>
-                <td colspan="8" class="pof_content_status_grey"></td>
+                <td colspan="9" class="pof_content_status_grey"></td>
                 <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
 
@@ -176,6 +177,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
             <?php
     echo pof_content_status_get_counters_cell("pof_tax_skillarea");
     echo pof_content_status_get_counters_cell("pof_tax_equipment");
+    echo pof_content_status_get_counters_cell("pof_tax_growth_target");
     echo pof_content_status_get_counters_cell("task_mandatory");
     
     echo pof_content_status_get_counters_cell("task_groupsize");
@@ -189,6 +191,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
             <?php
     echo pof_content_status_get_counters_cell_pros("pof_tax_skillarea");
     echo pof_content_status_get_counters_cell_pros("pof_tax_equipment");
+    echo pof_content_status_get_counters_cell_pros("pof_tax_growth_target");
     echo pof_content_status_get_counters_cell_pros("task_mandatory");
     echo pof_content_status_get_counters_cell_pros("task_groupsize");
     echo pof_content_status_get_counters_cell_pros("task_place_of_performance");
@@ -281,7 +284,7 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
                     ?>
 
                 </td>
-                <td colspan="8" class="pof_content_status_grey"></td>
+                <td colspan="9" class="pof_content_status_grey"></td>
 
                 <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
@@ -345,6 +348,7 @@ function pof_content_status_generic_content_get_tasks($taskgroup_id, $indentatio
                 </td>
                 <?php pof_content_status_get_tag_count_cell("pof_tax_skillarea", $the_query->post->ID); ?>
                 <?php pof_content_status_get_tag_count_cell("pof_tax_equipment", $the_query->post->ID); ?>
+                <?php pof_content_status_get_tag_count_cell("pof_tax_growth_target", $the_query->post->ID); ?>
                 <?php pof_content_status_get_checkbox_cell("task_mandatory", $the_query->post->ID); ?>
                 <?php pof_content_status_get_field_count_cell("task_groupsize", $the_query->post->ID); ?>
                 <?php pof_content_status_get_field_count_cell("task_place_of_performance", $the_query->post->ID); ?>
@@ -355,10 +359,25 @@ function pof_content_status_generic_content_get_tasks($taskgroup_id, $indentatio
             </tr>
 
             <?php
+
+            // Move growth target from field to tab
+            pof_content_status_migration_growth_target_to_tag($the_query->post->ID);
 		}
 	}
 
     wp_reset_query();
+}
+
+function pof_content_status_migration_growth_target_to_tag($post_id) {
+    $content = trim(get_post_meta($post_id, "growth_target_fi", true));
+
+    if ($content != "") {
+        $growth_targets = pof_importer_get_growth_targets(trim($content));
+
+		wp_set_post_terms( $post_id, $growth_targets, "pof_tax_growth_target", false );
+        update_post_meta($post_id, "growth_target_fi", "");
+//        update_field("growth_target_fi", "", $post_id);
+    }
 }
 
 function pof_content_status_get_suggestions($post_id) {

@@ -61,13 +61,12 @@ function pof_content_status_content_get_tasks($lang, $taskgroup_id, $indentation
                 echo pof_content_status_localization_get_field_cell("ingress", $the_query->post->ID);
                 echo pof_content_status_localization_get_content_cell($the_query->post->post_content, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("leader_tasks_fi", $the_query->post->ID);
-                echo pof_content_status_localization_get_field_cell("growth_target_fi", $the_query->post->ID);
                 
                 echo pof_content_status_localization_get_field_cell("title_".$lang, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("ingress_".$lang, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("content_".$lang, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("leader_tasks_".$lang, $the_query->post->ID);
-                echo pof_content_status_localization_get_field_cell("growth_target_".$lang, $the_query->post->ID);
+//                echo pof_content_status_localization_get_field_cell("growth_target_".$lang, $the_query->post->ID);
                 ?>
             </tr>
 
@@ -119,13 +118,11 @@ function pof_content_status_localization_get_content_get_taskgroups($lang, $task
 
                 ?>
                 <td></td>
-                <td></td>
                 <?php
                 echo pof_content_status_localization_get_field_cell("title_".$lang, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("ingress_".$lang, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("content_".$lang, $the_query->post->ID);
                 ?>
-                <td></td>
                 <td></td>
             </tr>
 
@@ -172,8 +169,8 @@ function pof_content_status_localization_get_content($lang, $agegroup_id) {
         <thead>
         <tr>
             <th></th>
-            <th colspan="5">FI</th>
-            <th colspan="5"><?php echo $lang; ?></th>
+            <th colspan="4">FI</th>
+            <th colspan="4"><?php echo $lang; ?></th>
         </tr>
         <tr>
             <th>Tyyppi</th>
@@ -181,12 +178,10 @@ function pof_content_status_localization_get_content($lang, $agegroup_id) {
             <th>Ingressi</th>
             <th>Sis&auml;lt&ouml;</th>
             <th>Johtajan teht&auml;v&auml;</th>
-            <th>Kasvatustavoitteen avainsana</th>
             <th>Otsikko</th>
             <th>Ingressi</th>
             <th>Sis&auml;lt&ouml;</th>
             <th>Johtajan teht&auml;v&auml;</th>
-            <th>Kasvatustavoitteen avainsana</th>
         </tr>
         </thead>
         <tbody>
@@ -224,13 +219,11 @@ function pof_content_status_localization_get_content($lang, $agegroup_id) {
 
                 ?>
                 <td></td>
-                <td></td>
                 <?php
                 echo pof_content_status_localization_get_field_cell("title_".$lang, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("ingress_".$lang, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("content_".$lang, $the_query->post->ID);
                 ?>
-                <td></td>
                 <td></td>
             </tr>
 
@@ -248,13 +241,12 @@ function pof_content_status_localization_get_content($lang, $agegroup_id) {
             echo pof_content_status_localization_get_counters_cell("ingress");
             echo pof_content_status_localization_get_counters_cell("content");
             echo pof_content_status_localization_get_counters_cell("leader_tasks_fi");
-            echo pof_content_status_localization_get_counters_cell("growth_target_fi");
 
             echo pof_content_status_localization_get_counters_cell("title_".$lang);
             echo pof_content_status_localization_get_counters_cell("ingress_".$lang);
             echo pof_content_status_localization_get_counters_cell("content_".$lang);
             echo pof_content_status_localization_get_counters_cell("leader_tasks_".$lang);
-            echo pof_content_status_localization_get_counters_cell("growth_target_".$lang);
+//            echo pof_content_status_localization_get_counters_cell("growth_target_".$lang);
             ?>
 
         </tr>
@@ -265,13 +257,12 @@ function pof_content_status_localization_get_content($lang, $agegroup_id) {
             echo pof_content_status_localization_get_counters_cell_pros("ingress");
             echo pof_content_status_localization_get_counters_cell_pros("content");
             echo pof_content_status_localization_get_counters_cell_pros("leader_tasks_fi");
-            echo pof_content_status_localization_get_counters_cell_pros("growth_target_fi");
 
             echo pof_content_status_localization_get_counters_cell_pros("title_".$lang);
             echo pof_content_status_localization_get_counters_cell_pros("ingress_".$lang);
             echo pof_content_status_localization_get_counters_cell_pros("content_".$lang);
             echo pof_content_status_localization_get_counters_cell_pros("leader_tasks_".$lang);
-            echo pof_content_status_localization_get_counters_cell_pros("growth_target_".$lang);
+//            echo pof_content_status_localization_get_counters_cell_pros("growth_target_".$lang);
             ?>
 
         </tr>

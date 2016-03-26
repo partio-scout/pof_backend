@@ -111,8 +111,9 @@ function pof_taxonomy_icons_menu() {
 
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_icons_equpments-handle', 'pof_taxonomy_icons_equpments');
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_icons_skillareas-handle', 'pof_taxonomy_icons_skillareas');
+    add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'manage_options', 'pof_taxonomy_icons_growthtarget-handle', 'pof_taxonomy_icons_growthtarget');
 
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suoritepaketin yl&auml;k&auml;site', 'Suoritepaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_icons_taskgroupterm-handle', 'pof_taxonomy_icons_taskgroupterm');
+    add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suoritepaketin yl&auml;k&auml;site', 'Suoritepaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_icons_taskgroupterm-handle', 'pof_taxonomy_icons_taskgroupterm');
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suoritteen yl&auml;k&auml;site', 'Suoritteen yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_icons_taskterm-handle', 'pof_taxonomy_icons_taskterm');
 
 }
@@ -424,6 +425,28 @@ function pof_taxonomy_icons_taskterm() {
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Suoritepaketin yl&auml;k&auml;site";
 	$title2 = "Termi";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+
+function pof_taxonomy_icons_get_growthtargets() {
+	$ret = array();
+
+	foreach (get_terms('pof_tax_growth_target') as $term) {
+		$ret[$term->slug] = $term->name;
+	}
+
+	return $ret;
+
+}
+
+
+function pof_taxonomy_icons_growthtarget() {
+	$taxonomy_base_key = "growth_target";
+	$items = pof_taxonomy_icons_get_growthtargets();
+	$title = "Kasvatustavoitteen avainsanat";
+	$title2 = "Kasvatustavoitteen avainsana";
 
 	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
 }

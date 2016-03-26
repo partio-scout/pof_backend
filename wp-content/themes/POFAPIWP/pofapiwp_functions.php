@@ -434,114 +434,123 @@ function getJsonItemDetailsTaskgroup($jsonItem, $post, $lang) {
 
 
 function getJsonSubtaskgroupTerm($term, $lang = 'fi') {
-	$ret = new stdClass();
-	$ret->name = $term;
 
-	$tmp_name_single = pof_taxonomy_translate_get_translation('taskgroup_term', $term.'_single', 0, $lang, true);
-	$tmp_name_plural = pof_taxonomy_translate_get_translation('taskgroup_term', $term.'_plural', 0, $lang, true);
+    if ($term != "" && $term != false) {
 
-	if (   !empty($tmp_name_single)
-		&& !empty($tmp_name_plural)) {
-		$ret->single = $tmp_name_single[0]->content;
-		$ret->plural = $tmp_name_plural[0]->content;
-	} else {
-		switch ($term) {
-			default:
-			case "":
-				return null;
-				break;
-			case "jalki":
-				$ret->single = mb_convert_encoding("Jälki","UTF-8", "auto");
-				$ret->plural = mb_convert_encoding("Jäljet","UTF-8", "auto");
-				break;
-			case "kasvatusosio":
-				$ret->single = "Kasvatusosio";
-				$ret->plural = "Kasvatusosiot";
-				break;
-			case "ilmansuunta":
-				$ret->single = "Ilmansuunta";
-				$ret->plural = "Ilmansuunnat";
-				break;
-			case "taitomerkki":
-				$ret->single = "Taitomerkki";
-				$ret->plural = "Taitomerkit";
-				break;
-			case "tarppo":
-				$ret->single = "Tarppo";
-				$ret->plural = "Tarpot";
-				break;
-			case "ryhma":
-				$ret->single = mb_convert_encoding("Ryhmä","UTF-8", "auto");
-				$ret->plural = mb_convert_encoding("Ryhmät","UTF-8", "auto");
-				break;
-			case "aktiviteetti":
-				$ret->single = "Aktiviteetti";
-				$ret->plural = "Aktiviteetit";
-				break;
-			case "aihe":
-				$ret->single = "Aihe";
-				$ret->plural = "Aiheet";
-				break;
-			case "tasku":
-				$ret->single = "Tasku";
-				$ret->plural = "Taskut";
-				break;
-			case "rasti":
-				$ret->single = "Rasti";
-				$ret->plural = "Rastit";
-				break;
+	    $ret = new stdClass();
+	    $ret->name = $term;
 
-		}
-	}
+	    $tmp_name_single = pof_taxonomy_translate_get_translation('taskgroup_term', $term.'_single', 0, $lang, true);
+	    $tmp_name_plural = pof_taxonomy_translate_get_translation('taskgroup_term', $term.'_plural', 0, $lang, true);
 
-	
+	    if (   !empty($tmp_name_single)
+		    && !empty($tmp_name_plural)) {
+		    $ret->single = $tmp_name_single[0]->content;
+		    $ret->plural = $tmp_name_plural[0]->content;
+	    } else {
+		    switch ($term) {
+			    default:
+			    case "":
+				    return null;
+				    break;
+			    case "jalki":
+				    $ret->single = mb_convert_encoding("Jälki","UTF-8", "auto");
+				    $ret->plural = mb_convert_encoding("Jäljet","UTF-8", "auto");
+				    break;
+			    case "kasvatusosio":
+				    $ret->single = "Kasvatusosio";
+				    $ret->plural = "Kasvatusosiot";
+				    break;
+			    case "ilmansuunta":
+				    $ret->single = "Ilmansuunta";
+				    $ret->plural = "Ilmansuunnat";
+				    break;
+			    case "taitomerkki":
+				    $ret->single = "Taitomerkki";
+				    $ret->plural = "Taitomerkit";
+				    break;
+			    case "tarppo":
+				    $ret->single = "Tarppo";
+				    $ret->plural = "Tarpot";
+				    break;
+			    case "ryhma":
+				    $ret->single = mb_convert_encoding("Ryhmä","UTF-8", "auto");
+				    $ret->plural = mb_convert_encoding("Ryhmät","UTF-8", "auto");
+				    break;
+			    case "aktiviteetti":
+				    $ret->single = "Aktiviteetti";
+				    $ret->plural = "Aktiviteetit";
+				    break;
+			    case "aihe":
+				    $ret->single = "Aihe";
+				    $ret->plural = "Aiheet";
+				    break;
+			    case "tasku":
+				    $ret->single = "Tasku";
+				    $ret->plural = "Taskut";
+				    break;
+			    case "rasti":
+				    $ret->single = "Rasti";
+				    $ret->plural = "Rastit";
+				    break;
 
-	return $ret;
+		    }
+	    }
+
+	    return $ret;
+    }
+
+    return null;
 }
 
 function getJsonTaskTerm($term, $lang = 'fi') {
-	$ret = new stdClass();
-	$ret->name = $term;
+    if ($term != "" && $term != false) {
+	    $ret = new stdClass();
+	    $ret->name = $term;
 
-	$tmp_name_single = pof_taxonomy_translate_get_translation('task_term', $term.'_single', 0, $lang, true);
-	$tmp_name_plural = pof_taxonomy_translate_get_translation('task_term', $term.'_plural', 0, $lang, true);
+        $tmp_name_single = pof_taxonomy_translate_get_translation('task_term', $term.'_single', 0, $lang, true);
+        $tmp_name_plural = pof_taxonomy_translate_get_translation('task_term', $term.'_plural', 0, $lang, true);
 
-	if (   !empty($tmp_name_single)
-		&& !empty($tmp_name_plural)) {
-		$ret->single = $tmp_name_single[0]->content;
-		$ret->plural = $tmp_name_plural[0]->content;
-	} else {
+        if (   !empty($tmp_name_single)
+            && !empty($tmp_name_plural)) {
+            $ret->single = $tmp_name_single[0]->content;
+            $ret->plural = $tmp_name_plural[0]->content;
+        } else {
 
-		switch ($term) {
-			default:
-			case "":
-				return null;
-				break;
-			case "askel":
-				$ret->single = "Askel";
-				$ret->plural = "Askeleet";
-				break;
-			case "aktiviteetti":
-				$ret->single = "Aktiviteetti";
-				$ret->plural = "Aktiviteetit";
-				break;
-			case "aktiviteettitaso":
-				$ret->single = "Aktiviteettitaso";
-				$ret->plural = "Aktiviteettitasot";
-				break;
-			case "suoritus":
-				$ret->single = "Suoritus";
-				$ret->plural = "Suoritukset";
-				break;
-			case "paussi":
-				$ret->single = "Paussi";
-				$ret->plural = "Paussit";
-				break;
+            switch ($term) {
+                default:
+                case "":
+                    return null;
+                    break;
+                case "askel":
+                    $ret->single = "Askel";
+                    $ret->plural = "Askeleet";
+                    break;
+                case "aktiviteetti":
+                    $ret->single = "Aktiviteetti";
+                    $ret->plural = "Aktiviteetit";
+                    break;
+                case "aktiviteettitaso":
+                    $ret->single = "Aktiviteettitaso";
+                    $ret->plural = "Aktiviteettitasot";
+                    break;
+                case "suoritus":
+                    $ret->single = "Suoritus";
+                    $ret->plural = "Suoritukset";
+                    break;
+                case "paussi":
+                    $ret->single = "Paussi";
+                    $ret->plural = "Paussit";
+                    break;
 
-		}
-	}
+            }
+        }
 
-	return $ret;
+        return $ret;
+    }
+
+    return null;
+
 }
 
 $mandatory_task_guids = array();
@@ -902,6 +911,26 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	}
 	if (count($tarvikkeet)) {
 		$ret->tarvikkeet = $tarvikkeet;
+	}
+
+    $growth_target_tags = wp_get_post_terms($post_id, 'pof_tax_growth_target');
+
+	$growth_targets = array();
+
+	foreach ($growth_target_tags as $growth_target_tag) {
+		$growth_target = new stdClass();
+
+		$tmp_name = pof_taxonomy_translate_get_translation('growth_target', $growth_target_tag->slug, $agegroup_id, $lang, true);
+		if (!empty($tmp_name)) {
+			$growth_target->name = $tmp_name[0]->content;
+		} else {
+			$growth_target->name = $growth_target_tag->name;
+		}
+		$growth_target->slug = $growth_target_tag->slug;
+		array_push($growth_targets, $growth_target);
+	}
+	if (count($growth_targets)) {
+		$ret->kasvatustavoitteet = $growth_targets;
 	}
 
 	return $ret;
