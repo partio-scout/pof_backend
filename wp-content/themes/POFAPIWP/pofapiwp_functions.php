@@ -1239,6 +1239,37 @@ function pof_item_guid_add_meta_box_callback($post) {
 
 add_action( 'add_meta_boxes', 'pof_item_guid_add_meta_box' );
 
+function pof_item_task_details_add_meta_box() {
+
+	$screens = array('pof_post_task');
+
+	foreach ( $screens as $screen ) {
+
+		add_meta_box(
+			'pof_item_task_details_add_meta_box_sectionid',
+			__( 'Import details', 'pof' ),
+			'pof_item_task_details_add_meta_box_callback',
+			$screen, 'side', 'high'
+		);
+	}
+}
+
+function pof_item_task_details_add_meta_box_callback($post) {
+    $langs = pof_settings_get_all_languages();
+
+    $guid = get_post_meta( $post->ID, "post_guid", true );
+
+    foreach ($langs as $lang) {
+        $dt = get_post_meta($post->ID, "content_imported_".$lang->lang_code, true);
+        echo '<a href="/item-json/?postGUID=' . $guid . '&lang=' . $lang->lang_code . '" target="_blank">';
+        echo $lang->lang_title . "</a>: " . $dt;
+        echo "<br />";
+    }
+
+}
+
+add_action( 'add_meta_boxes', 'pof_item_task_details_add_meta_box' );
+
 
 function pof_item_task_parenttree_meta_box() {
 

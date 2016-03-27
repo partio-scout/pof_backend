@@ -89,13 +89,14 @@ if (!empty($_GET["lang"])) {
 }
 
 $title = $mypost->post_title;
-$ingress = get_field("ingress");
+$ingress = get_post_meta($mypost->ID, "ingress", true);
+$content = $mypost->post_content;
 $content = $mypost->post_content;
 
 if ($lang != "FI") {
-	$title = get_field("title_".strtolower($lang));
-	$ingress = get_field("ingress_".strtolower($lang));
-	$content = get_field("content_".strtolower($lang));
+	$title = get_post_meta($mypost->ID, "title_".strtolower($lang), true);
+	$ingress = get_post_meta($mypost->ID, "ingress_".strtolower($lang), true);
+	$content = get_post_meta($mypost->ID, "content_".strtolower($lang), true);
 }
 
 switch ($post_type) {
@@ -114,10 +115,10 @@ switch ($post_type) {
 		$jsonItem->mandatory_task_hashes = implode(",", $mandatory_tasks->hashes);
 
 
-		$subtask_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $mypost->ID));
+		$subtask_term = getJsonTaskTerm(get_post_meta($mypost->ID, "taskgroup_subtask_term", true));
 		if (empty($task_term)) {
 			foreach ($tree_array_orig as $tree_item) {
-				$task_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $tree_item->ID));
+				$task_term = getJsonTaskTerm(get_post_meta($tree_item->ID, "taskgroup_subtask_term", true));
 
 				if ($task_term) {
 					$jsonItem->subtask_term = $task_term;
@@ -128,10 +129,10 @@ switch ($post_type) {
 			$jsonItem->subtask_term = $task_term;
 		}
 
-		$subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $post->ID), strtolower($lang));
+		$subtaskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($post->ID, "taskgroup_subtaskgroup_term", true), strtolower($lang));
 		if (empty($subtaskgroup_term)) {
 			foreach ($tree_array_orig as $tree_item) {
-				$subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_subtaskgroup_term", $tree_item->ID), strtolower($lang));
+				$subtaskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($tree_item->ID, "taskgroup_subtaskgroup_term", true), strtolower($lang));
 
 				if ($task_term) {
 					$jsonItem->subtaskgroup_term = $subtaskgroup_term;
@@ -142,10 +143,10 @@ switch ($post_type) {
 			$jsonItem->subtaskgroup_term = $subtaskgroup_term;
 		}
 
-		$taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $post->ID), strtolower($lang));
+		$taskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($post->ID, "taskgroup_taskgroup_term", true), strtolower($lang));
 		if (empty($taskgroup_term)) {
 			foreach ($tree_array_orig as $tree_item) {
-				$taskgroup_term = getJsonSubtaskgroupTerm(get_field("taskgroup_taskgroup_term", $tree_item->ID), strtolower($lang));
+				$taskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($tree_item->ID, "taskgroup_taskgroup_term", true), strtolower($lang));
 
 				if ($task_term) {
 					$jsonItem->taskgroup_term = $taskgroup_term;
@@ -160,10 +161,10 @@ switch ($post_type) {
 	case "task":
 		$jsonItem = getJsonItemDetailsTask($jsonItem, $mypost, strtolower($lang));
 
-		$task_term = getJsonTaskTerm(get_field("task_task_term", $mypost->ID), strtolower($lang));
+		$task_term = getJsonTaskTerm(get_post_meta($mypost->ID, "task_task_term", true), strtolower($lang));
 		if (empty($task_term)) {
 			foreach ($tree_array_orig as $tree_item) {
-				$task_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $tree_item->ID), strtolower($lang));
+				$task_term = getJsonTaskTerm(get_post_meta($tree_item->ID, "taskgroup_subtask_term", true), strtolower($lang));
 
 				if ($task_term) {
 					$jsonItem->task_term = $task_term;
@@ -177,7 +178,6 @@ switch ($post_type) {
 
 		$jsonItem->level = pof_normalize_task_level(get_post_meta($mypost->ID, "task_level", true));
 		$jsonItem->leader_tasks = get_post_meta($mypost->ID, "leader_tasks_".strtolower($lang), true);
-//		$jsonItem->growth_target = get_post_meta($mypost->ID, "growth_target_".strtolower($lang), true);
 
 
 	break;

@@ -33,8 +33,9 @@ add_action( 'admin_menu', 'pof_importer_menu' );
 function pof_importer_menu() {
 	add_menu_page('POF Importer', 'Importteri', 'manage_options', 'pof_importer_frontpage-handle', 'pof_importer_frontpage', 'dashicons-media-spreadsheet');
     add_submenu_page( 'pof_importer_frontpage-handle', 'Suoritepaketit', 'Suoritepaketit', 'manage_options', 'pof_importer_taskgroups-handle', 'pof_importer_taskgroups');	
-    add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit import', 'Aktiviteetit import', 'manage_options', 'pof_importer_tasksdriveimport-handle', 'pof_importer_tasksdriveimport');
+    add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit import fi', 'Aktiviteetit import fi', 'manage_options', 'pof_importer_tasksdriveimport-handle', 'pof_importer_tasksdriveimport');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit kieliversio otsikot', 'Aktiviteetit kieliversio otsikot', 'manage_options', 'pof_importer_tasksdrivelocalizationtitles-handle', 'pof_importer_tasksdrivelocalizationtitles');
+	add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit kieliversio sis&auml;lt&ouml;', 'Aktiviteetit kieliversio  sis&auml;lt&ouml;', 'manage_options', 'pof_importer_tasksdrivelocalizationcontent-handle', 'pof_importer_tasksdrivelocalizationcontent');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit import yksitt&auml;set', 'Vinkit import yksitt&auml;set', 'manage_options', 'pof_importer_suggestionsdriveimport-handle', 'pof_importer_suggestionsdriveimport');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit import massa', 'Vinkit import massa', 'manage_options', 'pof_importer_suggestionsdriveimport2-handle', 'pof_importer_suggestionsdriveimport2');
     
@@ -418,6 +419,101 @@ function pof_importer_tasksdrivelocalizationtitles() {
 			echo '<input type="submit" name="RunAgain" value="Aja uudestaan" />';
 			echo '</form>';
 			pof_importer_tasksdrivelocalizationtitles_run($_POST["drive_file_id"], true);
+		}
+	}
+	echo "</div>";
+}
+
+function pof_importer_tasksdrivelocalizationcontent() {
+
+
+	echo '<div class="wrap">';
+	echo '<h1>POF Importer, aktiviteettien kieliversio sis&auml;ll&ouml;t google drivest&auml;</h1>';
+
+    /*
+    echo "<pre>";
+    print_r(pof_importer_get_agegroups_and_taskgroups());
+    echo "</pre>";
+     */
+
+	if (   !isset($_POST)
+		|| !isset($_POST["lang"])) {
+
+        $langs = pof_settings_get_all_languages();
+
+
+        echo "<form method=\"POST\">";
+
+        echo  "Valitse kieli: <br />";
+        echo "<select name=\"lang\">";
+
+        foreach ($langs as $lang) {
+            if ($lang->lang_code == 'fi') {
+                continue;
+            }
+            echo "<option value=\"" . $lang->lang_code . "\">" . $lang->lang_title . "</option>\n";
+        }
+
+        echo "</select>";
+        echo "<br />";
+        echo '<input type="submit" name="Submit" value="Valitse kieli" />';
+
+        echo "</form>";
+
+
+    }
+    else if (!isset($_POST["drive_file_id"]) && isset($_POST["lang"])) {
+        $service = pof_importer_get_google_service();
+
+        echo '<form method="post" action="">';
+
+        // Print the names and IDs for up to 10 files.
+        $optParams = array(
+            'maxResults' => 999,
+            'q' => "mimeType = 'application/vnd.google-apps.spreadsheet' and title != 'fi_' and title contains '".$_POST["lang"]."_'",
+            'orderBy' => 'folder,modifiedDate desc,title'
+        );
+        $results = $service->files->listFiles($optParams);
+
+        if (count($results->getItems()) == 0) {
+            print "No files found.\n";
+        } else {
+
+            print "Valitse importoitava tiedosto:<br />";
+            echo '<select name="drive_file_id">';
+            foreach ($results->getItems() as $file) {
+
+                $fileLastModified = strtotime($file->getModifiedDate());
+
+                printf("<option value=\"%s\">%s (%s)</option>\n", $file->getId(), $file->getTitle(), date('d.m.Y', $fileLastModified));
+
+                echo "<br />";
+            }
+            echo "</select>";
+            echo '<input type="hidden" name="lang" value="'.$_POST["lang"].'" />';
+            echo '<br />';
+            echo '<input type="submit" name="Submit" value="Valitse tiedosto" />';
+            echo '</form>';
+        }
+	} else {
+        if (!isset($_POST["SaveToDatabase"])) {
+			echo '<form method="post" action="">';
+            echo '<input type="hidden" name="lang" value="'.$_POST["lang"].'" />';
+			echo '<input type="hidden" name="drive_file_id" value="'.$_POST["drive_file_id"].'" />';
+			echo '<input type="submit" name="SaveToDatabase" value="Tallenna tietokantaan" />';
+			echo '<br /><br />';
+			echo '<input type="submit" name="RunAgain" value="Aja uudestaan" />';
+			echo '</form>';
+			pof_importer_tasksdrivelocalizationcontent_run($_POST["drive_file_id"], $_POST["lang"]);
+		} else {
+			echo '<form method="post" action="">';
+            echo '<input type="hidden" name="lang" value="'.$_POST["lang"].'" />';
+			echo '<input type="hidden" name="drive_file_id" value="'.$_POST["drive_file_id"].'" />';
+			echo '<input type="submit" name="SaveToDatabase" value="Tallenna tietokantaan" />';
+			echo '<br /><br />';
+			echo '<input type="submit" name="RunAgain" value="Aja uudestaan" />';
+			echo '</form>';
+			pof_importer_tasksdrivelocalizationcontent_run($_POST["drive_file_id"], $_POST["lang"], true);
 		}
 	}
 	echo "</div>";

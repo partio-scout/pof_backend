@@ -75,3 +75,11 @@ function pof_settigs_get_active_lang_codes() {
 
 	return $toret;
 }
+
+function pof_settigs_getDatetimeNow() {
+    $tz_object = new DateTimeZone('Europe/Helsinki');
+
+    $datetime = new DateTime();
+    $datetime->setTimezone($tz_object);
+    return $datetime->format('Y\-m\-d\ H:i:s');
+}

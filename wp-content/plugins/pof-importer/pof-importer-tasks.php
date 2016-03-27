@@ -232,7 +232,7 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 		wp_set_post_terms( $post_id, $growth_targets, "pof_tax_growth_target", false );
 
-//        update_field("growth_target_fi", $row['H'], $post_id);
+		update_post_meta($post_id, "content_imported_fi", pof_settigs_getDatetimeNow());
 
 		wp_update_post($post, $wp_error);
 	}
@@ -413,4 +413,191 @@ function pof_importer_tasksdrivelocalizationtitles_importRow($row, $row_index, $
 
 	echo "<br />";
     echo "<br />";
+}
+
+
+function pof_importer_tasksdrivelocalizationcontent_run($fileId, $lang, $saveToDataBase = false) {
+	$service = pof_importer_get_google_service();
+
+	try {
+		$file = $service->files->get($fileId);
+
+		echo '<table cellpadding="2" cellspacing="2" border="2">';
+		echo '<tr>';
+		echo '<th>Otsikko</th>';
+		echo '<td>'.$file->getTitle().'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<th>Kieli</th>';
+		echo '<td>'.$lang.'</td>';
+		echo '</tr>';
+        echo '<tr>';
+		echo '<th>Avaa drivess&auml;</th>';
+		echo '<td><a href="'.$file->getAlternateLink().'" target="_blank">'.$file->getAlternateLink().'</a></td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<th>Kuvaus</th>';
+		echo '<td>'.$file->getDescription().'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<th>Viimeksi muokattu</th>';
+		$fileLastModified = strtotime($file->getModifiedDate());
+		echo '<td>'.date('d.m.Y', $fileLastModified).'</td>';
+		echo '</tr>';
+
+		echo '<tr>';
+		echo '<th>Muokkaaja</th>';
+		echo '<td>'.$file->getLastModifyingUserName().'</td>';
+		echo '</tr>';
+
+		echo '</table>';
+
+
+		$filepath = pof_importer_download_drive_file($service, $file);
+
+		$objReader = pof_imported_get_phpExcel_objReader();
+
+		$objPHPExcel = $objReader->load($filepath);
+
+		$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+        flush();
+        
+		if (pof_importer_tasksdrivelocalizationcontent_checkThatHeadersMatchTasks($sheetData[1])) {
+
+			$headers = $sheetData[1];
+			$i = 0;
+			foreach($sheetData as $sheetDataRow) {
+				$i++;
+				if ($i < 2) {
+					continue;
+				}
+
+				pof_importer_tasksdrivelocalizationcontent_importRow($lang, $sheetDataRow, $i, $saveToDataBase);
+                
+                if ($i % 3 == 0) {
+                    flush();
+                }
+			}
+
+		} else {
+			echo "<h1>Unvalid excel, or failed to read excel at all.</h1>";
+		}
+
+	} catch (Exception $e) {
+		echo "An error occurred: " . $e->getMessage();
+	}
+
+}
+
+
+function pof_importer_tasksdrivelocalizationcontent_getExcelHeaderCharachters() {
+    $ret = array();
+
+    $ret['import'] = 'A';
+    $ret['title'] = 'D';
+    $ret['ingress'] = 'E';
+    $ret['content'] = 'F';
+    $ret['leadertask'] = 'G';
+
+    return $ret;
+}
+
+function pof_importer_tasksdrivelocalizationcontent_checkThatHeadersMatchTasks($headerRow) {
+
+	if (   !is_array($headerRow)
+		|| count($headerRow) < 7) {
+		echo "<h1>Not enough fields</h1>";
+		echo "<pre>";
+		print_r($headerRow);
+		echo "</pre>";
+		return false;
+	}
+
+	if (   substr(strtolower($headerRow['A']), 0, 10) != "a: importo"
+		|| substr(strtolower($headerRow['D']), 0, 10) != "d: otsikko"
+		|| substr(strtolower($headerRow['E']), 0, 10) != "e: ingress") {
+		echo "<h1>Wrong fields</h1>";
+		echo "<pre>";
+		print_r($headerRow);
+		echo "</pre>";
+		return false;
+	}
+
+	return true;
+}
+
+
+function pof_importer_tasksdrivelocalizationcontent_importRow($lang, $row, $row_index, $saveToDataBase = false) {
+
+
+    $colums = pof_importer_tasksdrivelocalizationcontent_getExcelHeaderCharachters();
+
+
+	if (   empty($row[$colums['import']])
+		|| substr($row[$colums['import']], 0, 2) != 'KY'
+		|| empty($row[$colums['title']])) {
+
+		if (!empty($row[$colums['title']])) {
+			echo "Not importing, because row not setted to be imported: " . $row[$colums['title']];
+		} else {
+			if (empty($row[$colums['import']])) {
+				return;
+			}
+			echo "Not importing, because row not setted to be imported, empty title. Row " . $row_index;
+		}
+
+		echo '<br />';
+
+		return;
+	}
+	echo "<br />";
+	echo "to be imported: " . $row[$colums['title']];
+
+
+	$wp_error = false;
+	$post = null;
+
+	$args = array(
+		'numberposts' => -1,
+		'posts_per_page' => -1,
+		'post_type' => array('pof_post_task' ),
+		'meta_key' => 'title_'.$lang,
+		'meta_value' => trim($row[$colums['title']])
+	);
+
+	$the_query_task = new WP_Query( $args );
+	
+	if( $the_query_task->have_posts() ) {
+		while ( $the_query_task->have_posts() ) {
+
+			$item = new stdClass();
+			$the_query_task->the_post();
+			$post = $the_query_task->post;
+		}
+	}
+
+
+	if (empty($post)) {
+		echo "  POST NOT FOUND, skipping :<strong>" . trim($row[$colums['title']])."</strong>";
+        return;
+	} else {
+
+		echo "  POST FOUND; TO BE UPDATED : <a href=\"/wp-admin/post.php?post=" . $post->ID . "&action=edit\" target=\"_blank\">" . $post->post_title . "</a> (" . trim($row[$colums['title']]).")</strong>";
+		$post_id = $post->ID;
+	}
+
+
+
+	if ($saveToDataBase && $post_id > 0) {
+
+
+		update_field("ingress_".$lang, trim($row[$colums['ingress']]), $post_id);
+        update_field("content_".$lang, trim($row[$colums['content']]), $post_id);
+		update_field("leader_tasks_".$lang, trim($row[$colums['leadertask']]), $post_id);
+		update_post_meta($post_id, "content_imported_".$lang, pof_settigs_getDatetimeNow());
+
+        echo " UPDATED";
+
+	}
+	echo "<br />";
 }
