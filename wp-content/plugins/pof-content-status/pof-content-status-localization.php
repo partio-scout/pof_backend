@@ -138,13 +138,17 @@ function pof_content_status_localization_get_content_get_taskgroups($lang, $task
 
 function pof_content_status_localization_get_content($lang, $agegroup_id) {
     
-    ?>
+            ?>
 
     <style>
     
     #pof_content_status_table td {
-        padding: 1px;
+        padding: 2px;
+        text-align: center;
+    }
 
+    #pof_content_status_table td.title {
+        text-align: left;
     }
 
     .pof_content_status_black {
@@ -229,6 +233,7 @@ function pof_content_status_localization_get_content($lang, $agegroup_id) {
 
             <?php
             pof_content_status_localization_get_content_get_taskgroups($lang, $the_query->post->ID, 1);
+            pof_content_status_content_get_tasks($lang, $the_query->post->ID, 1);
 		}
 	}
     wp_reset_query();
@@ -300,7 +305,8 @@ function pof_content_status_localization_get_field_cell($field, $post_id) {
 
     $field_counters[$field]->total++;
 
-    $content = get_field($field,$post_id);
+    $content = trim(get_post_meta($post_id, $field, true));
+//    $content = get_field($field,$post_id);
 
     $class = "pof_content_status_black";
 
@@ -358,7 +364,16 @@ function pof_content_status_localization_get_form() {
         if ($lang->lang_code == 'fi') {
             continue;
         }
-        $ret .= "<option value=\"" . $lang->lang_code . "\">" . $lang->lang_title . "</option>\n";
+        $selected = "";
+        if (   isset($_POST)
+	        && isset($_POST["lang"])) {
+            if ($_POST["lang"] == $lang->lang_code) {
+                $selected = " selected=\"selected\"";
+            }
+        }
+
+
+        $ret .= "<option".$selected." value=\"" . $lang->lang_code . "\">" . $lang->lang_title . "</option>\n";
 	}
 
     $ret .= "</select>";
@@ -373,7 +388,14 @@ function pof_content_status_localization_get_form() {
         if ($agegroup->id == 0) {
             continue;
         }
-        $ret .= "<option value=\"" . $agegroup->id . "\">" . $agegroup->title . "</option>\n";
+        $selected = "";
+        if (   isset($_POST)
+	        && isset($_POST["agegroup"])) {
+            if ($_POST["agegroup"] == $agegroup->id) {
+                $selected = " selected=\"selected\"";
+            }
+        }
+        $ret .= "<option".$selected." value=\"" . $agegroup->id . "\">" . $agegroup->title . "</option>\n";
 	}
 
     $ret .=  '</select>';

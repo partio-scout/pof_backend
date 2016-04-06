@@ -38,7 +38,14 @@ function pof_content_status_generic_get_form() {
         if ($agegroup->id == 0) {
             continue;
         }
-        $ret .= "<option value=\"" . $agegroup->id . "\">" . $agegroup->title . "</option>\n";
+        $selected = "";
+        if (   isset($_POST)
+	        && isset($_POST["lang"])) {
+            if ($_POST["lang"] == $lang->lang_code) {
+                $selected = " selected=\"selected\"";
+            }
+        }
+        $ret .= "<option".$selected." value=\"" . $agegroup->id . "\">" . $agegroup->title . "</option>\n";
 	}
 
     $ret .=  '</select>';
@@ -60,6 +67,10 @@ function pof_content_status_generic_get_content($agegroup_id) {
     #pof_content_status_table td {
         padding: 2px;
         text-align: center;
+    }
+
+    #pof_content_status_table td.title {
+        text-align: left;
     }
 
     .pof_content_status_black {
@@ -156,17 +167,31 @@ function pof_content_status_generic_get_content($agegroup_id) {
     ?>
             <tr>
                 <td>Paketti</td>
-                <td><?php echo "<a href=\"/wp-admin/post.php?post=" . $the_query->post->ID . "&action=edit\" target=\"_blank\">" . $the_query->post->post_title . "</a>"; ?></td>
-                <td><?php echo get_field("taskgroup_additional_tasks_count", $the_query->post->ID); ?></td>
-                <td><?php echo get_field("taskgroup_taskgroup_term", $the_query->post->ID); ?></td>
-                <td><?php echo get_field("taskgroup_subtaskgroup_term", $the_query->post->ID); ?></td>
-                <td><?php echo get_field("taskgroup_subtask_term", $the_query->post->ID); ?></td>
+                <td class="title"><?php echo "<a href=\"/wp-admin/post.php?post=" . $the_query->post->ID . "&action=edit\" target=\"_blank\">" . $the_query->post->post_title . "</a>"; ?></td>
+                <td><?php echo get_post_meta($the_query->post->ID, "taskgroup_additional_tasks_count", true ); ?></td>
+                <td><?php echo get_post_meta($the_query->post->ID, "taskgroup_taskgroup_term", true); ?></td>
+                <td>
+                    <?php
+            $task_parent_term = "";
+            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true); 
+            if ($task_term == "" &&  $task_parent_term != "") {
+                echo "(".$task_parent_term.")";
+            } else {
+                echo $task_term;
+                $task_parent_term = $task_term;
+            }
+
+                    ?>
+                </td>
+                <td><?php echo get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true); ?></td>
                 <td colspan="9" class="pof_content_status_grey"></td>
                 <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
 
             <?php
             pof_content_status_generic_content_get_taskgroups($the_query->post->ID, 1, get_field("taskgroup_subtaskgroup_term", $the_query->post->ID), get_field("taskgroup_subtask_term", $the_query->post->ID));
+            $indentation = 0;
+            pof_content_status_generic_content_get_tasks($the_query->post->ID, $indentation + 1, $task_parent_term);
 		}
 	}
     wp_reset_query();
@@ -242,11 +267,11 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
     ?>
             <tr>
                 <td>Paketti</td>
-                <td><?php echo $intendation_str . "<a href=\"/wp-admin/post.php?post=" . $the_query->post->ID . "&action=edit\" target=\"_blank\">" . $the_query->post->post_title . "</a>"; ?></td>
-                <td><?php echo get_field("taskgroup_additional_tasks_count", $the_query->post->ID); ?></td>
+                <td class="title"><?php echo $intendation_str . "<a href=\"/wp-admin/post.php?post=" . $the_query->post->ID . "&action=edit\" target=\"_blank\">" . $the_query->post->post_title . "</a>"; ?></td>
+                <td><?php echo get_post_meta($the_query->post->ID, "taskgroup_additional_tasks_count", true); ?></td>
                 <td>
                     <?php
-                        $taskgroup_term =  get_field("taskgroup_taskgroup_term", $the_query->post->ID); 
+                        $taskgroup_term =  get_post_meta($the_query->post->ID, "taskgroup_taskgroup_term", true); 
                         if ($taskgroup_term == "" &&  $taskgroup_parent_term != "") {
                             echo "(".$taskgroup_parent_term.")";
                         } else {
@@ -260,7 +285,7 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
                 </td>
                 <td>
                     <?php
-            $taskgroup_term =  get_field("taskgroup_subtaskgroup_term", $the_query->post->ID); 
+            $taskgroup_term =  get_post_meta($the_query->post->ID, "taskgroup_subtaskgroup_term", true); 
             if ($taskgroup_term == "" &&  $taskgroup_parent_term != "") {
                 echo "(".$taskgroup_parent_term.")";
             } else {
@@ -273,7 +298,7 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
                 </td>
                 <td>
                     <?php
-            $task_term =  get_field("taskgroup_subtask_term", $the_query->post->ID); 
+            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true); 
             if ($task_term == "" &&  $task_parent_term != "") {
                 echo "(".$task_parent_term.")";
             } else {
@@ -330,14 +355,14 @@ function pof_content_status_generic_content_get_tasks($taskgroup_id, $indentatio
 				continue;
 			}
                         
-			?>
+            ?>
             <tr>
                 <td>Aktiviteetti</td>
-                <td><?php echo $intendation_str . "<a href=\"/wp-admin/post.php?post=" . $the_query->post->ID . "&action=edit\" target=\"_blank\">" . $the_query->post->post_title . "</a>"; ?></td>
+                <td class="title"><?php echo $intendation_str . "<a href=\"/wp-admin/post.php?post=" . $the_query->post->ID . "&action=edit\" target=\"_blank\">" . $the_query->post->post_title . "</a>"; ?></td>
                 <td colspan="3" class="pof_content_status_grey"></td>
                 <td>
                     <?php
-                        $task_term = get_field("task_task_term", $the_query->post->ID);
+                        $task_term = get_post_meta($the_query->post->ID, "task_task_term", true);
                         if ($task_term == "" && $task_parent_term != "") {
                             $task_term = "(" . $task_parent_term . ")";
                         }
@@ -352,9 +377,9 @@ function pof_content_status_generic_content_get_tasks($taskgroup_id, $indentatio
                 <?php pof_content_status_get_checkbox_cell("task_mandatory", $the_query->post->ID); ?>
                 <?php pof_content_status_get_field_count_cell("task_groupsize", $the_query->post->ID); ?>
                 <?php pof_content_status_get_field_count_cell("task_place_of_performance", $the_query->post->ID); ?>
-                <td><?php echo get_field("task_duration", $the_query->post->ID); ?></td>
-                <td><?php echo get_field("task_preparationduration", $the_query->post->ID); ?></td>
-                <td><?php echo get_field("task_level", $the_query->post->ID); ?></td>
+                <td><?php echo get_post_meta($the_query->post->ID, "task_duration", true); ?></td>
+                <td><?php echo get_post_meta($the_query->post->ID, "task_preparationduration", true); ?></td>
+                <td><?php echo get_post_meta($the_query->post->ID, "task_level", true); ?></td>
                 <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
 
@@ -397,7 +422,7 @@ function pof_content_status_get_suggestions($post_id) {
 	if( $the_query_suggestion->have_posts() ) {
 		while ( $the_query_suggestion->have_posts() ) {
 			$the_query_suggestion->the_post();
-            $lang = get_field("pof_suggestion_lang", $the_query_suggestion->post->ID);
+            $lang = get_post_meta($the_query_suggestion->post->ID, "pof_suggestion_lang", true);
             if (!array_key_exists($lang, $tmp)) {
                 $tmp[$lang] = 1;
             } else {
@@ -445,7 +470,7 @@ function pof_content_status_get_tag_count_cell($taxonomy, $post_id) {
 }
 
 function pof_content_status_get_field_count_cell($field, $post_id) {
-    $res = get_field($field, $post_id);
+    $res = get_post_meta($post_id, $field, true);
     
     $count = count($res);
 
@@ -481,13 +506,16 @@ function pof_content_status_get_checkbox_cell($taxonomy, $post_id) {
     $field_counters[$taxonomy]->total++;
 
     $class = "pof_content_status_black";
-    if (get_field($taxonomy, $post_id)) {
+
+    $content = get_post_meta($post_id, $taxonomy, true);
+
+    if ($content) {
         $class = "pof_content_status_green";
         $field_counters[$taxonomy]->green++;
     }
 
     ?>
-    <td class="<?php echo $class; ?>"><?php echo get_field($taxonomy, $post_id); ?></td>
+    <td class="<?php echo $class; ?>"><?php echo $content; ?></td>
     <?php
 }
 
@@ -518,7 +546,7 @@ function pof_content_status_get_field_cell($field, $post_id) {
 
     $field_counters[$field]->total++;
 
-    $content = get_field($field,$post_id);
+    $content = get_post_meta($post_id, $field, true);
 
     $class = "pof_content_status_black";
 
