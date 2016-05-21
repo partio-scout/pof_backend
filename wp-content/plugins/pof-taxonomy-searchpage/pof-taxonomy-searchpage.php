@@ -40,7 +40,7 @@ function pof_taxonomy_searchpage_install() {
 	global $pof_taxonomy_searchpage_db_version;
 
 	$table_name = pof_taxonomy_searchpage_get_table_name();
-	
+
 	$charset_collate = $wpdb->get_charset_collate();
 
 	$sql = "CREATE TABLE $table_name (
@@ -67,6 +67,7 @@ function pof_taxonomy_searchpage_menu() {
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_searchpage_equpments-handle', 'pof_taxonomy_searchpage_equpments');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_searchpage_skillareas-handle', 'pof_taxonomy_searchpage_skillareas');
     add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'manage_options', 'pof_taxonomy_searchpage_growthtarget-handle', 'pof_taxonomy_searchpage_growthtarget');
+	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'manage_options', 'pof_taxonomy_searchpage_leaderships-handle', 'pof_taxonomy_searchpage_leaderships');
 
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Suoritepaketin yl&auml;k&auml;site', 'Suoritepaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_searchpage_taskgroupterm-handle', 'pof_taxonomy_searchpage_taskgroupterm');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Suoritteen yl&auml;k&auml;site', 'Suoritteen yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_searchpage_taskterm-handle', 'pof_taxonomy_searchpage_taskterm');
@@ -127,22 +128,22 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 				$taxonomy_key = $tmp["key"];
 				$taxonomy_full_key = $taxonomy_base_key . "::" . $tmp["key"];
 
-				$tmp = $wpdb->insert( 
-					$table_name, 
-					array( 
+				$tmp = $wpdb->insert(
+					$table_name,
+					array(
 						'taxonomy_slug' => $taxonomy_full_key,
 						'taxonomy_base' => $taxonomy_base_key
-					), 
-					array( 
-						'%s', 
+					),
+					array(
+						'%s',
 						'%s'
-					) 
+					)
 				);
 				echo "<br />Added " . $key . "";
 			}
 		}
         echo "<br />";
-		
+
 		// reload items:
 		$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	}
@@ -175,7 +176,7 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 	echo '</table>';
 	echo '<br /><input type="submit" name="Submit" value="Submit" />';
 	echo '</form>';
-	echo '</div>';	
+	echo '</div>';
 }
 
 
@@ -195,9 +196,9 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
     } else {
         $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower);
     }
-    
 
-	$searchpage_res = $wpdb->get_results( 
+
+	$searchpage_res = $wpdb->get_results(
 		"
 		SELECT taxonomy_slug
 		FROM " . pof_taxonomy_searchpage_get_table_name() . "
@@ -227,7 +228,7 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
 
 function pof_taxonomy_searchpage_places() {
 	$taxonomy_base_key = "place_of_performance";
-	
+
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Suorituspaikat";
 	$title2 = "Suorituspaikka";
@@ -281,7 +282,7 @@ function pof_taxonomy_searchpage_get_equpments($taxonomy_base_key) {
 	foreach (get_terms('pof_tax_equipment') as $term) {
 		$all_items[$term->slug] = $term->name;
 	}
-	
+
     $ret = array();
 
 	global $wpdb;
@@ -290,7 +291,7 @@ function pof_taxonomy_searchpage_get_equpments($taxonomy_base_key) {
 
 //    $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower);
 
-	$searchpage_res = $wpdb->get_results( 
+	$searchpage_res = $wpdb->get_results(
 		"
 		SELECT taxonomy_slug
 		FROM " . pof_taxonomy_searchpage_get_table_name() . "
@@ -313,7 +314,7 @@ function pof_taxonomy_searchpage_get_equpments($taxonomy_base_key) {
         }
 
     }
-	
+
 	return $ret;
 
 }
@@ -343,7 +344,7 @@ function pof_taxonomy_searchpage_get_skillareas($taxonomy_base_key) {
 
 //    $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower);
 
-	$searchpage_res = $wpdb->get_results( 
+	$searchpage_res = $wpdb->get_results(
 		"
 		SELECT taxonomy_slug
 		FROM " . pof_taxonomy_searchpage_get_table_name() . "
@@ -366,13 +367,13 @@ function pof_taxonomy_searchpage_get_skillareas($taxonomy_base_key) {
         }
 
     }
-	
+
 	return $ret;
 
 }
 
 
-function pof_taxonomy_searchpage_skillareas($taxonomy_base_key) {
+function pof_taxonomy_searchpage_skillareas() {
 	$taxonomy_base_key = "skillarea";
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Taitoalueet";
@@ -381,7 +382,17 @@ function pof_taxonomy_searchpage_skillareas($taxonomy_base_key) {
 	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
 }
 
-function pof_taxonomy_searchpage_growthtarget($taxonomy_base_key) {
+
+function pof_taxonomy_searchpage_leaderships() {
+	$taxonomy_base_key = "leadership";
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$title = "Johtamistaidot";
+	$title2 = "Johtamistaito";
+
+	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_searchpage_growthtarget() {
 	$taxonomy_base_key = "growth_target";
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Kasvatustavoitteen avainsanat";
@@ -422,7 +433,7 @@ function pof_taxonomy_searchpage_get_taskgroupterms() {
 
 	$ret["rasti_single"] = "Rasti";
 	$ret["rasti_plural"] = "Rastit";
-	
+
 	return $ret;
 
 }
@@ -465,7 +476,7 @@ function pof_taxonomy_searchpage_get_taskterms() {
 
 	$ret["paussi_single"] = "Paussi";
 	$ret["paussi_plural"] = "Paussit";
-	
+
 	return $ret;
 
 }

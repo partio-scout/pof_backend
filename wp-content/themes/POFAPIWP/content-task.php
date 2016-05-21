@@ -45,8 +45,19 @@
 				echo '<a href="/skillarea/'.$taitoalue_tag->slug .'">' . $taitoalue_tag->name . "</a>, ";
 
 			}
-		?>
+        ?>
 		</p>
+
+        <h3>Johtamistaito</h3>
+        <p>
+            <?php
+			$johtamistaito_tags = wp_get_post_terms($post->ID, 'pof_tax_leadership');
+			foreach ($johtamistaito_tags as $johtamistaito_tag) {
+				echo '<a href="/skillarea/'.$johtamistaito_tag->slug .'">' . $johtamistaito_tag->name . "</a>, ";
+
+			}
+            ?>
+        </p>
 
 
 		<h3>Johtajan teht&auml;v&auml;t</h3>

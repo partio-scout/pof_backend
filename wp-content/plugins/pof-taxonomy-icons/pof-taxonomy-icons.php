@@ -40,7 +40,7 @@ function pof_taxonomy_icons_install() {
 	global $pof_taxonomy_icons_db_version;
 
 	$table_name = pof_taxonomy_icons_get_table_name();
-	
+
 	$charset_collate = $wpdb->get_charset_collate();
 
 	$sql = "CREATE TABLE $table_name (
@@ -90,7 +90,7 @@ function pof_taxonomy_icons_get_agegroups() {
 			$tmp->title = $the_query->post->post_title;
 			$tmp->guid = get_post_meta( $the_query->post->ID, 'post_guid', true);
 			$min_age = get_field("agegroup_min_age");
-			
+
 			$agegroups[$min_age] = $tmp;
 		}
 	}
@@ -112,6 +112,7 @@ function pof_taxonomy_icons_menu() {
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_icons_equpments-handle', 'pof_taxonomy_icons_equpments');
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_icons_skillareas-handle', 'pof_taxonomy_icons_skillareas');
     add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'manage_options', 'pof_taxonomy_icons_growthtarget-handle', 'pof_taxonomy_icons_growthtarget');
+	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'manage_options', 'pof_taxonomy_icons_leaderships-handle', 'pof_taxonomy_icons_leaderships');
 
     add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suoritepaketin yl&auml;k&auml;site', 'Suoritepaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_icons_taskgroupterm-handle', 'pof_taxonomy_icons_taskgroupterm');
 	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suoritteen yl&auml;k&auml;site', 'Suoritteen yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_icons_taskterm-handle', 'pof_taxonomy_icons_taskterm');
@@ -131,23 +132,23 @@ function pof_taxonomy_icons_frontpage() {
 
 function pof_taxonomy_icons_get_icon($taxonomy, $icon_key, $agegroup_id, $fallback = false) {
 	global $wpdb;
-	$icon_res = $wpdb->get_results( 
+	$icon_res = $wpdb->get_results(
 		"
-		SELECT * 
+		SELECT *
 		FROM " . pof_taxonomy_icons_get_table_name() . "
-		WHERE taxonomy_slug = '" . $taxonomy . '::' . $icon_key . "' 
+		WHERE taxonomy_slug = '" . $taxonomy . '::' . $icon_key . "'
 			AND agegroup_id = ".$agegroup_id."
 		"
 	);
 
-	if (   $fallback 
+	if (   $fallback
 		&& $agegroup_id != 0
 		&& empty($icon_res)) {
-		$icon_res = $wpdb->get_results( 
+		$icon_res = $wpdb->get_results(
 			"
-			SELECT * 
+			SELECT *
 			FROM " . pof_taxonomy_icons_get_table_name() . "
-			WHERE taxonomy_slug = '" . $taxonomy . '::' . $icon_key . "' 
+			WHERE taxonomy_slug = '" . $taxonomy . '::' . $icon_key . "'
 				AND agegroup_id = 0
 			"
 		);
@@ -162,7 +163,7 @@ function pof_taxonomy_icons_parser_taxonomy_key($tmpkey) {
 	$tmp = explode("_", $tmpkey);
 
 	$agegroup_id = $tmp[count($tmp)-1];
-	
+
 	$key = str_replace("_".$agegroup_id, "", $tmpkey);
 
 	$ret = array();
@@ -204,20 +205,20 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 					wp_delete_attachment( $icon[0]->attachment_id, false );
 				}
 
-				$wpdb->delete( 
-					$table_name, 
-					array( 
-						'taxonomy_slug' => $taxonomy_full_key, 
-						'agegroup_id' => (int) $tmp["agegroup_id"] 
-					), 
-					array( '%s', '%d' )	
+				$wpdb->delete(
+					$table_name,
+					array(
+						'taxonomy_slug' => $taxonomy_full_key,
+						'agegroup_id' => (int) $tmp["agegroup_id"]
+					),
+					array( '%s', '%d' )
 				);
 
 				echo "<br />Deleted " . $key . "";
 
 			}
 			else if (!empty($file['name'])) {
-			
+
 				$attachment_id = media_handle_upload( $key, 0);
 
 				if ( is_wp_error( $attachment_id ) ) {
@@ -231,18 +232,18 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 				} else {
 					$icon = pof_taxonomy_icons_get_icon($taxonomy_base_key, $taxonomy_key, $agegroup_id);
 					if (empty($icon)) {
-						$tmp = $wpdb->insert( 
-							$table_name, 
-							array( 
-								'taxonomy_slug' => $taxonomy_full_key, 
+						$tmp = $wpdb->insert(
+							$table_name,
+							array(
+								'taxonomy_slug' => $taxonomy_full_key,
 								'agegroup_id' => (int) $agegroup_id,
 								'attachment_id' => $attachment_id
-							), 
-							array( 
-								'%s', 
-								'%d', 
+							),
+							array(
+								'%s',
+								'%d',
 								'%d'
-							) 
+							)
 						);
 						echo "<br />Added " . $key . "";
 					} else {
@@ -250,29 +251,29 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 							wp_delete_attachment( $icon[0]->attachment_id, false );
 						}
 
-						$tmp = $wpdb->update( 
-							$table_name, 
-							array( 
+						$tmp = $wpdb->update(
+							$table_name,
+							array(
 
 								'attachment_id' => $attachment_id
-							), 
+							),
 							array(
-								'taxonomy_slug' => $taxonomy_full_key, 
+								'taxonomy_slug' => $taxonomy_full_key,
 								'agegroup_id' => (int) $agegroup_id
 							),
-							array( 
+							array(
 								'%d'
 							),
-							array( 
-								'%s', 
+							array(
+								'%s',
 								'%d'
-							) 
+							)
 						);
 						echo "<br />Updated" . $key . "";
 					}
-				}				
+				}
 			}
-	
+
 		}
 
 
@@ -318,7 +319,7 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 	echo '</table>';
 	echo '<br /><input type="submit" name="Submit" value="Submit" />';
 	echo '</form>';
-	echo '</div>';	
+	echo '</div>';
 }
 
 function pof_taxonomy_icons_places() {
@@ -375,7 +376,7 @@ function pof_taxonomy_icons_get_equpments() {
 	foreach (get_terms('pof_tax_equipment') as $term) {
 		$ret[$term->slug] = $term->name;
 	}
-	
+
 	return $ret;
 
 }
@@ -396,10 +397,11 @@ function pof_taxonomy_icons_get_skillareas() {
 	foreach (get_terms('pof_tax_skillarea') as $term) {
 		$ret[$term->slug] = $term->name;
 	}
-	
+
 	return $ret;
 
 }
+
 
 
 function pof_taxonomy_icons_skillareas() {
@@ -410,6 +412,30 @@ function pof_taxonomy_icons_skillareas() {
 
 	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
 }
+
+
+function pof_taxonomy_icons_get_leaderships() {
+	$ret = array();
+
+	foreach (get_terms('pof_tax_leadership') as $term) {
+		$ret[$term->slug] = $term->name;
+	}
+
+	return $ret;
+
+}
+
+
+
+function pof_taxonomy_icons_leaderships() {
+	$taxonomy_base_key = "leadership";
+	$items = pof_taxonomy_icons_get_leaderships();
+	$title = "Johtamistaidot";
+	$title2 = "Johtamistaito";
+
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
 
 function pof_taxonomy_icons_taskgroupterm() {
 	$taxonomy_base_key = "taskgroup_term";

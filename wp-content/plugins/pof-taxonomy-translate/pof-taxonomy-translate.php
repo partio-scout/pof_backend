@@ -40,7 +40,7 @@ function pof_taxonomy_translate_install() {
 	global $pof_taxonomy_translate_db_version;
 
 	$table_name = pof_taxonomy_translate_get_table_name();
-	
+
 	$charset_collate = $wpdb->get_charset_collate();
 
 	$sql = "CREATE TABLE $table_name (
@@ -115,7 +115,7 @@ function pof_taxonomy_translate_get_agegroups() {
 			$tmp->id = $the_query->post->ID;
 			$tmp->title = $the_query->post->post_title;
 			$min_age = get_field("agegroup_min_age");
-			
+
 			$agegroups[$min_age] = $tmp;
 		}
 	}
@@ -137,6 +137,7 @@ function pof_taxonomy_translate_menu() {
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_translate_equpments-handle', 'pof_taxonomy_translate_equpments');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_translate_skillareas-handle', 'pof_taxonomy_translate_skillareas');
     add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'manage_options', 'pof_taxonomy_translate_growthtarget-handle', 'pof_taxonomy_translate_growthtarget');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'manage_options', 'pof_taxonomy_translate_leaderships-handle', 'pof_taxonomy_translate_leaderships');
 
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Suoritepaketin yl&auml;k&auml;site', 'Suoritepaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_translate_taskgroupterm-handle', 'pof_taxonomy_translate_taskgroupterm');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Suoritteen yl&auml;k&auml;site', 'Suoritteen yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_translate_taskterm-handle', 'pof_taxonomy_translate_taskterm');
@@ -163,7 +164,7 @@ function pof_taxonomy_translate_parser_taxonomy_key($tmpkey) {
 	$tmp = explode("_", $tmpkey);
 
 	$agegroup_id = $tmp[count($tmp)-1];
-	
+
 	$key = str_replace("_".$agegroup_id, "", $tmpkey);
 
 	$ret = array();
@@ -187,52 +188,52 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 	$taxonomy_slug = $taxonomy_base_key . '::' . $tmp_key;
 
 	global $wpdb;
-	$translate_res = $wpdb->get_results( 
+	$translate_res = $wpdb->get_results(
 		"
-		SELECT * 
+		SELECT *
 		FROM " . pof_taxonomy_translate_get_table_name() . "
-		WHERE taxonomy_slug = '" . $taxonomy_slug . "' 
+		WHERE taxonomy_slug = '" . $taxonomy_slug . "'
 			AND lang = '".$selected_lang."'
 			AND agegroup_id = ".$agegroup_id."
 		"
 	);
 
-	if (   $fallback 
+	if (   $fallback
 		&& $agegroup_id != 0
 		&& (empty($translate_res) || count($translate_res) == 0)) {
-		$translate_res = $wpdb->get_results( 
+		$translate_res = $wpdb->get_results(
 			"
-			SELECT * 
+			SELECT *
 			FROM " . pof_taxonomy_translate_get_table_name() . "
-			WHERE taxonomy_slug = '" . $taxonomy_slug . "' 
+			WHERE taxonomy_slug = '" . $taxonomy_slug . "'
 				AND lang = '".$selected_lang."'
 				AND agegroup_id = 0
 			"
 		);
 	}
 
-	if (   $fallback 
+	if (   $fallback
 		&& $agegroup_id != 0
 		&& $selected_lang != 'fi'
 		&& (empty($translate_res) || count($translate_res) == 0)) {
-		$translate_res = $wpdb->get_results( 
+		$translate_res = $wpdb->get_results(
 			"
-			SELECT * 
+			SELECT *
 			FROM " . pof_taxonomy_translate_get_table_name() . "
-			WHERE taxonomy_slug = '" . $taxonomy_slug . "' 
+			WHERE taxonomy_slug = '" . $taxonomy_slug . "'
 				AND lang = 'fi'
 				AND agegroup_id = ".$agegroup_id."
 			"
 		);
 	}
 
-	if (   $fallback 
+	if (   $fallback
 		&& (empty($translate_res) || count($translate_res) == 0)) {
-		$translate_res = $wpdb->get_results( 
+		$translate_res = $wpdb->get_results(
 			"
-			SELECT * 
+			SELECT *
 			FROM " . pof_taxonomy_translate_get_table_name() . "
-			WHERE taxonomy_slug = '" . $taxonomy_slug . "' 
+			WHERE taxonomy_slug = '" . $taxonomy_slug . "'
 				AND lang = 'fi'
 				AND agegroup_id = 0
 			"
@@ -241,28 +242,28 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 
         // if all have failed, then create the item so that it can be translated
         if (empty($translate_res) || count($translate_res) == 0) {
-            $tmp = $wpdb->insert( 
-				pof_taxonomy_translate_get_table_name(), 
-				array( 
-					'taxonomy_slug' => $taxonomy_slug, 
+            $tmp = $wpdb->insert(
+				pof_taxonomy_translate_get_table_name(),
+				array(
+					'taxonomy_slug' => $taxonomy_slug,
 					'agegroup_id' => 0,
 					'lang' => 'fi',
                     'content' => $tmp_key
-				), 
-				array( 
-					'%s', 
-					'%d', 
+				),
+				array(
+					'%s',
+					'%d',
 					'%s',
                     '%s'
-				) 
+				)
 			);
 
 
-            $translate_res = $wpdb->get_results( 
+            $translate_res = $wpdb->get_results(
 			    "
-			    SELECT * 
+			    SELECT *
 			    FROM " . pof_taxonomy_translate_get_table_name() . "
-			    WHERE taxonomy_slug = '" . $taxonomy_slug . "' 
+			    WHERE taxonomy_slug = '" . $taxonomy_slug . "'
 				    AND lang = 'fi'
 				    AND agegroup_id = 0
 			    "
@@ -285,7 +286,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 
 	$languages = pof_taxonomy_translate_get_languages();
 	$agegroups = pof_taxonomy_translate_get_agegroups();
-	
+
 	$selected_lang = 'fi';
 	if (isset($_POST['language'])) {
 		$selected_lang = $_POST['language'];
@@ -309,52 +310,52 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 
 				if (empty($translation)
 					&& $item != "") {
-					$tmp = $wpdb->insert( 
-						$table_name, 
-						array( 
-							'taxonomy_slug' => $taxonomy_full_key, 
+					$tmp = $wpdb->insert(
+						$table_name,
+						array(
+							'taxonomy_slug' => $taxonomy_full_key,
 							'agegroup_id' => (int) $agegroup_id,
 							'lang' => $selected_lang,
 							'content' => $item
-						), 
-						array( 
-							'%s', 
-							'%d', 
+						),
+						array(
+							'%s',
+							'%d',
 							'%s',
 							'%s',
-						) 
+						)
 					);
 					echo "<br />Added " . $key . "";
 				} else if (!empty($translation) && $item != "") {
 					if ($translation[0]->content != $item) {
-						$tmp = $wpdb->update( 
-							$table_name, 
-							array( 
+						$tmp = $wpdb->update(
+							$table_name,
+							array(
 								'content' => $item
-							), 
+							),
 							array(
 								'id' => $translation[0]->id
 							),
-							array( 
+							array(
 								'%s'
 							),
-							array(  
+							array(
 								'%d'
-							) 
+							)
 						);
 						echo "<br />Updated" . $key . "";
 					}
 				} else if (!empty($translation) && $item == "") {
-					$wpdb->delete( 
-						$table_name, 
-						array( 
+					$wpdb->delete(
+						$table_name,
+						array(
 							'id' => $translation[0]->id
-						), 
-						array( '%d' )	
+						),
+						array( '%d' )
 					);
 					echo "<br />Deleted " . $key . "";
 				}
-				
+
 			}
 		}
 		if (   isset($_POST['add_taxonomy_translate_key'])
@@ -363,47 +364,47 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 
 			$taxonomy_key = trim($_POST['add_taxonomy_translate_key']);
 			$taxonomy_key = str_replace(" ", "_", $taxonomy_key);
-			
+
 			$default = pof_taxonomy_translate_get_translation($taxonomy_base_key, $taxonomy_key, 0, 0, false);
 
 			if (count($default) == 0) {
 
 				$taxonomy_full_key = $taxonomy_base_key . "::" . $taxonomy_key;
 
-				$tmp = $wpdb->insert( 
-					$table_name, 
-					array( 
-						'taxonomy_slug' => $taxonomy_full_key, 
+				$tmp = $wpdb->insert(
+					$table_name,
+					array(
+						'taxonomy_slug' => $taxonomy_full_key,
 						'agegroup_id' => 0,
 						'lang' => 'fi',
 						'content' => $_POST['add_taxonomy_translate_key_0']
-					), 
-					array( 
-						'%s', 
-						'%d', 
+					),
+					array(
+						'%s',
+						'%d',
 						'%s',
 						'%s',
-					) 
+					)
 				);
 
 				foreach ($agegroups as $agegroup) {
 					if ($agegroup->id == 0) {
 						continue;
 					}
-					$tmp = $wpdb->insert( 
-						$table_name, 
-						array( 
-							'taxonomy_slug' => $taxonomy_full_key, 
+					$tmp = $wpdb->insert(
+						$table_name,
+						array(
+							'taxonomy_slug' => $taxonomy_full_key,
 							'agegroup_id' => $agegroup->id,
 							'lang' => 'fi',
 							'content' => $_POST['add_taxonomy_translate_key_'.$agegroup->id]
-						), 
-						array( 
-							'%s', 
-							'%d', 
+						),
+						array(
+							'%s',
+							'%d',
 							'%s',
 							'%s',
-						) 
+						)
 					);
 				}
 			}
@@ -484,7 +485,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	echo '</table>';
 	echo '<br /><input type="submit" name="Submit" value="Submit" />';
 	echo '</form>';
-	echo '</div>';	
+	echo '</div>';
 }
 
 
@@ -496,7 +497,7 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
 	$table_name = pof_taxonomy_translate_get_table_name();
 
 
-	$translate_res = $wpdb->get_results( 
+	$translate_res = $wpdb->get_results(
 		"
 		SELECT taxonomy_slug, content
 		FROM " . pof_taxonomy_translate_get_table_name() . "
@@ -520,7 +521,7 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
 
 function pof_taxonomy_translate_places() {
 	$taxonomy_base_key = "place_of_performance";
-	
+
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Suorituspaikat";
 	$title2 = "Suorituspaikka";
@@ -574,7 +575,7 @@ function pof_taxonomy_translate_get_equpments() {
 	foreach (get_terms('pof_tax_equipment') as $term) {
 		$ret[$term->slug] = $term->name;
 	}
-	
+
 	return $ret;
 
 }
@@ -595,7 +596,7 @@ function pof_taxonomy_translate_get_skillareas() {
 	foreach (get_terms('pof_tax_skillarea') as $term) {
 		$ret[$term->slug] = $term->name;
 	}
-	
+
 	return $ret;
 
 }
@@ -606,6 +607,27 @@ function pof_taxonomy_translate_skillareas() {
 	$items = pof_taxonomy_translate_get_skillareas();
 	$title = "Taitoalueet";
 	$title2 = "Taitoalue";
+
+	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_translate_get_leaderships() {
+	$ret = array();
+
+	foreach (get_terms('pof_tax_leadership') as $term) {
+		$ret[$term->slug] = $term->name;
+	}
+
+	return $ret;
+
+}
+
+
+function pof_taxonomy_translate_leaderships() {
+	$taxonomy_base_key = "leadership";
+	$items = pof_taxonomy_translate_get_leaderships();
+	$title = "Johtamistaidot";
+	$title2 = "Johtamistaito";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
 }
@@ -663,7 +685,7 @@ function pof_taxonomy_translate_get_taskgroupterms() {
 
 	$ret["rasti_single"] = "Rasti";
 	$ret["rasti_plural"] = "Rastit";
-	
+
 	return $ret;
 
 }
@@ -706,7 +728,7 @@ function pof_taxonomy_translate_get_taskterms() {
 
 	$ret["paussi_single"] = "Paussi";
 	$ret["paussi_plural"] = "Paussit";
-	
+
 	return $ret;
 
 }

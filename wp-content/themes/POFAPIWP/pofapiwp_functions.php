@@ -6,28 +6,28 @@ function get_post_custom_attributes($post) {
 
 	switch ($post->post_type) {
 		case "pof_post_program":
-		
+
 			$languages = get_field("kielet", $post->ID);
-		
+
 			$langs = array();
 			if (!empty($languages)) {
 				foreach ($languages as $language) {
 					array_push ($langs, array('name'=>'language', 'attributes' => array('value' => $language)));
 				}
 			}
-			
-			$ret = 	array( 
+
+			$ret = 	array(
 				'name'=>'leaf',
 				array(
 					'name'=>'languages',
 					$langs
 				)
 			);
-			
+
 			break;
-	
+
 		case "pof_post_agegroup":
-			$ret = 	array( 
+			$ret = 	array(
 				'name'=>'leaf',
 				array(
 					'name'=>'minAge',
@@ -42,7 +42,7 @@ function get_post_custom_attributes($post) {
 					),
 				)
 			);
-			
+
 			break;
 	}
 
@@ -54,13 +54,13 @@ function get_post_tags_XML($post_id) {
 	$ret = array(
 		'name'=>'tags'
 	);
-	
+
 	$taitoalueet_tags = wp_get_post_terms($post_id, 'pof_tax_skillarea');
-	
+
 	$taitoalueet = array(
 		'name'=>'taitoalueet'
 	);
-	
+
 	foreach ($taitoalueet_tags as $taitoalue_tag) {
 		$taitoalue = array(
 			'name'=>'taitoalue',
@@ -72,15 +72,15 @@ function get_post_tags_XML($post_id) {
 		);
 		array_push($taitoalueet, $taitoalue);
 	}
-	
+
 	array_push($ret, $taitoalueet);
-	
+
 	$suoritus_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskduration');
-	
+
 	$suoritus_kestot = array(
 		'name'=>'task_duration'
 	);
-	
+
 	foreach ($suoritus_kesto_tags as $suoritus_kesto_tag) {
 		$suoritus_kesto = array(
 			'name'=>'duration',
@@ -92,15 +92,15 @@ function get_post_tags_XML($post_id) {
 		);
 		array_push($suoritus_kestot, $suoritus_kesto);
 	}
-	
+
 	array_push($ret, $suoritus_kestot);
-	
+
 	$suoritus_valmistelu_kesto_tags = wp_get_post_terms($post_id, 'pof_tax_taskpreparationduration');
-	
+
 	$suoritus_valmistelu_kestot = array(
 		'name'=>'task_preaparation_duration'
 	);
-	
+
 	foreach ($suoritus_valmistelu_kesto_tags as $suoritus_valmistelu_kesto_tag) {
 		$suoritus_valmistelu_kesto = array(
 			'name'=>'duration',
@@ -112,15 +112,15 @@ function get_post_tags_XML($post_id) {
 		);
 		array_push($suoritus_valmistelu_kestot, $suoritus_valmistelu_kesto);
 	}
-	
+
 	array_push($ret, $suoritus_valmistelu_kestot);
-	
+
 	$tarvike_tags = wp_get_post_terms($post_id, 'pof_tax_equipment');
-	
+
 	$tarvikkeet = array(
 		'name'=>'equipments'
 	);
-	
+
 	foreach ($tarvike_tags as $tarvike_tag) {
 		$tarvike = array(
 			'name'=>'equipment',
@@ -132,9 +132,9 @@ function get_post_tags_XML($post_id) {
 		);
 		array_push($tarvikkeet, $tarvike);
 	}
-	
+
 	array_push($ret, $tarvikkeet);
-	
+
 	return $ret;
 }
 
@@ -162,9 +162,9 @@ function get_post_images_XML($post_id) {
 		);
 	}
 
-	
+
 	array_push($ret, $logo_arr);
-	
+
 	$main_image = get_field('main_image', $post_id);
 
 
@@ -185,7 +185,7 @@ function get_post_images_XML($post_id) {
 		);
 	}
 
-	
+
 	array_push($ret, $mainimage_arr);
 
 	return $ret;
@@ -232,7 +232,7 @@ function get_post_additional_content_XML($post_id) {
 	if ($files) {
 		foreach ($files as $additional_file) {
 			if ($additional_file['additional_file']) {
-	
+
 				$file = $additional_file['additional_file'];
 
 				$file_arr = array(
@@ -257,7 +257,7 @@ function get_post_additional_content_XML($post_id) {
 	if ($links) {
 		foreach ($links as $additional_link) {
 			if ($additional_link['additional_link_url']) {
-	
+
 				$link = $additional_link['additional_link_url'];
 
 				$link_arr = array(
@@ -284,31 +284,31 @@ function generate_xml_element( $dom, $data ) {
 	$dom->formatOutput = true; // Add whitespace to make easier to read XML
 	if ( empty( $data['name'] ) )
 		return false;
- 
+
 	// Create the element
 	$element_value = ( ! empty( $data['value'] ) ) ? $data['value'] : null;
 	$element = $dom->createElement( $data['name'], $element_value );
- 
+
 	// Add any attributes
 	if ( ! empty( $data['attributes'] ) && is_array( $data['attributes'] ) ) {
 		foreach ( $data['attributes'] as $attribute_key => $attribute_value ) {
 			$element->setAttribute( $attribute_key, $attribute_value );
 		}
 	}
- 
+
 	// Any other items in the data array should be child elements
 	foreach ( $data as $data_key => $child_data ) {
 		if ( ! is_numeric( $data_key ) )
 			continue;
- 
+
 		$child = generate_xml_element( $dom, $child_data );
 		if ( $child )
 			$element->appendChild( $child );
 	}
- 
+
 	return $element;
 }
- 
+
 function getXML($data) {
 	$doc = new DOMDocument();
 	$doc->formatOutput = true; // Add whitespace to make easier to read XML
@@ -318,10 +318,10 @@ function getXML($data) {
 		$doc->appendChild( $child );
 	$outXml = $doc->saveXML();
 
-	$xml = new DOMDocument(); 
-	$xml->preserveWhiteSpace = false; 
-	$xml->formatOutput = true; 
-	$xml->loadXML($outXml); 
+	$xml = new DOMDocument();
+	$xml->preserveWhiteSpace = false;
+	$xml->formatOutput = true;
+	$xml->loadXML($outXml);
 	$outXml = $xml->saveXML();
 	return $outXml;
 }
@@ -727,7 +727,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 
 	if (empty($groupsizes)) {
 		$groupsize = new stdClass();
-		
+
 		$tmp_name = pof_taxonomy_translate_get_translation('groupsize', 'group', $agegroup_id, $lang, true);
 
 		if (!empty($tmp_name)) {
@@ -737,9 +737,9 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		}
 		$groupsize->name = 'Laumassa';
 		$groupsize->slug = 'group';
-		
+
 		array_push($ret_groupsizes, $groupsize);
-	
+
 	} else {
 		foreach ($groupsizes as $tmp_groupsize) {
 			$groupsize = new stdClass();
@@ -782,7 +782,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 			}
 
 			$groupsize->slug = $tmp_groupsize;
-		
+
 			array_push($ret_groupsizes, $groupsize);
 
 		}
@@ -790,7 +790,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 
 	if (count($ret_groupsizes) > 0) {
 		$ret->ryhmakoko = $ret_groupsizes;
-	}	
+	}
 
 	$place_of_performance = get_field("task_place_of_performance", $post_id);
 
@@ -807,9 +807,9 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 			$place->name = 'Kolo';
 		}
 		$place->slug = 'meeting_place';
-		
+
 		array_push($ret_places, $place);
-	
+
 	} else {
 		foreach ($place_of_performance as $tmp_place) {
 			$place = new stdClass();
@@ -831,7 +831,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 			}
 
 			$place->slug = $tmp_place;
-		
+
 			array_push($ret_places, $place);
 
 		}
@@ -839,10 +839,10 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 
 	if (count($ret_places) > 0) {
 		$ret->paikka = $ret_places;
-	}	
+	}
 
 	$taitoalueet_tags = wp_get_post_terms($post_id, 'pof_tax_skillarea');
-	
+
 	$taitoalueet = array();
 
 	foreach ($taitoalueet_tags as $taitoalue_tag) {
@@ -859,6 +859,26 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	}
 	if (count($taitoalueet) > 0) {
 		$ret->taitoalueet = $taitoalueet;
+	}
+
+    $johtamistaito_tags = wp_get_post_terms($post_id, 'pof_tax_leadership');
+
+	$johtamistaidot = array();
+
+	foreach ($johtamistaito_tags as $johtamistaito_tag) {
+		$johtamistaito = new stdClass();
+		$tmp_name = pof_taxonomy_translate_get_translation('leadership', $johtamistaito_tag->slug, $agegroup_id, $lang, true);
+		if (!empty($tmp_name)) {
+			$johtamistaito->name = $tmp_name[0]->content;
+		} else {
+			$johtamistaito->name = $johtamistaito_tag->name;
+		}
+		$johtamistaito->slug = $johtamistaito_tag->slug;
+
+		array_push($johtamistaidot, $johtamistaito);
+	}
+	if (count($johtamistaidot) > 0) {
+		$ret->johtamistaito = $johtamistaidot;
 	}
 
 	$suoritus_kesto_tmp = get_field("task_duration", $post_id);
@@ -892,11 +912,11 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		}
 		$ret->suoritus_valmistelu_kesto = $suoritus_valmistelu_kesto;
 	}
-	
+
 	$tarvike_tags = wp_get_post_terms($post_id, 'pof_tax_equipment');
-	
+
 	$tarvikkeet = array();
-	
+
 	foreach ($tarvike_tags as $tarvike_tag) {
 		$tarvike = new stdClass();
 
@@ -952,21 +972,21 @@ function get_post_images_JSON($post_id) {
 		$ret->logo->url = $logo['url'];
 
 		if (!empty($logo['sizes'])) {
-			if (!empty($logo['sizes']['thumbnail'])) {		
+			if (!empty($logo['sizes']['thumbnail'])) {
 				$thumbnail = new stdClass();
 				$thumbnail->height = $logo['sizes']['thumbnail-height'];
 				$thumbnail->width = $logo['sizes']['thumbnail-width'];
 				$thumbnail->url = $logo['sizes']['thumbnail'];
 				$ret->logo->thumbnail = $thumbnail;
 			}
-			if (!empty($logo['sizes']['medium'])) {		
+			if (!empty($logo['sizes']['medium'])) {
 				$medium = new stdClass();
 				$medium->height = $logo['sizes']['medium-height'];
 				$medium->width = $logo['sizes']['medium-width'];
 				$medium->url = $logo['sizes']['medium'];
 				$ret->logo->medium = $medium;
 			}
-			if (!empty($logo['sizes']['large'])) {		
+			if (!empty($logo['sizes']['large'])) {
 				$large = new stdClass();
 				$large->height = $logo['sizes']['large-height'];
 				$large->width = $logo['sizes']['large-width'];
@@ -989,21 +1009,21 @@ function get_post_images_JSON($post_id) {
 		$ret->main_image->url = $main_image['url'];
 
 		if (!empty($main_image['sizes'])) {
-			if (!empty($main_image['sizes']['thumbnail'])) {		
+			if (!empty($main_image['sizes']['thumbnail'])) {
 				$thumbnail = new stdClass();
 				$thumbnail->height = $main_image['sizes']['thumbnail-height'];
 				$thumbnail->width = $main_image['sizes']['thumbnail-width'];
 				$thumbnail->url = $main_image['sizes']['thumbnail'];
 				$ret->main_image->thumbnail = $thumbnail;
 			}
-			if (!empty($main_image['sizes']['medium'])) {		
+			if (!empty($main_image['sizes']['medium'])) {
 				$medium = new stdClass();
 				$medium->height = $main_image['sizes']['medium-height'];
 				$medium->width = $main_image['sizes']['medium-width'];
 				$medium->url = $main_image['sizes']['medium'];
 				$ret->main_image->medium = $medium;
 			}
-			if (!empty($main_image['sizes']['large'])) {		
+			if (!empty($main_image['sizes']['large'])) {
 				$large = new stdClass();
 				$large->height = $main_image['sizes']['large-height'];
 				$large->width = $main_image['sizes']['large-width'];
@@ -1038,21 +1058,21 @@ function get_post_additional_content_JSON($post_id) {
 
 
 				if (!empty($image['image_src'])) {
-					if (!empty($image['image_src']['thumbnail'])) {		
+					if (!empty($image['image_src']['thumbnail'])) {
 						$thumbnail = new stdClass();
 						$thumbnail->height = $image['image_src']['thumbnail'][1];
 						$thumbnail->width = $image['image_src']['thumbnail'][2];
 						$thumbnail->url = $image['image_src']['thumbnail'][0];
 						$image_obj->thumbnail = $thumbnail;
 					}
-					if (!empty($image['image_src']['medium'])) {		
+					if (!empty($image['image_src']['medium'])) {
 						$medium = new stdClass();
 						$medium->height = $image['image_src']['medium'][1];
 						$medium->width = $image['image_src']['medium'][2];
 						$medium->url = $image['image_src']['medium'][0];
 						$image_obj->medium = $medium;
 					}
-					if (!empty($image['image_src']['large'])) {		
+					if (!empty($image['image_src']['large'])) {
 						$large = new stdClass();
 						$large->height = $image['image_src']['large'][1];
 						$large->width = $image['image_src']['large'][2];
@@ -1078,7 +1098,7 @@ function get_post_additional_content_JSON($post_id) {
 	if ($files) {
 		foreach ($files as $additional_file) {
 			if ($additional_file['additional_file']) {
-	
+
 				$file = $additional_file['additional_file'];
 
 				$file_obj = new stdClass();
@@ -1101,7 +1121,7 @@ function get_post_additional_content_JSON($post_id) {
 	if ($links) {
 		foreach ($links as $additional_link) {
 			if ($additional_link['additional_link_url']) {
-	
+
 				$link = $additional_link['additional_link_url'];
 
 				$link_obj = new stdClass();
@@ -1684,7 +1704,7 @@ function pof_get_parent_tree_for_menu($post_item, $tree_array) {
 			if (!is_null($ohjelma_id) && $ohjelma_id != "null" && $ohjelma_id != "" && !empty($ohjelma_id)) {
 				$ohjelma = get_post($ohjelma_id);
 				array_push($tree_array, $ohjelma);
-				
+
 			}
 		break;
 		case "taskgroup":
@@ -1729,7 +1749,7 @@ function pof_normalize_task_level($level_str) {
 function pof_checkDatetime($post_to_check) {
 	global $lastModified;
 	global $lastModifiedBy;
-	
+
 	$tmpTime = strtotime($post_to_check->post_modified);
 	if ($tmpTime > $lastModified) {
 		$lastModified = $tmpTime;
