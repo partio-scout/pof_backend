@@ -44,7 +44,7 @@
 			) );
 		?>
 
-		<h3>Suoritepaketin yl&auml;k&auml;site</h3>
+		<h3>Aktiviteettipaketin yl&auml;k&auml;site</h3>
 		<?php
 		echo get_post_meta($post->ID, "agegroup_subtaskgroup_term", true);
 		?>

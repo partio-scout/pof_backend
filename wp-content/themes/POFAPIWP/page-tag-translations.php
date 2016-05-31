@@ -13,15 +13,12 @@ function pof_taxonomy_translate_form_view() {
     $taxonomies['place_of_performance'] = "Suorituspaikat";
     $taxonomies['groupsize'] = "Ryhm&auml;koot";
     $taxonomies['mandatory'] = "Pakollisuus";
-    $taxonomies['taskduration'] = "Suorituksen kestot";
-    $taxonomies['taskpreaparationduration'] = "Suorituksen valmistelun kestot";
+    $taxonomies['taskduration'] = "Aktiviteetin kestot";
+    $taxonomies['taskpreaparationduration'] = "Aktiviteetin valmistelun kestot";
     $taxonomies['equpment'] = "Tarvikkeet";
     $taxonomies['skillarea'] = "Taitoalueet";
     $taxonomies['growth_target'] = "Kasvatustavoitteen avainsanat";
-    $taxonomies['taskgroup_term'] = "Suoritepaketin yl&auml;k&auml;site";
-    $taxonomies['taskgroup_term'] = "Suoritepaketin yl&auml;k&auml;site";
-    $taxonomies['taskgroup_term'] = "Suoritepaketin yl&auml;k&auml;site";
-    $taxonomies['taskgroup_term'] = "Suoritepaketin yl&auml;k&auml;site";
+    $taxonomies['taskgroup_term'] = "Aktiviteettipaketin yl&auml;k&auml;site";
 
 
 

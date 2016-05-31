@@ -163,7 +163,7 @@
 		?>
 		</p>
 
-		<h3>Suorituksen yl&auml;k&auml;site</h3>
+		<h3>Aktiviteetin yl&auml;k&auml;site</h3>
 		<?php
 		echo get_post_meta($post->ID, "task_task_term", true);
 		?>

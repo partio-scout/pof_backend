@@ -10,8 +10,8 @@ function AddPofApiCustomPostTypes() {
 	register_post_type( 'pof_post_program',
 		array(
 			'labels' => array(
-				'name' => __( 'Suoritusohjelmat' ),
-				'singular_name' => __( 'Suoritusohjelma' ),
+				'name' => __( 'Ohjelmat' ),
+				'singular_name' => __( 'Ohjelma' ),
 				),
 			'public' => true,
 			'has_archive' => true,
@@ -30,24 +30,24 @@ function AddPofApiCustomPostTypes() {
 			'menu_icon' => 'dashicons-backup'
 		)
 	);
-	
+
 	register_post_type( 'pof_post_taskgroup',
 		array(
 			'labels' => array(
-				'name' => __( 'Suoritepaketit' ),
-				'singular_name' => __( 'Suoritepaketti' ),
+				'name' => __( 'Aktiviteettipaketit' ),
+				'singular_name' => __( 'Aktiviteettipaketti' ),
 				),
 			'public' => true,
 			'has_archive' => true,
 			'menu_icon' => 'dashicons-cart'
 		)
 	);
-	
+
 	register_post_type( 'pof_post_task',
 		array(
 			'labels' => array(
-				'name' => __( 'Suoritukset' ),
-				'singular_name' => __( 'Suoritus' ),
+				'name' => __( 'Aktiviteetit' ),
+				'singular_name' => __( 'Aktiviteetti' ),
 				),
 			'public' => true,
 			'has_archive' => true,
@@ -67,4 +67,4 @@ function AddPofApiCustomPostTypes() {
 		)
 	);
 }
- 
+

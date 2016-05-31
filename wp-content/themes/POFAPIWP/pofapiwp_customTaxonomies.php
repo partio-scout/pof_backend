@@ -63,8 +63,8 @@ function AddPofApiCustomTaxonomies() {
 		'hierarchical' => false,
 		'labels' => array(
 			'name' => _x( 'Suorituksen kesto', 'taxonomy general name' ),
-			'singular_name' => _x( 'Suorituksen kestot', 'taxonomy singular name' ),
-			'menu_name' => __( 'Suorituksen kestot' )
+			'singular_name' => _x( 'Aktiviteetin kestot', 'taxonomy singular name' ),
+			'menu_name' => __( 'Aktiviteetin kestot' )
 		),
 		'rewrite' => array(
 			'slug' => 'taskduration',
@@ -77,8 +77,8 @@ function AddPofApiCustomTaxonomies() {
 		'hierarchical' => false,
 		'labels' => array(
 			'name' => _x( 'Suorituksen valmistelun kesto', 'taxonomy general name' ),
-			'singular_name' => _x( 'Suorituksen valmistelun kestot', 'taxonomy singular name' ),
-			'menu_name' => __( 'Suorituksen valmistelun kestot' )
+			'singular_name' => _x( 'Aktiviteetin valmistelun kestot', 'taxonomy singular name' ),
+			'menu_name' => __( 'Aktiviteetin valmistelun kestot' )
 		),
 		'rewrite' => array(
 			'slug' => 'taskpreparationduration',

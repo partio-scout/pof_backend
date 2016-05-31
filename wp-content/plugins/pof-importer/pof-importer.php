@@ -31,14 +31,14 @@ include( plugin_dir_path( __FILE__ ) . 'pof-importer-suggestions2.php');
 add_action( 'admin_menu', 'pof_importer_menu' );
 
 function pof_importer_menu() {
-	add_menu_page('POF Importer', 'Importteri', 'manage_options', 'pof_importer_frontpage-handle', 'pof_importer_frontpage', 'dashicons-media-spreadsheet');
-    add_submenu_page( 'pof_importer_frontpage-handle', 'Suoritepaketit', 'Suoritepaketit', 'manage_options', 'pof_importer_taskgroups-handle', 'pof_importer_taskgroups');	
+	add_menu_page('POF Importer', 'Importteri ja exportteri', 'manage_options', 'pof_importer_frontpage-handle', 'pof_importer_frontpage', 'dashicons-media-spreadsheet');
+    add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteettipaketit', 'Aktiviteettipaketit', 'manage_options', 'pof_importer_taskgroups-handle', 'pof_importer_taskgroups');
     add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit import fi', 'Aktiviteetit import fi', 'manage_options', 'pof_importer_tasksdriveimport-handle', 'pof_importer_tasksdriveimport');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit kieliversio otsikot', 'Aktiviteetit kieliversio otsikot', 'manage_options', 'pof_importer_tasksdrivelocalizationtitles-handle', 'pof_importer_tasksdrivelocalizationtitles');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit kieliversio sis&auml;lt&ouml;', 'Aktiviteetit kieliversio  sis&auml;lt&ouml;', 'manage_options', 'pof_importer_tasksdrivelocalizationcontent-handle', 'pof_importer_tasksdrivelocalizationcontent');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit import yksitt&auml;set', 'Vinkit import yksitt&auml;set', 'manage_options', 'pof_importer_suggestionsdriveimport-handle', 'pof_importer_suggestionsdriveimport');
 	add_submenu_page( 'pof_importer_frontpage-handle', 'Vinkit import massa', 'Vinkit import massa', 'manage_options', 'pof_importer_suggestionsdriveimport2-handle', 'pof_importer_suggestionsdriveimport2');
-    
+
     add_submenu_page( 'pof_importer_frontpage-handle', 'Aktiviteetit export', 'Aktiviteetit export', 'manage_options', 'pof_importer_tasksexport-handle', 'pof_importer_tasksexport');
 }
 
@@ -56,13 +56,13 @@ function pof_importer_taskgroups() {
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
-	
+
 	echo '<div class="wrap">';
-	echo '<h1>POF Importer, suorituspaketit</h1>';
-	
-	
+	echo '<h1>POF Importer, aktiviteettipaketit</h1>';
+
+
 	if(isset($_POST['Submit'])) {
-		
+
 		$row = 1;
 		$added = 0;
 		$updated = 0;
@@ -74,11 +74,11 @@ function pof_importer_taskgroups() {
 				}
 				$num = count($data);
 				$row++;
-				
+
 				if ($data[2] == "") {
 					continue;
 				}
-				
+
 				if ($data[1] == "" || intval($data[1]) == 0) {
 					$post = array('post_title' => $data[2], 'post_status' => 'publish', 'post_type' => 'pof_post_taskgroup');
 					$post_id = wp_insert_post($post);
@@ -90,7 +90,7 @@ function pof_importer_taskgroups() {
 						update_post_meta($post_id, 'suoritepaketti', $data[0]);
 					}
 					$added++;
-					
+
 				} else {
 					$post_id = $data[1];
 					$post = get_post(intval($data[1]));
@@ -105,7 +105,7 @@ function pof_importer_taskgroups() {
 				echo '"'.$data[0].'","'.$post_id.'","'.$data[2].'","'.$data[3].'"';
 				echo "<br />";
 			}
-			
+
 			echo "<br />";
 			echo "<br />";
 			echo "<br />";
@@ -116,8 +116,8 @@ function pof_importer_taskgroups() {
 			echo "<br />";
 			fclose($handle);
 		}
-		
-		
+
+
 		echo "<h2></h2>";
 	} else {
 		echo '<form method="POST" enctype="multipart/form-data">';
@@ -125,17 +125,17 @@ function pof_importer_taskgroups() {
 		echo '<input name="csv_content" type="file" /><br />';
 		echo '<input type="submit" name="Submit" value="Lue sis&auml;&auml;n" />';
 		echo '</form>';
-		
+
 		echo "<br /><br /><br /><br />";
 		echo '"parent","id","title_fi","title_sv"<br />';
-		
+
 		$args = array(
 			'nopaging' => true,
 			'post_type' => 'pof_post_taskgroup'
 		);
 
 		$the_query = new WP_Query( $args );
-	
+
 		if( $the_query->have_posts() ) {
 			while ( $the_query->have_posts() ) {
 				$the_query->the_post();
@@ -150,10 +150,10 @@ function pof_importer_taskgroups() {
 				echo "<br />";
 			}
 		}
-		
+
 	}
-	
-	
+
+
 
 	echo '</div>';
 }
@@ -163,7 +163,7 @@ function pof_importer_tasksexport() {
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
-	
+
 	echo '<div class="wrap">';
 	echo '<h1>POF Importer, suoritukset export</h1>';
 
@@ -182,7 +182,7 @@ function pof_importer_tasksexport() {
 		);
 
 		$the_query = new WP_Query( $args );
-	
+
 		if( $the_query->have_posts() ) {
 			while ( $the_query->have_posts() ) {
 				$the_query->the_post();
@@ -322,7 +322,7 @@ echo "</pre>";
 			print "Valitse importoitava tiedosto:<br />";
 			echo '<select name="drive_file_id">';
 			foreach ($results->getItems() as $file) {
-			
+
 				$fileLastModified = strtotime($file->getModifiedDate());
 
 				printf("<option value=\"%s\">%s (%s)</option>\n", $file->getId(), $file->getTitle(), date('d.m.Y', $fileLastModified));
@@ -548,7 +548,7 @@ function pof_importer_suggestionsdriveimport() {
 			print "Valitse importoitava tiedosto:<br />";
 			echo '<select name="drive_file_id">';
 			foreach ($results->getItems() as $file) {
-			
+
 				$fileLastModified = strtotime($file->getModifiedDate());
 
 				printf("<option value=\"%s\">%s (%s)</option>\n", $file->getId(), $file->getTitle(), date('d.m.Y', $fileLastModified));
@@ -611,13 +611,13 @@ function pof_importer_suggestionsdriveimport2() {
 			print "Valitse importoitava tiedosto:<br />";
 			echo '<select name="drive_file_id">';
 			foreach ($results->getItems() as $file) {
-			
+
 				$fileLastModified = strtotime($file->getModifiedDate());
 
 				printf("<option value=\"%s\">%s (%s)</option>\n", $file->getId(), $file->getTitle(), date('d.m.Y', $fileLastModified));
 			}
 			echo "</select>";
-            
+
 			echo "<br />";
             print "Valitse ik&auml;kausi: <br />";
             echo '<select name="agegroup">';
@@ -632,7 +632,7 @@ function pof_importer_suggestionsdriveimport2() {
 			}
 
             echo '</select>';
-            
+
 			echo "<br />";
 			echo "<br />";
 		echo '<input type="submit" name="Submit" value="Valitse tiedosto" />';

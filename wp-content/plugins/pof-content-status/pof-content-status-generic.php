@@ -117,7 +117,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
                 <th>Otsikko</th>
                 <th>T&auml;m&auml; paketti</th>
                 <th>Ali paketti</th>
-                <th>Suorite</th>
+                <th>Aktiviteetti</th>
                 <th>Taitoalueet</th>
                 <th>Tarvikkeet</th>
                 <th>Kasvatustavoitteen avainsana</th>

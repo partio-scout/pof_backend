@@ -61,16 +61,16 @@ function pof_taxonomy_searchpage_menu() {
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Suorituspaikat', 'Suorituspaikat', 'manage_options', 'pof_taxonomy_searchpage_places-handle', 'pof_taxonomy_searchpage_places');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Ryhm&auml;koko', 'Ryhm&auml;koot', 'manage_options', 'pof_taxonomy_searchpage_groupsizes-handle', 'pof_taxonomy_searchpage_groupsizes');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Pakollisuus', 'Pakollisuus', 'manage_options', 'pof_taxonomy_searchpage_mandatory-handle', 'pof_taxonomy_searchpage_mandatory');
-	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Suorituksen kestot', 'Suorituksen kestot', 'manage_options', 'pof_taxonomy_searchpage_taskduration-handle', 'pof_taxonomy_searchpage_taskduration');
-	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Suorituksen valmistelun kestot', 'Suorituksen valmistelun kestot', 'manage_options', 'pof_taxonomy_searchpage_taskpreparationduration-handle', 'pof_taxonomy_searchpage_taskpreparationduration');
+	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Aktiviteetin kestot', 'Aktiviteetin kestot', 'manage_options', 'pof_taxonomy_searchpage_taskduration-handle', 'pof_taxonomy_searchpage_taskduration');
+	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Aktiviteetin valmistelun kestot', 'Aktiviteetin valmistelun kestot', 'manage_options', 'pof_taxonomy_searchpage_taskpreparationduration-handle', 'pof_taxonomy_searchpage_taskpreparationduration');
 
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_searchpage_equpments-handle', 'pof_taxonomy_searchpage_equpments');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_searchpage_skillareas-handle', 'pof_taxonomy_searchpage_skillareas');
     add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'manage_options', 'pof_taxonomy_searchpage_growthtarget-handle', 'pof_taxonomy_searchpage_growthtarget');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'manage_options', 'pof_taxonomy_searchpage_leaderships-handle', 'pof_taxonomy_searchpage_leaderships');
 
-	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Suoritepaketin yl&auml;k&auml;site', 'Suoritepaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_searchpage_taskgroupterm-handle', 'pof_taxonomy_searchpage_taskgroupterm');
-	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Suoritteen yl&auml;k&auml;site', 'Suoritteen yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_searchpage_taskterm-handle', 'pof_taxonomy_searchpage_taskterm');
+	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Aktiviteettipaketin yl&auml;k&auml;site', 'Aktiviteettipaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_searchpage_taskgroupterm-handle', 'pof_taxonomy_searchpage_taskgroupterm');
+	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Aktiviteetin yl&auml;k&auml;site', 'Aktiviteetin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_searchpage_taskterm-handle', 'pof_taxonomy_searchpage_taskterm');
 
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Yleiset', 'Yleiset', 'manage_options', 'pof_taxonomy_searchpage_common-handle', 'pof_taxonomy_searchpage_common');
 
@@ -259,7 +259,7 @@ function pof_taxonomy_searchpage_mandatory() {
 function pof_taxonomy_searchpage_taskduration() {
 	$taxonomy_base_key = "taskduration";
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
-	$title = "Suorituksen kestot";
+	$title = "Aktiviteetin kestot";
 	$title2 = "Kesto";
 
 	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
@@ -270,7 +270,7 @@ function pof_taxonomy_searchpage_taskduration() {
 function pof_taxonomy_searchpage_taskpreparationduration() {
 	$taxonomy_base_key = "taskpreaparationduration";
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
-	$title = "Suorituksen valmistelun kestot";
+	$title = "Aktiviteetin valmistelun kestot";
 	$title2 = "Kesto";
 
 	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
@@ -452,7 +452,7 @@ function pof_taxonomy_searchpage_taskgroupterm() {
 	}
 
 //	$items = pof_taxonomy_searchpage_get_taskgroupterms();
-	$title = "Suoritepaketin yl&auml;k&auml;site";
+	$title = "Aktiviteettipaketin yl&auml;k&auml;site";
 	$title2 = "Termi";
 	$additional_text = "Kun lis&auml;&auml;t, lis&auml;&auml; aina kaksi. Yksikk&ouml;muodon per&auml;ss&auml; oltava _single, monikkomuodon per&auml;ss&auml; _plural";
 
@@ -495,7 +495,7 @@ function pof_taxonomy_searchpage_taskterm() {
 	}
 
 //	$items = pof_taxonomy_searchpage_get_taskterms();
-	$title = "Suoritepaketin yl&auml;k&auml;site";
+	$title = "Aktiviteettipaketin yl&auml;k&auml;site";
 	$title2 = "Termi";
 	$additional_text = "Kun lis&auml;&auml;t, lis&auml;&auml; aina kaksi. Yksikk&ouml;muodon per&auml;ss&auml; oltava _single, monikkomuodon per&auml;ss&auml; _plural";
 

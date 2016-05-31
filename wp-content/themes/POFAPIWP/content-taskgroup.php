@@ -42,17 +42,17 @@
 		echo get_post_meta($post->ID, "taskgroup_additional_tasks_count", true);
 		?>
 
-		<h3>Suoriteiden yl&auml;k&auml;site</h3>
+		<h3>Aktiviteettien yl&auml;k&auml;site</h3>
 		<?php
 		echo get_post_meta($post->ID, "taskgroup_subtask_term", true);
-		?>
+        ?>
 
-		<h3>Suoritepakettien yl&auml;k&auml;site</h3>
+		<h3>Aktiviteettipakettien yl&auml;k&auml;site</h3>
 		<?php
 		echo get_post_meta($post->ID, "taskgroup_subtaskgroup_term", true);
-		?>
+        ?>
 
-		<h3>Suoritepaketin yl&auml;k&auml;site</h3>
+		<h3>Aktiviteettipaketin yl&auml;k&auml;site</h3>
 		<?php
 		echo get_post_meta($post->ID, "taskgroup_taskgroup_term", true);
 		?>

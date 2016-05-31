@@ -535,8 +535,8 @@ function getJsonTaskTerm($term, $lang = 'fi') {
                     $ret->plural = "Aktiviteettitasot";
                     break;
                 case "suoritus":
-                    $ret->single = "Suoritus";
-                    $ret->plural = "Suoritukset";
+                    $ret->single = "Aktiviteetti";
+                    $ret->plural = "Aktiviteetit";
                     break;
                 case "paussi":
                     $ret->single = "Paussi";
