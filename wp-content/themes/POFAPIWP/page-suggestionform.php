@@ -7,13 +7,13 @@ $lang_key = 'fi';
 $partio_id = '';
 $post_guid = '';
 
-if (   $_SERVER['REQUEST_METHOD'] === 'POST' 
-    && isset($_POST) 
-    && array_key_exists('suggestion_name', $_POST) 
+if (   $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST)
+    && array_key_exists('suggestion_name', $_POST)
     && $_POST['suggestion_name'] != ""
-    && array_key_exists('suggestion_title', $_POST) 
+    && array_key_exists('suggestion_title', $_POST)
     && $_POST['suggestion_title'] != ""
-    && array_key_exists('suggestion_content', $_POST) 
+    && array_key_exists('suggestion_content', $_POST)
     && $_POST['suggestion_content'] != "" ) {
 
     if (array_key_exists('lang', $_POST) && $_POST['lang'] != "") {
@@ -58,6 +58,58 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         }
     }
 
+    if (array_key_exists('pof_suggestion_file_user', $_FILES)) {
+
+        if ( ! function_exists( 'wp_handle_upload' ) ) {
+            require_once( ABSPATH . 'wp-admin/includes/file.php' );
+        }
+
+        $uploadedfile = $_FILES['pof_suggestion_file_user'];
+
+        $upload_overrides = array( 'test_form' => false );
+
+        $movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
+
+        if ( $movefile && !isset( $movefile['error'] ) ) {
+            // echo "File is valid, and was successfully uploaded.\n";
+            // var_dump( $movefile);
+            // $filename should be the path to a file in the upload directory.
+            $filename = $movefile['file'];
+
+            // The ID of the post this attachment is for.
+            $parent_post_id = $suggestion_id;
+
+            // Check the type of file. We'll use this as the 'post_mime_type'.
+            $filetype = wp_check_filetype( basename( $filename ), null );
+
+            // Get the path to the upload directory.
+            $wp_upload_dir = wp_upload_dir();
+
+            // Prepare an array of post data for the attachment.
+            $attachment = array(
+                'guid'           => $wp_upload_dir['url'] . '/' . basename( $filename ),
+                'post_mime_type' => $filetype['type'],
+                'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $filename ) ),
+                'post_content'   => '',
+                'post_status'    => 'inherit'
+            );
+
+            // Insert the attachment.
+            $attach_id = wp_insert_attachment( $attachment, $filename, $parent_post_id );
+
+            // Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
+            require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+            // Generate the metadata for the attachment, and update the database record.
+            $attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
+            wp_update_attachment_metadata( $attach_id, $attach_data );
+
+            // Update File Field
+//            update_field('pof_suggestion_file_user', $attach_id, $suggestion_id);
+
+            update_post_meta($suggestion_id, "pof_suggestion_file_user", $attach_id);
+        }
+    }
     update_post_meta($suggestion_id, "pof_suggestion_lang", $lang_key);
 	update_post_meta($suggestion_id, "pof_suggestion_writer", $_POST['suggestion_name']);
     update_post_meta($suggestion_id, "pof_suggestion_writer_id", $partio_id);
@@ -121,12 +173,12 @@ else {
         }
         echo json_encode($tmp);
         exit();
-    } 
+    }
     else {
-        
-        get_header(); 
-		
-		?>
+
+        get_header();
+
+?>
 
 
 	<div id="primary" class="content-area">
@@ -148,14 +200,21 @@ else {
 
                         
                     ?>
-		            <form action="" method="POST" class="tips__form">
-						<input type="hidden" name="return_val" value="html" />
-				        <input class="radius" type="text" name="suggestion_name" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_name_placeholder", 0, $lang_key, true); ?> *" aria-label="Name" /><br /><br />
-				        <input class="radius" type="text" name="suggestion_title" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_title_placeholder", 0, $lang_key, true); ?> *" aria-label="Title" /><br /><br />
-				        <textarea class="radius form-textarea" name="suggestion_content" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_content_placeholder", 0, $lang_key, true); ?>"></textarea><br /><br />
-				        <input class="button radius" type="submit" name="submit-tip" value="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_sendbutton", 0, $lang_key, true); ?>" aria-label="Send" />
+                    <form action="" method="POST" class="tips__form" enctype="multipart/form-data">
+                        <input type="hidden" name="return_val" value="html" />
+                        <br />
+                        <input class="radius" type="text" name="suggestion_name" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_name_placeholder", 0, $lang_key, true); ?> *" aria-label="Name" />
+                        <br />
+                        <br />
+                        <input class="radius" type="text" name="suggestion_title" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_title_placeholder", 0, $lang_key, true); ?> *" aria-label="Title" />
+                        <br />
+                        <br />
+                        <textarea class="radius form-textarea" name="suggestion_content" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_content_placeholder", 0, $lang_key, true); ?>"></textarea>
+                        <br />
+                        <br />
+                        <input class="button radius" type="submit" name="submit-tip" value="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_sendbutton", 0, $lang_key, true); ?>" aria-label="Send" />
 
-	    		    </form>
+                    </form>
                 </div>
             </article>
 		</main><!-- .site-main -->
