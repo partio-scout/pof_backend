@@ -15,7 +15,7 @@ $ret = new stdClass();
 
 $languages = pof_taxonomy_translate_get_languages();
 
-function pof_pages_get_tags_searchpage($items, $item_tax_key) 
+function pof_pages_get_tags_searchpage($items, $item_tax_key)
 {
 	$items_arr = array();
 	foreach ($items as $item_key => $item) {
@@ -86,7 +86,14 @@ if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
 	//Kasvatustavoitteet
 	$item_tax_key = 'growth_target';
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->kasvatustavoitteet = pof_pages_get_tags_searchpage($languages, $items, $item_tax_key);
+	$ret->kasvatustavoitteet = pof_pages_get_tags_searchpage($items, $items, $item_tax_key);
+}
+
+if ($filter_tags == "all" || strstr($filter_tags, "johtamistaito")) {
+	//Johtamistaito
+	$item_tax_key = 'leadership';
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key);
+	$ret->johtamistaito = pof_pages_get_tags_searchpage($items, $items, $item_tax_key);
 }
 
 echo json_encode($ret);
