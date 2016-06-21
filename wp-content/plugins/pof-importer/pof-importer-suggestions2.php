@@ -6,7 +6,7 @@ function pof_importer_suggestionsdriveimport_run2($fileId, $agegroup_id, $saveTo
     $agegroups = pof_taxonomy_translate_get_agegroups();
 
     $agegroup = new stdClass();
-			
+
     foreach ($agegroups as $agegroup_tmp) {
         if ($agegroup_tmp->id == $agegroup_id) {
             $agegroup = $agegroup_tmp;
@@ -59,7 +59,7 @@ function pof_importer_suggestionsdriveimport_run2($fileId, $agegroup_id, $saveTo
 
 
 		$filepath = pof_importer_download_drive_file($service, $file);
-		
+
 		$objReader = pof_imported_get_phpExcel_objReader();
 
 		$objPHPExcel = $objReader->load($filepath);
@@ -123,7 +123,7 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
 	$post = null;
 
     $agegroups_and_tasks = pof_importer_get_agegroups_and_tasks($agegroup_id);
-    
+
     $tasks = $agegroups_and_tasks[$agegroup_id];
 
     $task_title = pof_importer_normalize_title($row['A']);
@@ -135,7 +135,7 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
         $title_counter = 0;
 
         foreach ($row as $row_key => $row_value) {
-            
+
             if ($row_key == 'A') {
                 continue;
             }
@@ -146,11 +146,15 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
             $title_counter++;
             $title = "Toteutusvinkki " . strval($title_counter);
 
+            if ($lang == 'sv') {
+                $title = "Tip " . strval($title_counter);
+            } elseif ($lang == 'en') {
+                $title = "Example " . strval($title_counter);
+            }
+
             if (strlen(trim($row_value)) < 5) {
                 continue;
             }
-
-
 
             $args = array(
 		        'numberposts' => -1,
@@ -164,13 +168,18 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
 	        add_filter( 'posts_where', 'pof_importer_title_filter', 10, 2 );
 	        $the_query_suggestion = new WP_Query( $args );
 	        remove_filter( 'posts_where', 'pof_importer_title_filter', 10, 2 );
-	
+
 
 	        if( $the_query_suggestion->have_posts() ) {
 		        while ( $the_query_suggestion->have_posts() ) {
+                    $the_query_suggestion->the_post();
 
-			        $the_query_suggestion->the_post();
-			        $post = $the_query_suggestion->post;
+                    $tmp_lang = get_post_meta($the_query_suggestion->post->ID, "pof_suggestion_lang", true);
+
+                    if ($tmp_lang == $lang)
+                    {
+                        $post = $the_query_suggestion->post;
+                    }
 		        }
 	        }
 
@@ -201,7 +210,7 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
 	        }
             $post = null;
 
-            
+
 
         }
 
