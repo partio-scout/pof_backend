@@ -147,7 +147,7 @@ function pof_importer_suggestionssdriveimport_importRow2($row, $row_index, $ageg
             $title = "Toteutusvinkki " . strval($title_counter);
 
             if ($lang == 'sv') {
-                $title = "Tip " . strval($title_counter);
+                $title = "Tips " . strval($title_counter);
             } elseif ($lang == 'en') {
                 $title = "Example " . strval($title_counter);
             }
