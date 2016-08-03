@@ -98,7 +98,7 @@ function pof_sitemap_run() {
                 foreach ($langs as $lang_code) {
                     $content .= "<url>";
                     $content .= "<loc>".get_site_url()."/item-json/?postGUID=".$item->meta_value."&amp;lang=".$lang_code."</loc>";
-                    $content .= "<priority>0.8</priority>";
+                    $content .= "<priority>0.5</priority>";
                     $content .= "</url>";
                 }
 
