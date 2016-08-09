@@ -109,7 +109,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
             <th colspan="2"></th>
             <th rowspan="2">Vapaavalintaisten<br />lukum&auml;&auml;r&auml;</th>
             <th colspan="3">Yl&auml;k&auml;site</th>
-            <th colspan="8"></th>
+            <th colspan="10"></th>
             <th colspan="<?php echo $langs_count; ?>">Vinkit</th>
         </tr>
             <tr>
@@ -119,6 +119,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
                 <th>Ali paketti</th>
                 <th>Aktiviteetti</th>
                 <th>Taitoalueet</th>
+                <th>Johtamistaidot</th>
                 <th>Tarvikkeet</th>
                 <th>Kasvatustavoitteen avainsana</th>
                 <th>Pakollinen</th>
