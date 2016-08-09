@@ -78,6 +78,7 @@ function pof_taxonomy_icons_get_agegroups() {
 	$tmp = new stdClass();
 	$tmp->id = 0;
 	$tmp->title = "Default";
+    $tmp->guid = "";
 
 	$agegroups[0] = $tmp;
 
