@@ -56,9 +56,9 @@ function getJsonTree($root_id) {
 
 	pof_checkDatetime($root_post);
 
-	
+
 	$program = new $classProgram;
-	
+
 	$program = getJsonItemDetailsProgram($program, $root_post);
 
 	$program->title = $root_post->post_title;
@@ -76,17 +76,24 @@ function getJsonTree($root_id) {
 
 function getJsonAgeGroups($parent_id) {
 	$classAgeGroup = "POFTREE\\agegroup";
-	
+
 	$childs = array();
 
 	$args = array(
 		'numberposts' => -1,
 		'posts_per_page' => -1,
 		'post_type' => 'pof_post_agegroup',
-		'orderby' => 'title',
-		'order' => 'ASC',
-		'meta_key' => 'suoritusohjelma',
-		'meta_value' => $parent_id
+        'meta_query' => array(
+            array(
+                'key'			=> 'suoritusohjelma',
+                'compare'		=> '=',
+                'value'         => $parent_id
+            )
+        ),
+        'order'				=> 'ASC',
+        'orderby'			=> 'meta_value',
+        'meta_key'			=> 'agegroup_min_age',
+        'meta_type'			=> 'NUMERIC'
 	);
 
 	$the_query = new WP_Query( $args );
@@ -94,7 +101,7 @@ function getJsonAgeGroups($parent_id) {
 	if( $the_query->have_posts() ) {
 		while ( $the_query->have_posts() ) {
 			$the_query->the_post();
-			
+
 			$child = new $classAgeGroup;
 			$child = getJsonItemBaseDetails($child, $the_query->post);
 			$child = getJsonItemDetailsAgegroup($child, $the_query->post, 'fi');
@@ -113,7 +120,7 @@ function getJsonAgeGroups($parent_id) {
 function getJsonTaskGroups($parent_id) {
 	global $mandatory_task_guids;
 	$classTaskGroup = "POFTREE\\taskgroup";
-	
+
 	$childs = array();
 
 	$args = array(
@@ -136,7 +143,7 @@ function getJsonTaskGroups($parent_id) {
 			if ($the_query->post->ID == $parent_id) {
 				continue;
 			}
-			
+
 			$child = new $classTaskGroup;
 			$child = getJsonItemBaseDetails($child, $the_query->post);
 			$child = getJsonItemDetailsTaskgroup($child, $the_query->post, 'fi');
@@ -165,7 +172,7 @@ function getJsonTaskGroups($parent_id) {
 function getJsonTaskGroupsForTaskGroup($parent_id) {
 	global $mandatory_task_guids;
 	$classTaskGroup = "POFTREE\\taskgroup";
-	
+
 	$childs = array();
 
 	$args = array(
@@ -188,7 +195,7 @@ function getJsonTaskGroupsForTaskGroup($parent_id) {
 			if ($the_querysub->post->ID == $parent_id) {
 				continue;
 			}
-			
+
 			$child = new $classTaskGroup;
 			$child = getJsonItemBaseDetails($child, $the_querysub->post);
 			$child = getJsonItemDetailsTaskgroup($child, $the_querysub->post, 'fi');
@@ -216,7 +223,7 @@ function getJsonTaskGroupsForTaskGroup($parent_id) {
 
 function getJsonTasks($parent_id) {
 	$classTask = "POFTREE\\task";
-	
+
 	$childs = array();
 
 	$args = array(
@@ -233,7 +240,7 @@ function getJsonTasks($parent_id) {
 		while ( $the_query->have_posts() ) {
 			$the_query->the_post();
 
-			
+
 			$child = new $classTask;
 			$child = getJsonItemBaseDetails($child, $the_query->post);
 			$child = getJsonItemDetailsTask($child, $the_query->post);
