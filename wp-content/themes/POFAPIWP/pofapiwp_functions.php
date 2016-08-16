@@ -239,7 +239,7 @@ function get_post_additional_content_XML($post_id) {
 					'name'=>'file',
 					'value' => $additional_file['additional_file_text'],
 					'attributes' => array(
-						'mime_type' => $image['mime'],
+						'mime_type' => $file['mime'],
 						'url' => $file['url']
 					),
 				);
@@ -1097,13 +1097,14 @@ function get_post_additional_content_JSON($post_id) {
 
 	if ($files) {
 		foreach ($files as $additional_file) {
-			if ($additional_file['additional_file']) {
+
+            if ($additional_file['additional_file']) {
 
 				$file = $additional_file['additional_file'];
 
 				$file_obj = new stdClass();
 				$file_obj->description = $additional_file['additional_file_text'];
-				$file_obj->mime_type = $image['mime'];
+				$file_obj->mime_type = $file['mime'];
 				$file_obj->url = $file['url'];
 				array_push($files_arr, $file_obj);
 			}
