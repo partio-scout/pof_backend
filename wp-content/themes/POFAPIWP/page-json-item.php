@@ -192,7 +192,11 @@ $jsonItem->title = $title;
 $jsonItem->ingress = $ingress;
 $jsonItem->content = $content;
 $jsonItem->lang = $lang;
-$jsonItem->tags = get_post_tags_JSON($mypost->ID, $agegroup_id, strtolower($lang));
+
+if ($mypost->post_type == 'pof_post_task') {
+    $jsonItem->tags = get_post_tags_JSON($mypost->ID, $agegroup_id, strtolower($lang));
+}
+
 $jsonItem->images = get_post_images_JSON($mypost->ID);
 $jsonItem->additional_content = get_post_additional_content_JSON($mypost->ID);
 
