@@ -40,8 +40,8 @@ function pof_content_status_generic_get_form() {
         }
         $selected = "";
         if (   isset($_POST)
-	        && isset($_POST["lang"])) {
-            if ($_POST["lang"] == $lang->lang_code) {
+	        && isset($_POST["agegroup"])) {
+            if ($_POST["agegroup"] == $agegroup->id) {
                 $selected = " selected=\"selected\"";
             }
         }
@@ -174,7 +174,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
                 <td>
                     <?php
             $task_parent_term = "";
-            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true); 
+            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtaskgroup_term", true); 
             if ($task_term == "" &&  $task_parent_term != "") {
                 echo "(".$task_parent_term.")";
             } else {
@@ -199,7 +199,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
 
             ?>
         <tr>
-            <td colspan="5"></td>
+            <td colspan="6"></td>
             <?php
     echo pof_content_status_get_counters_cell("pof_tax_skillarea");
     echo pof_content_status_get_counters_cell("pof_tax_leadership");
@@ -209,12 +209,20 @@ function pof_content_status_generic_get_content($agegroup_id) {
     
     echo pof_content_status_get_counters_cell("task_groupsize");
     echo pof_content_status_get_counters_cell("task_place_of_performance");
+    echo pof_content_status_get_counters_cell("task_duration");
+    echo pof_content_status_get_counters_cell("task_preparationduration");
+    echo pof_content_status_get_counters_cell("task_level");
+
+    foreach ($langs as $lang) {
+        echo pof_content_status_get_counters_cell("suggestion_".$lang->lang_code);
+    }
+
 
             ?>
 
         </tr>
         <tr>
-            <td colspan="5"></td>
+            <td colspan="6"></td>
             <?php
     echo pof_content_status_get_counters_cell_pros("pof_tax_skillarea");
     echo pof_content_status_get_counters_cell_pros("pof_tax_leadership");
@@ -223,6 +231,15 @@ function pof_content_status_generic_get_content($agegroup_id) {
     echo pof_content_status_get_counters_cell_pros("task_mandatory");
     echo pof_content_status_get_counters_cell_pros("task_groupsize");
     echo pof_content_status_get_counters_cell_pros("task_place_of_performance");
+
+    
+    echo pof_content_status_get_counters_cell_pros("task_duration");
+    echo pof_content_status_get_counters_cell_pros("task_preparationduration");
+    echo pof_content_status_get_counters_cell_pros("task_level");
+
+    foreach ($langs as $lang) {
+        echo pof_content_status_get_counters_cell_pros("suggestion_".$lang->lang_code);
+    }
 
 
 
@@ -381,9 +398,10 @@ function pof_content_status_generic_content_get_tasks($taskgroup_id, $indentatio
                 <?php pof_content_status_get_checkbox_cell("task_mandatory", $the_query->post->ID); ?>
                 <?php pof_content_status_get_field_count_cell("task_groupsize", $the_query->post->ID); ?>
                 <?php pof_content_status_get_field_count_cell("task_place_of_performance", $the_query->post->ID); ?>
-                <td><?php echo get_post_meta($the_query->post->ID, "task_duration", true); ?></td>
-                <td><?php echo get_post_meta($the_query->post->ID, "task_preparationduration", true); ?></td>
-                <td><?php echo get_post_meta($the_query->post->ID, "task_level", true); ?></td>
+                <?php pof_content_status_get_field_cell_exists("task_duration", $the_query->post->ID); ?>
+                <?php pof_content_status_get_field_cell_exists("task_preparationduration", $the_query->post->ID); ?>
+                <?php pof_content_status_get_field_cell_exists("task_level", $the_query->post->ID); ?>
+
                 <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
 
@@ -410,6 +428,7 @@ function pof_content_status_migration_growth_target_to_tag($post_id) {
 }
 
 function pof_content_status_get_suggestions($post_id) {
+    global $field_counters;
 
     $tmp = array();
 
@@ -439,11 +458,23 @@ function pof_content_status_get_suggestions($post_id) {
     $langs = pof_settings_get_all_languages();
 
     foreach ($langs as $lang) {
-        echo "<td>";
-        if (array_key_exists($lang->lang_code, $tmp)) {
-            echo $tmp[$lang->lang_code];
+        if (!array_key_exists('suggestion_'.$lang->lang_code, $field_counters)) {
+            $field_counters['suggestion_'.$lang->lang_code] = new stdClass();
+            $field_counters['suggestion_'.$lang->lang_code]->total = 0;
+            $field_counters['suggestion_'.$lang->lang_code]->green = 0;
         }
-        echo "</td>";
+
+        $field_counters['suggestion_'.$lang->lang_code]->total++;
+
+
+        if (array_key_exists($lang->lang_code, $tmp)) {
+            echo "<td class=\"pof_content_status_green\">";
+            $field_counters['suggestion_'.$lang->lang_code]->green++;
+            echo $tmp[$lang->lang_code];
+            echo "</td>";
+        } else {
+            echo "<td></td>";
+        }
     }
 
 }
@@ -472,6 +503,33 @@ function pof_content_status_get_tag_count_cell($taxonomy, $post_id) {
     <td class="<?php echo $class; ?>"><?php echo $count; ?></td>
     <?php
 }
+
+function pof_content_status_get_field_cell_exists($field, $post_id) {
+    
+    global $field_counters;
+
+    if (!array_key_exists($field, $field_counters)) {
+        $field_counters[$field] = new stdClass();
+        $field_counters[$field]->total = 0;
+        $field_counters[$field]->green = 0;
+    }
+
+    $field_counters[$field]->total++;
+
+    $content = get_post_meta($post_id, $field, true);
+
+    $class = "pof_content_status_black";
+
+    if (strlen($content) > 0) {
+        $class = "pof_content_status_green";
+        $field_counters[$field]->green++;
+    }
+
+    ?>
+    <td class="<?php echo $class; ?>"><?php echo $content; ?></td>
+    <?php
+}
+
 
 function pof_content_status_get_field_count_cell($field, $post_id) {
     $res = get_post_meta($post_id, $field, true);
