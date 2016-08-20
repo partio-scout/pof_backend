@@ -88,14 +88,6 @@
 		?>
 		</p>
 
-		<h3>Pakollinen meripartiolaisille</h3>
-		<p>
-
-		<?php
-			echo get_post_meta($post->ID, "task_mandatory_seascouts", true);
-		?>
-		</p>
-
 		<h3>Ryhm&auml;koko</h3>
 		<p>
 
