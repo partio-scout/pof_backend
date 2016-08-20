@@ -58,47 +58,4 @@ function AddPofApiCustomTaxonomies() {
 			'hierarchical' => false
 		)
 	));
-	/*
-	register_taxonomy('pof_tax_taskduration', array('pof_post_task'), array(
-		'hierarchical' => false,
-		'labels' => array(
-			'name' => _x( 'Suorituksen kesto', 'taxonomy general name' ),
-			'singular_name' => _x( 'Aktiviteetin kestot', 'taxonomy singular name' ),
-			'menu_name' => __( 'Aktiviteetin kestot' )
-		),
-		'rewrite' => array(
-			'slug' => 'taskduration',
-			'with_front' => false,
-			'hierarchical' => false
-		)
-	));
-
-	register_taxonomy('pof_tax_taskpreparationduration', array('pof_post_task'), array(
-		'hierarchical' => false,
-		'labels' => array(
-			'name' => _x( 'Suorituksen valmistelun kesto', 'taxonomy general name' ),
-			'singular_name' => _x( 'Aktiviteetin valmistelun kestot', 'taxonomy singular name' ),
-			'menu_name' => __( 'Aktiviteetin valmistelun kestot' )
-		),
-		'rewrite' => array(
-			'slug' => 'taskpreparationduration',
-			'with_front' => false,
-			'hierarchical' => false
-		)
-	));*/
-/*
-	register_taxonomy('pof_tax_taskplace', array('pof_post_task'), array(
-		'hierarchical' => false,
-		'labels' => array(
-			'name' => _x( 'Paikka', 'taxonomy general name' ),
-			'singular_name' => _x( 'Paikat', 'taxonomy singular name' ),
-			'menu_name' => __( 'Paikat' )
-		),
-		'rewrite' => array(
-			'slug' => 'taskplace',
-			'with_front' => false,
-			'hierarchical' => false
-		)
-	));
-*/
 }
