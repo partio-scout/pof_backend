@@ -674,7 +674,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		}
 		array_push($pakollisuus, $pakollinen);
 	}
-
+    /*
 	if (get_field("task_mandatory_seascouts", $post_id)) {
 		$pakollinen = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory_seascouts', $agegroup_id, $lang, true);
@@ -695,7 +695,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		}
 		array_push($pakollisuus, $pakollinen);
 	}
-
+    */
 
 	if (count($pakollisuus) > 0) {
 		$ret->pakollisuus = $pakollisuus;
