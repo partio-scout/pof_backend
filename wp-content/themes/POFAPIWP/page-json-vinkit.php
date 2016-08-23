@@ -52,7 +52,7 @@ $jsonItem->post->title = $task_post->post_title;
 $jsonItem->post->guid = get_post_meta( $task_post->ID, "post_guid", true );
 
 foreach ($suggestions as $suggestion) {
-	$suggestiong_lang = get_post_meta( $suggestion->ID, "pof_suggestion_language", true );
+	$suggestiong_lang = get_post_meta( $suggestion->ID, "pof_suggestion_lang", true );
 	if (strtolower($suggestiong_lang) == $lang || ($lang == 'fi' && $suggestiong_lang == '')) {
 		$suggestiong_writer = get_post_meta( $suggestion->ID, "pof_suggestion_writer", true );
 		$item = new stdClass();

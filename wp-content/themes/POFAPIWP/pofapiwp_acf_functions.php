@@ -15,7 +15,7 @@ function acf_load_pof_language_choices( $field ) {
 	return $field;
 }
 
-add_filter('acf/load_field/name=pof_suggestion_language', 'acf_load_pof_language_choices');
+add_filter('acf/load_field/name=pof_suggestion_lang', 'acf_load_pof_language_choices');
 add_filter('acf/load_field/name=program_lang', 'acf_load_pof_language_choices');
 
 
