@@ -155,12 +155,12 @@ function pof_content_status_orphan_get_content($pof_post_type) {
                     FROM wp_posts
                         JOIN wp_postmeta as wppostmeta1
                             ON wppostmeta1.post_id = wp_posts.ID AND wppostmeta1.meta_key = 'ikakausi'
-                        JOIN wp_postmeta as wppostmeta1
-                            ON wppostmeta1.post_id = wp_posts.ID AND wppostmeta1.meta_key = 'suoritepaketti'
+                        JOIN wp_postmeta as wppostmeta2
+                            ON wppostmeta2.post_id = wp_posts.ID AND wppostmeta2.meta_key = 'suoritepaketti'
                 WHERE  wp_posts.post_status = 'publish'
                     AND wp_posts.post_type = 'pof_post_taskgroup'
                     AND wppostmeta1.meta_value = 'null'
-                    AND wppostmeta1.meta_value = 'null';
+                    AND wppostmeta2.meta_value = 'null';
 			    "
 		    );
 
