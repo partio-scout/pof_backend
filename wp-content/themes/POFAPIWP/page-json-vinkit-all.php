@@ -6,13 +6,16 @@ Template Name: JSON vinkit kaikki
 header('Content-type: application/json');
 
 
-$lang = "fi";
+$args = array(
+	'numberposts' => -1,
+	'posts_per_page' => -1,
+	'post_type' => array('pof_post_suggestion')
+);
 
 if (!empty($_GET["lang"])) {
 	$lang = strtolower($_GET["lang"]);
-}
 
-$args = array(
+    $args = array(
 	'numberposts' => -1,
 	'posts_per_page' => -1,
 	'post_type' => array('pof_post_suggestion'),
@@ -23,7 +26,11 @@ $args = array(
                 'value'         => $lang
             )
         ),
-);
+    );
+
+}
+
+
 
 $the_query = new WP_Query( $args );
 
@@ -73,7 +80,7 @@ if( $the_query->have_posts() ) {
                 $task_post = get_post($task_post_id);
                 $task_posts[$task_post_id] = $task_post;
             }
-            
+
             if (!empty($task_post) && $task_post->ID != null) {
                 $item->post = new stdClass();
                 $item->post->id = $task_post->ID;
