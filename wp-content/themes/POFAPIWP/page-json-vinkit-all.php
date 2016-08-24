@@ -59,14 +59,14 @@ if( $the_query->have_posts() ) {
 		$item->modified = $suggestion->post_modified;
 
 
-		$suggestiong_file_user_id = get_post_meta( $suggestion->ID, "pof_suggestion_file_user", true );
+        //		$suggestiong_file_user_id = get_post_meta( $suggestion->ID, "pof_suggestion_file_user", true );
 		$suggestiong_file_id = get_post_meta( $suggestion->ID, "pof_suggestion_file", true );
-
+        /*
         if ($suggestiong_file_user_id != "") {
-            $path = wp_get_attachment_url( $suggestiong_file_user_id );
-            $item->file_user = $path;
+        $path = wp_get_attachment_url( $suggestiong_file_user_id );
+        $item->file_user = $path;
         }
-
+         */
         if ($suggestiong_file_id != "") {
             $path = wp_get_attachment_url( $suggestiong_file_id );
             $item->file = $path;
