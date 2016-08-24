@@ -60,7 +60,7 @@ if( $the_query->have_posts() ) {
 
 
 		$suggestiong_file_user_id = get_post_meta( $suggestion->ID, "pof_suggestion_file_user", true );
-		$suggestiong_file_id = get_post_meta( $suggestion->ID, "pof_suggestion_user", true );
+		$suggestiong_file_id = get_post_meta( $suggestion->ID, "pof_suggestion_file", true );
 
         if ($suggestiong_file_user_id != "") {
             $path = wp_get_attachment_url( $suggestiong_file_user_id );
@@ -90,6 +90,8 @@ if( $the_query->have_posts() ) {
             }
 
         }
+
+        $item->additional_content = get_post_additional_content_JSON($suggestion->ID);
 
 		array_push($posts, $item);
 	}

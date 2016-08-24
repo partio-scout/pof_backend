@@ -55,7 +55,7 @@ if( $the_query->have_posts() ) {
 
 
 		$suggestiong_file_user_id = get_post_meta( $suggestion->ID, "pof_suggestion_file_user", true );
-		$suggestiong_file_id = get_post_meta( $suggestion->ID, "pof_suggestion_user", true );
+		$suggestiong_file_id = get_post_meta( $suggestion->ID, "pof_suggestion_file", true );
 
         if ($suggestiong_file_user_id != "") {
             $path = wp_get_attachment_url( $suggestiong_file_user_id );
@@ -67,6 +67,8 @@ if( $the_query->have_posts() ) {
             $item->file = $path;
         }
 
+
+
         $task_post_id = get_post_meta( $suggestion->ID, "pof_suggestion_task", true );
         if (!empty($task_post_id)) {
             if (array_key_exists($task_post_id, $task_posts)) {
@@ -75,7 +77,7 @@ if( $the_query->have_posts() ) {
                 $task_post = get_post($task_post_id);
                 $task_posts[$task_post_id] = $task_post;
             }
-            
+
             if (!empty($task_post) && $task_post->ID != null) {
                 $item->post = new stdClass();
                 $item->post->id = $task_post->ID;
@@ -85,6 +87,7 @@ if( $the_query->have_posts() ) {
             }
 
         }
+        $item->additional_content = get_post_additional_content_JSON($suggestion->ID);
 
 		array_push($posts, $item);
 	}

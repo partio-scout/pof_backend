@@ -66,7 +66,7 @@ foreach ($suggestions as $suggestion) {
 
 
 		$suggestiong_file_user_id = get_post_meta( $suggestion->ID, "pof_suggestion_file_user", true );
-		$suggestiong_file_id = get_post_meta( $suggestion->ID, "pof_suggestion_user", true );
+		$suggestiong_file_id = get_post_meta( $suggestion->ID, "pof_suggestion_file", true );
 
         if ($suggestiong_file_user_id != "") {
             $path = wp_get_attachment_url( $suggestiong_file_user_id );
@@ -77,6 +77,8 @@ foreach ($suggestions as $suggestion) {
             $path = wp_get_attachment_url( $suggestiong_file_id );
             $item->file = $path;
         }
+
+        $item->additional_content = get_post_additional_content_JSON($suggestion->ID);
 
 		pof_checkDatetime($suggestion);
 
