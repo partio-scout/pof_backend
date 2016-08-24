@@ -1241,7 +1241,7 @@ add_action( 'save_post', 'pof_save_post_hook' );
 
 function pof_item_guid_add_meta_box() {
 
-	$screens = array('pof_post_task', 'pof_post_taskgroup', 'pof_post_program', 'pof_post_agegroup' );
+	$screens = array('pof_post_task', 'pof_post_taskgroup', 'pof_post_program', 'pof_post_agegroup', 'pof_post_suggestion' );
 
 	foreach ( $screens as $screen ) {
 
@@ -1493,6 +1493,10 @@ function pof_get_childs($post_item) {
 function pof_item_suggestions_meta_box() {
 
 	$screens = array('pof_post_task');
+
+    // Show suggestions metabox for all content types to clean up those that are linked to other content types than tasks
+	$screens = array('pof_post_task', 'pof_post_taskgroup', 'pof_post_program', 'pof_post_agegroup' );
+
 
 	foreach ( $screens as $screen ) {
 
