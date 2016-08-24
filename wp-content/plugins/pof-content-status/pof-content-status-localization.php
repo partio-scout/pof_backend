@@ -310,7 +310,7 @@ function pof_content_status_localization_get_field_cell($field, $post_id) {
 
     $class = "pof_content_status_black";
 
-    if (strlen($content) > 3) {
+    if (strlen(trim($content)) > 0) {
         $class = "pof_content_status_green";
         $field_counters[$field]->green++;
     }
@@ -336,7 +336,7 @@ function pof_content_status_localization_get_content_cell($content, $post_id) {
 
     $class = "pof_content_status_black";
 
-    if (strlen($content) > 3) {
+    if (strlen(trim($content)) > 0) {
         $class = "pof_content_status_green";
         $field_counters['content']->green ++;
     }
