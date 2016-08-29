@@ -58,7 +58,8 @@ function pof_sitemap_run() {
                     ON wp_postmeta.post_id = wp_posts.ID
                 WHERE wp_postmeta.meta_key = 'post_guid'
                     AND wp_posts.post_status = 'publish'
-                    AND wp_posts.post_type IN ('page', 'pof_post_agegroup', 'pof_post_program', 'pof_post_task', 'pof_post_taskgroup')
+                    #AND wp_posts.post_type IN ('page', 'pof_post_agegroup', 'pof_post_program', 'pof_post_task', 'pof_post_taskgroup')
+                    AND wp_posts.post_type IN ('page', 'pof_post_agegroup', 'pof_post_program', 'pof_post_taskgroup')
                 ORDER BY wp_posts.post_type, wp_posts.ID;
 			    "
 		    );
