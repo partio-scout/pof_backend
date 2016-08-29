@@ -335,6 +335,8 @@ function getXML($data) {
 $pof_settings_langs = array();
 $pof_available_languages = pof_settigs_get_active_lang_codes();
 
+$pof_settings_lastupdate_overwrite = pof_settings_get_lastupdate_overwrite();
+
 
 function getLastModifiedBy($userId) {
 	$tmp = new stdClass();
@@ -348,8 +350,15 @@ function getLastModifiedBy($userId) {
 
 function getJsonItemBaseDetails($jsonItem, $post) {
 	global $pof_available_languages;
+    global $pof_settings_lastupdate_overwrite;
 
-	$jsonItem->lastModified = $post->post_modified;
+    if ($pof_settings_lastupdate_overwrite == null) {
+	    $jsonItem->lastModified = $post->post_modified;
+    } else {
+	    $jsonItem->lastModified = $pof_settings_lastupdate_overwrite;
+    }
+
+
 	$jsonItem->lastModifiedBy = getLastModifiedBy(get_post_meta( $post->ID, '_edit_last', true));
 
 	$post_guid = get_post_meta( $post->ID, "post_guid", true );
@@ -360,7 +369,14 @@ function getJsonItemBaseDetails($jsonItem, $post) {
 	$lang_obj->lang = 'fi';
 	$lang_obj->title = $post->post_title;
 	$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=fi";
-	$lang_obj->lastModified = $post->post_modified;
+
+
+    if ($pof_settings_lastupdate_overwrite == null) {
+	    $lang_obj->lastModified = $post->post_modified;
+    } else {
+	    $lang_obj->lastModified = $pof_settings_lastupdate_overwrite;
+    }
+
 	if (empty($jsonItem->languages)) {
 		$jsonItem->languages = array();
 	}
@@ -373,7 +389,11 @@ function getJsonItemBaseDetails($jsonItem, $post) {
 			$lang_obj->lang = $available_language;
 			$lang_obj->title = $tmp;
 			$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=".$available_language;
-			$lang_obj->lastModified = $post->post_modified;
+			if ($pof_settings_lastupdate_overwrite == null) {
+                $lang_obj->lastModified = $post->post_modified;
+            } else {
+                $lang_obj->lastModified = $pof_settings_lastupdate_overwrite;
+            }
 			array_push($jsonItem->languages, $lang_obj);
 		}
 
@@ -384,8 +404,14 @@ function getJsonItemBaseDetails($jsonItem, $post) {
 
 function getJsonItemBaseDetailsItem($jsonItem, $post) {
 	global $pof_available_languages;
+    global $pof_settings_lastupdate_overwrite;
 
-	$jsonItem->lastModified = $post->post_modified;
+    if ($pof_settings_lastupdate_overwrite == null) {
+	    $jsonItem->lastModified = $post->post_modified;
+    } else {
+	    $jsonItem->lastModified = $pof_settings_lastupdate_overwrite;
+    }
+
 	$jsonItem->lastModifiedBy = getLastModifiedBy(get_post_meta( $post->ID, '_edit_last', true));
 
 	$post_guid = get_post_meta( $post->ID, "post_guid", true );
@@ -395,7 +421,11 @@ function getJsonItemBaseDetailsItem($jsonItem, $post) {
 	$lang_obj = new stdClass();
 	$lang_obj->lang = 'fi';
 	$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=fi";
-	$lang_obj->lastModified = $post->post_modified;
+	if ($pof_settings_lastupdate_overwrite == null) {
+	    $lang_obj->lastModified = $post->post_modified;
+    } else {
+	    $lang_obj->lastModified = $pof_settings_lastupdate_overwrite;
+    }
 	array_push($jsonItem->languages, $lang_obj);
 
 	foreach ($pof_available_languages as $available_language) {
@@ -404,7 +434,11 @@ function getJsonItemBaseDetailsItem($jsonItem, $post) {
 			$lang_obj = new stdClass();
 			$lang_obj->lang = $available_language;
 			$lang_obj->details = get_site_url() . "/item-json/?postGUID=".$post_guid."&lang=".$available_language;
-			$lang_obj->lastModified = $post->post_modified;
+			if ($pof_settings_lastupdate_overwrite == null) {
+                $lang_obj->lastModified = $post->post_modified;
+            } else {
+                $lang_obj->lastModified = $pof_settings_lastupdate_overwrite;
+            }
 			array_push($jsonItem->languages, $lang_obj);
 		}
 
@@ -558,29 +592,11 @@ $mandatory_task_guids = array();
 function getJsonItemDetailsTask($jsonItem, $post) {
 	global $pof_available_languages;
 	global $mandatory_task_guids;
+    global $pof_settings_lastupdate_overwrite;
 
 	if (get_field("task_mandatory", $post->ID)) {
 		array_push($mandatory_task_guids, get_post_meta( $post->ID, "post_guid", true ));
 	}
-/*
-	$jsonItem->mandatory = get_field("task_mandatory", $post->ID);
-	$jsonItem->mandatory_seascouts = get_field("task_mandatory_seascouts", $post->ID);
-
-	$groupsize = get_field("task_groupsize", $post->ID);
-
-	if (empty($groupsize)) {
-		$jsonItem->groupsize = array('group');
-	} else {
-		$jsonItem->groupsize = $groupsize;
-	}
-
-	$place_of_performance = get_field("task_place_of_performance", $post->ID);
-
-	if (empty($place_of_performance)) {
-		$jsonItem->place_of_performance = array('meeting_place');
-	} else {
-		$jsonItem->place_of_performance = $place_of_performance;
-	}*/
 
 	$post_guid = get_post_meta( $post->ID, "post_guid", true );
 
@@ -594,31 +610,19 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 				$lang_obj = new stdClass();
 				$lang_obj->lang = $available_language;
 				$lang_obj->details = get_site_url() . "/item-json-vinkit/?postGUID=".$post_guid."&lang=".$available_language;
-				$lang_obj->lastModified = $suggestiongs_tmp[$available_language]->modified;
+
+                if ($pof_settings_lastupdate_overwrite == null) {
+                    $lang_obj->lastModified = $suggestiongs_tmp[$available_language]->modified;
+                } else {
+                    $lang_obj->lastModified = $pof_settings_lastupdate_overwrite;
+                }
+
 				$lang_obj->count= $suggestiongs_tmp[$available_language]->count;
 				array_push($jsonItem->suggestions_details, $lang_obj);
 			}
 		}
 	}
-/*
-	$lang_obj = new stdClass();
-	$lang_obj->lang = 'fi';
-	$lang_obj->details = get_site_url() . "/item-json-vinkit/?postGUID=".$post_guid."&lang=fi";
-	$lang_obj->lastModified = "2015-03-26 18:15:34";
-	array_push($jsonItem->suggestions_details, $lang_obj);
 
-	foreach ($pof_available_languages as $available_language) {
-		$tmp = get_field("title_".strtolower($available_language), $post->ID);
-		if (!empty($tmp)) {
-			$lang_obj = new stdClass();
-			$lang_obj->lang = $available_language;
-			$lang_obj->details = get_site_url() . "/item-json-vinkit/?postGUID=".$post_guid."&lang=".$available_language;
-			$lang_obj->lastModified = "2015-03-26 18:15:34";
-			array_push($jsonItem->suggestions_details, $lang_obj);
-		}
-
-	}
-*/
 	return $jsonItem;
 }
 
@@ -1754,10 +1758,16 @@ function pof_normalize_task_level($level_str) {
 function pof_checkDatetime($post_to_check) {
 	global $lastModified;
 	global $lastModifiedBy;
+    global $pof_settings_lastupdate_overwrite;
 
 	$tmpTime = strtotime($post_to_check->post_modified);
 	if ($tmpTime > $lastModified) {
-		$lastModified = $tmpTime;
+        if ($pof_settings_lastupdate_overwrite == null) {
+            $lastModified = $tmpTime;
+        } else {
+            $lastModified = $pof_settings_lastupdate_overwrite;
+        }
+
 		$lastModifiedBy = get_post_meta( $post_to_check->ID, '_edit_last', true);
 	}
 }

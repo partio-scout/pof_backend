@@ -29,6 +29,8 @@ if( $the_query->have_posts() ) {
 	}
 }
 
+$pof_settings_lastupdate_overwrite = pof_settings_get_lastupdate_overwrite();
+
 pof_checkDatetime($task_post);
 
 
@@ -62,21 +64,13 @@ foreach ($suggestions as $suggestion) {
 		$item->publisher = new stdClass();
 		$item->publisher->nickname = $suggestiong_writer;
 		$item->published = $suggestion->post_date;
-		$item->modified = $suggestion->post_modified;
 
+        if ($pof_settings_lastupdate_overwrite == null) {
+            $item->modified = $suggestion->post_modified;
+        } else {
+            $item->modified = $pof_settings_lastupdate_overwrite;
+        }
 
-        //		$suggestiong_file_user_id = get_post_meta( $suggestion->ID, "pof_suggestion_file_user", true );
-		$suggestiong_file_id = get_post_meta( $suggestion->ID, "pof_suggestion_file", true );
-        /*
-        if ($suggestiong_file_user_id != "") {
-        $path = wp_get_attachment_url( $suggestiong_file_user_id );
-        $item->file_user = $path;
-        }
-         */
-        if ($suggestiong_file_id != "") {
-            $path = wp_get_attachment_url( $suggestiong_file_id );
-            $item->file = $path;
-        }
 
         $item->additional_content = get_post_additional_content_JSON($suggestion->ID);
 
@@ -86,7 +80,13 @@ foreach ($suggestions as $suggestion) {
 	}
 }
 
-$jsonItem->lastModified = date("Y-m-d H:i:s",$lastModified);
+
+
+if ($pof_settings_lastupdate_overwrite == null) {
+    $jsonItem->lastModified = date("Y-m-d H:i:s",$lastModified);
+} else {
+    $jsonItem->lastModified = $pof_settings_lastupdate_overwrite;
+}
 
 echo json_encode($jsonItem);
 

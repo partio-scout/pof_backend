@@ -41,7 +41,7 @@ function pof_settings_install() {
 	global $pof_settings_db_version;
 
 	$table_name_languages = pof_settings_get_table_name_languages();
-	
+
 	$charset_collate = $wpdb->get_charset_collate();
 
 	$sql = "CREATE TABLE $table_name_languages (
@@ -99,7 +99,7 @@ function pof_settings_general() {
 		if (isset($_POST["google_api_password"])) {
 			update_option("pof_settings_google_api_password", $_POST["google_api_password"]);
 		}
-        
+
 		if (isset($_POST["suggestions_emails"])) {
 			update_option("pof_settings_suggestions_emails", $_POST["suggestions_emails"]);
 		}
@@ -110,12 +110,15 @@ function pof_settings_general() {
         if (isset($_POST["suggestions_email_sender_email"])) {
 			update_option("pof_settings_suggestions_email_sender_email", $_POST["suggestions_email_sender_email"]);
 		}
+        if (isset($_POST["lastupdate_overwrite"])) {
+			update_option("pof_settings_lastupdate_overwrite", $_POST["lastupdate_overwrite"]);
+		}
 	}
 
 	echo '<div class="wrap">';
 	echo '<h1>POF Settings, yleiset</h1>';
-	
-	?>
+
+?>
 
 	<form method="post" action="">
 		<?php settings_fields( 'pof_settings-general' ); ?>
@@ -151,6 +154,15 @@ function pof_settings_general() {
             <tr valign="top">
                 <th scope="row">Mist&auml; osoitteesta l&auml;hetet&auml;&auml;n.</th>
                 <td><input id="suggestions_email_sender_email" autocomplete="off" type="text" name="suggestions_email_sender_email" value='<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_email')); ?>' /></td>
+            </tr>
+        </table>
+        <h2>Itemit</h2>
+        <table class="form-table">
+            <tr valign="top">
+                <th scope="row">Yliaja viimeisimm&auml;n muokkauksen p&auml;iv&auml;m&auml;&auml;r&auml; (Muoto: YYYY-MM-DD HH:mm:ss (esim. 2016-08-29 12:00:00)).</th>
+                <td>
+                    <input id="lastupdate_overwrite" autocomplete="off" type="text" name="lastupdate_overwrite" value="<?php echo esc_attr( get_option('pof_settings_lastupdate_overwrite') ); ?>" />
+                </td>
             </tr>
         </table>
 	

@@ -27,6 +27,16 @@ function pof_settings_get_suggestions_email_sender_email() {
 	return get_option('pof_settings_suggestions_email_sender_email');
 }
 
+function pof_settings_get_lastupdate_overwrite() {
+    $val = get_option('pof_settings_lastupdate_overwrite');
+
+    if (strlen($val) > 2) {
+        return $val;
+    }
+    return null;
+
+}
+
 function pof_settings_get_all_languages($use_cache = true) {
 	global $pof_settings_langs;
 
@@ -42,9 +52,9 @@ function pof_settings_get_all_languages($use_cache = true) {
 
 
 	global $wpdb;
-	$languages_res = $wpdb->get_results( 
+	$languages_res = $wpdb->get_results(
 		"
-		SELECT * 
+		SELECT *
 		FROM " . pof_settings_get_table_name_languages() . "
 		ORDER BY id
 		"

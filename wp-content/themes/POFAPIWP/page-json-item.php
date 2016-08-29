@@ -91,7 +91,6 @@ if (!empty($_GET["lang"])) {
 $title = $mypost->post_title;
 $ingress = get_post_meta($mypost->ID, "ingress", true);
 $content = $mypost->post_content;
-$content = $mypost->post_content;
 
 if ($lang != "FI") {
 	$title = get_post_meta($mypost->ID, "title_".strtolower($lang), true);

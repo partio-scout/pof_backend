@@ -11,6 +11,8 @@ $lastModifiedByName = "";
 
 $root = get_field("suoritusohjelma");
 
+$pof_settings_lastupdate_overwrite = pof_settings_get_lastupdate_overwrite();
+
 $post_id = $root->ID;
 
 if (!empty($_GET["postGUID"])) {
@@ -40,7 +42,13 @@ $tree = getJsonTree($post_id);
 $tree_hash = hash("md5", serialize($tree));
 
 $tree->program[0]->treeDetails = new stdClass();
-$tree->program[0]->treeDetails->lastModified = date("Y-m-d H:i:s",$lastModified);
+
+if ($pof_settings_lastupdate_overwrite == null) {
+    $tree->program[0]->treeDetails->lastModified = date("Y-m-d H:i:s",$lastModified);
+} else {
+    $tree->program[0]->treeDetails->lastModified = $pof_settings_lastupdate_overwrite;
+}
+
 $tree->program[0]->treeDetails->lastModifiedBy = getLastModifiedBy($lastModifiedBy);
 $tree->program[0]->treeDetails->hash = $tree_hash;
 
