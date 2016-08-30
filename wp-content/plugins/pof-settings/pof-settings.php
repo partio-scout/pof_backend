@@ -149,11 +149,11 @@ function pof_settings_general() {
 			</tr>
             <tr valign="top">
                 <th scope="row">Mill&auml; nimell&auml; l&auml;hetet&auml;&auml;n</th>
-                <td><input id="suggestions_email_sender_name" autocomplete="off" type="text" name="suggestions_email_sender_name" value='<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_name') ); ?>' /></td>
+                <td><input id="suggestions_email_sender_name" autocomplete="off" type="text" name="suggestions_email_sender_name" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_name') ); ?>" /></td>
             </tr>
             <tr valign="top">
                 <th scope="row">Mist&auml; osoitteesta l&auml;hetet&auml;&auml;n.</th>
-                <td><input id="suggestions_email_sender_email" autocomplete="off" type="text" name="suggestions_email_sender_email" value='<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_email')); ?>' /></td>
+                <td><input id="suggestions_email_sender_email" autocomplete="off" type="text" name="suggestions_email_sender_email" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_email')); ?>" /></td>
             </tr>
         </table>
         <h2>Itemit</h2>
