@@ -1055,6 +1055,9 @@ function get_post_additional_content_JSON($post_id) {
 
 				$image_obj = new stdClass();
 				$image_obj->description = $additional_image['additional_image_text'];
+                if (!is_array($image['metadata'])) {
+                    continue;
+                }
 				$image_obj->mime_type = $image['mime'];
 				$image_obj->height = $image['metadata']['height'];
 				$image_obj->width = $image['metadata']['width'];
@@ -1105,6 +1108,10 @@ function get_post_additional_content_JSON($post_id) {
             if ($additional_file['additional_file']) {
 
 				$file = $additional_file['additional_file'];
+
+                if ($file['url'] == false) {
+                    continue;
+                }
 
 				$file_obj = new stdClass();
 				$file_obj->description = $additional_file['additional_file_text'];
