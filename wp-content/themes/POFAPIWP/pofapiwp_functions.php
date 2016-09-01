@@ -1344,7 +1344,7 @@ function pof_item_siblings_meta_box() {
 
 		add_meta_box(
 			'pof_item_siblings_meta_box_sectionid',
-			__( 'Sibings', 'pof' ),
+			__( 'Siblings', 'pof' ),
 			'pof_item_siblings_meta_box_callback',
 			$screen, 'side', 'core'
 		);
