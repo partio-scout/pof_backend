@@ -724,7 +724,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		array_push($pakollisuus, $pakollinen);
 		$ret->pakollisuus = $pakollisuus;
 	}
-
+    /*
 	$groupsizes = get_field("task_groupsize", $post_id);
 
 	$ret_groupsizes = array();
@@ -795,7 +795,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	if (count($ret_groupsizes) > 0) {
 		$ret->ryhmakoko = $ret_groupsizes;
 	}
-
+    */
 	$place_of_performance = get_field("task_place_of_performance", $post_id);
 
 
@@ -900,7 +900,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		}
 		$ret->suoritus_kesto = $suoritus_kesto;
 	}
-
+    /*
 	$suoritus_valmistelu_kesto_tmp = get_field("task_preparationduration", $post_id);
 	if ($suoritus_valmistelu_kesto_tmp) {
 		$suoritus_valmistelu_kesto = new stdClass();
@@ -916,7 +916,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		}
 		$ret->suoritus_valmistelu_kesto = $suoritus_valmistelu_kesto;
 	}
-
+    */
 	$tarvike_tags = wp_get_post_terms($post_id, 'pof_tax_equipment');
 
 	$tarvikkeet = array();
