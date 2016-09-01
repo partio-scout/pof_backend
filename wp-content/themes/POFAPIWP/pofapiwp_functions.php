@@ -469,7 +469,7 @@ function getJsonItemDetailsTaskgroup($jsonItem, $post, $lang) {
 
 function getJsonSubtaskgroupTerm($term, $lang = 'fi') {
 
-    if ($term != "" && $term != false) {
+    if ($term != "" && $term != false && $term != "null") {
 
 	    $ret = new stdClass();
 	    $ret->name = $term;
@@ -538,7 +538,7 @@ function getJsonSubtaskgroupTerm($term, $lang = 'fi') {
 }
 
 function getJsonTaskTerm($term, $lang = 'fi') {
-    if ($term != "" && $term != false) {
+    if ($term != "" && $term != false && $term != "null") {
 	    $ret = new stdClass();
 	    $ret->name = $term;
 
@@ -579,10 +579,8 @@ function getJsonTaskTerm($term, $lang = 'fi') {
 
             }
         }
-
         return $ret;
     }
-
     return null;
 
 }
@@ -1266,7 +1264,21 @@ function pof_item_guid_add_meta_box() {
 }
 
 function pof_item_guid_add_meta_box_callback($post) {
-	echo get_post_meta( $post->ID, "post_guid", true );
+    $guid = get_post_meta( $post->ID, "post_guid", true );
+    echo $guid;
+    echo "<br />";
+    if ($post->post_type != 'pof_post_suggestion') {
+        echo '<a href="/item-json/?postGUID='.$guid.'&lang=fi" target="_blank">View JSON</a>';
+    } else {
+        $parent_post_id = get_post_meta( $post->ID, "pof_suggestion_task", true );
+        $lang = get_post_meta( $post->ID, "pof_suggestion_lang", true );
+        if (strlen($lang) < 2) {
+            $lang = 'fi';
+        }
+        $parent_guid = get_post_meta( $parent_post_id, "post_guid", true );
+        echo '<a href="/item-json-vinkit/?postGUID='.$parent_guid.'&lang='.$lang.'" target="_blank">View JSON</a>';
+    }
+
 }
 
 add_action( 'add_meta_boxes', 'pof_item_guid_add_meta_box' );
@@ -1524,13 +1536,13 @@ function pof_item_suggestions_meta_box_callback($post) {
 	$suggestions = pof_get_suggestions($post);
 
 
+    echo "<ul style=\"margin-left: 10px; list-style-type: round;\">";
 	foreach ($suggestions as $suggestion_key => $suggestion_post) {
-		echo "<ul style=\"margin-left: 10px; list-style-type: round;\">";
 		echo "<li>";
-		echo "<a href=\"/wp-admin/post.php?post=" . $suggestion_post->ID . "&action=edit\" target=\"_blank\">" . $suggestion_post->post_title . "</a>";
+		echo "<a href=\"/wp-admin/post.php?post=" . $suggestion_post->ID . "&action=edit\" target=\"_blank\">" . $suggestion_post->post_title . "</a> (".get_post_meta( $suggestion_post->ID, "pof_suggestion_lang", true ).")";
 		echo "</li>";
-		echo "</ul>";
 	}
+    echo "</ul>";
 }
 
 function pof_get_suggestions($post_item) {
