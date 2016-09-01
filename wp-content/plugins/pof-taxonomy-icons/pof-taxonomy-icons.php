@@ -132,6 +132,10 @@ function pof_taxonomy_icons_frontpage() {
 }
 
 function pof_taxonomy_icons_get_icon($taxonomy, $icon_key, $agegroup_id, $fallback = false) {
+
+    $taxonomy = trim($taxonomy);
+    $icon_key = trim($icon_key);
+
 	global $wpdb;
 	$icon_res = $wpdb->get_results(
 		"
@@ -193,8 +197,8 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 		foreach ($_FILES as $key => $file) {
 			$tmp = pof_taxonomy_icons_parser_taxonomy_key($key);
 
-			$taxonomy_key = $tmp["key"];
-			$taxonomy_full_key = $taxonomy_base_key . "::" . $tmp["key"];
+			$taxonomy_key = trim($tmp["key"]);
+			$taxonomy_full_key = $taxonomy_base_key . "::" . $taxonomy_key;
 			$agegroup_id = $tmp["agegroup_id"];
 
 
@@ -295,6 +299,7 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 	echo '</thead>';
 	echo '<tbody>';
 	foreach ($items as $tmp_key => $tmp_title) {
+        $tmp_key = trim($tmp_key);
 		echo '<tr>';
 		echo '<th>'.$tmp_title.'<br /> ('.$tmp_key.')</th>';
 		foreach ($agegroups as $agegroup) {

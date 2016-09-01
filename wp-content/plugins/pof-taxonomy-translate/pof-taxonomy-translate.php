@@ -302,8 +302,13 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 			if (substr( $key, 0, 19 ) == "taxonomy_translate_") {
 				$tmp = pof_taxonomy_translate_parser_taxonomy_key($key);
 
-				$taxonomy_key = $tmp["key"];
-				$taxonomy_full_key = $taxonomy_base_key . "::" . $tmp["key"];
+				$taxonomy_key = trim($tmp["key"]);
+
+                if (strlen($taxonomy_key) == 0) {
+                    continue;
+                }
+
+				$taxonomy_full_key = $taxonomy_base_key . "::" . $taxonomy_key;
 				$agegroup_id = $tmp["agegroup_id"];
 
 				$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key, $taxonomy_key, $agegroup_id, $selected_lang, false);
@@ -444,6 +449,10 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	echo '</thead>';
 	echo '<tbody>';
 	foreach ($items as $tmp_key => $tmp_title) {
+        $tmp_key = trim($tmp_key);
+        if (strlen($tmp_key) == 0) {
+            continue;
+        }
 		echo '<tr>';
 		echo '<th>'.$tmp_title.'<br /> ('.$tmp_key.')</th>';
 		foreach ($agegroups as $agegroup) {
@@ -499,7 +508,7 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
 
 	$translate_res = $wpdb->get_results(
 		"
-		SELECT taxonomy_slug, content
+		SELECT taxonomy_slug, content, id
 		FROM " . pof_taxonomy_translate_get_table_name() . "
 		WHERE lang = 'fi'
 			AND agegroup_id = 0
@@ -508,10 +517,22 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
 	);
 
 	foreach ($translate_res as $item) {
+        $key = str_replace($taxonomy_base_key.'::', "", $item->taxonomy_slug);
+
+        if (trim($key) == "") {
+            $wpdb->delete(
+				pof_taxonomy_translate_get_table_name(),
+				array(
+					'id' => $item->id
+				),
+				array( '%d' )
+			);
+        }
+
 		if ($tolower) {
-			$ret[str_replace($taxonomy_base_key.'::', "", $item->taxonomy_slug)] = strtolower($item->content);
+			$ret[$key] = strtolower($item->content);
 		} else {
-			$ret[str_replace($taxonomy_base_key.'::', "", $item->taxonomy_slug)] = $item->content;
+			$ret[$key] = $item->content;
 		}
 	}
 
