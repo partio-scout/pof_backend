@@ -115,7 +115,7 @@ switch ($post_type) {
 
 
 		$subtask_term = getJsonTaskTerm(get_post_meta($mypost->ID, "taskgroup_subtask_term", true));
-		if (empty($task_term)) {
+		if (empty($subtask_term)) {
 			foreach ($tree_array_orig as $tree_item) {
 				$task_term = getJsonTaskTerm(get_post_meta($tree_item->ID, "taskgroup_subtask_term", true));
 
@@ -125,10 +125,10 @@ switch ($post_type) {
 				}
 			}
 		} else {
-			$jsonItem->subtask_term = $task_term;
+			$jsonItem->subtask_term = $subtask_term;
 		}
 
-		$subtaskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($post->ID, "taskgroup_subtaskgroup_term", true), strtolower($lang));
+		$subtaskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($mypost->ID, "taskgroup_subtaskgroup_term", true), strtolower($lang));
 		if (empty($subtaskgroup_term)) {
 			foreach ($tree_array_orig as $tree_item) {
 				$subtaskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($tree_item->ID, "taskgroup_subtaskgroup_term", true), strtolower($lang));
@@ -142,7 +142,7 @@ switch ($post_type) {
 			$jsonItem->subtaskgroup_term = $subtaskgroup_term;
 		}
 
-		$taskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($post->ID, "taskgroup_taskgroup_term", true), strtolower($lang));
+		$taskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($mypost->ID, "taskgroup_taskgroup_term", true), strtolower($lang));
 		if (empty($taskgroup_term)) {
 			foreach ($tree_array_orig as $tree_item) {
 				$taskgroup_term = getJsonSubtaskgroupTerm(get_post_meta($tree_item->ID, "taskgroup_taskgroup_term", true), strtolower($lang));
