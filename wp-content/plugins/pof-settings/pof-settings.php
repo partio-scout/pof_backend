@@ -133,37 +133,37 @@ function pof_settings_general() {
 		<table class="form-table">
 			<tr valign="top">
 				<th scope="row">Certifikaatin nimi (sijoita kyseinen tiedosto plugins\pof-settings\certificates-kansioon</th>
-				<td><input id="google_api_certificate_name_search" autocomplete="off" type="text" name="google_api_certificate_name" value="<?php echo esc_attr( get_option('pof_settings_google_api_certificate_name') ); ?>" /></td>
+				<td><input style="width: 600px;" id="google_api_certificate_name_search" autocomplete="off" type="text" name="google_api_certificate_name" value="<?php echo esc_attr( get_option('pof_settings_google_api_certificate_name') ); ?>" /></td>
 			</tr>
 		 
 			<tr valign="top">
 				<th scope="row">Api k&auml;ytt&auml;j&auml;</th>
-				<td><input id="google_api_user_search" autocomplete="off" type="text" name="google_api_user" value="<?php echo esc_attr( get_option('pof_settings_google_api_user') ); ?>" /></td>
+				<td><input style="width: 600px;" id="google_api_user_search" autocomplete="off" type="text" name="google_api_user" value="<?php echo esc_attr( get_option('pof_settings_google_api_user') ); ?>" /></td>
 			</tr>
 		
 			<tr valign="top">
 				<th scope="row">Salasana</th>
-				<td><input id="google_api_password_search" autocomplete="off" type="password" name="google_api_password" value="<?php echo esc_attr( get_option('pof_settings_google_api_password') ); ?>" /></td>
+				<td><input style="width: 600px;" id="google_api_password_search" autocomplete="off" type="password" name="google_api_password" value="<?php echo esc_attr( get_option('pof_settings_google_api_password') ); ?>" /></td>
 			</tr>
 		</table>
         <h2>Vinkit</h2>
         <table class="form-table">
 			<tr valign="top">
 				<th scope="row">Kelle l&auml;hetet&auml;&auml;n s&auml;hk&ouml;postia uuista vinkeist&auml;. Erottele pilkulla</th>
-				<td><input id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
+				<td><input style="width: 600px;" id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
 			</tr>
             <tr valign="top">
                 <th scope="row">Mill&auml; nimell&auml; l&auml;hetet&auml;&auml;n</th>
-                <td><input id="suggestions_email_sender_name" autocomplete="off" type="text" name="suggestions_email_sender_name" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_name') ); ?>" /></td>
+                <td><input style="width: 600px;" id="suggestions_email_sender_name" autocomplete="off" type="text" name="suggestions_email_sender_name" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_name') ); ?>" /></td>
             </tr>
             <tr valign="top">
                 <th scope="row">Mist&auml; osoitteesta l&auml;hetet&auml;&auml;n.</th>
-                <td><input id="suggestions_email_sender_email" autocomplete="off" type="text" name="suggestions_email_sender_email" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_email')); ?>" /></td>
+                <td><input style="width: 600px;" id="suggestions_email_sender_email" autocomplete="off" type="text" name="suggestions_email_sender_email" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_email')); ?>" /></td>
             </tr>
             <tr valign="top">
-                <th scope="row">Domainit, joista saa l‰hett‰‰ vinkkej‰ liitteineen (jokainen omalle rivilleen, koko domain, http:n kanssa).</th>
+                <th scope="row">Domainit, joista saa l&auml;hett&auml; vinkkej&auml; liitteineen (jokainen omalle rivilleen, koko domain, http:n kanssa).</th>
                 <td>
-                    <textarea id="suggestions_allowed_domains" autocomplete="off" name="suggestions_allowed_domains"><?php echo esc_attr( get_option('pof_settings_suggestions_allowed_domains')); ?></textarea>
+                    <textarea id="suggestions_allowed_domains" rows="10" cols="80" autocomplete="off" name="suggestions_allowed_domains"><?php echo esc_attr( get_option('pof_settings_suggestions_allowed_domains')); ?></textarea>
                 </td>
             </tr>
         </table>
@@ -172,7 +172,7 @@ function pof_settings_general() {
             <tr valign="top">
                 <th scope="row">Yliaja viimeisimm&auml;n muokkauksen p&auml;iv&auml;m&auml;&auml;r&auml; (Muoto: YYYY-MM-DD HH:mm:ss (esim. 2016-08-29 12:00:00)).</th>
                 <td>
-                    <input id="lastupdate_overwrite" autocomplete="off" type="text" name="lastupdate_overwrite" value="<?php echo esc_attr( get_option('pof_settings_lastupdate_overwrite') ); ?>" />
+                    <input style="width: 600px;" id="lastupdate_overwrite" autocomplete="off" type="text" name="lastupdate_overwrite" value="<?php echo esc_attr( get_option('pof_settings_lastupdate_overwrite') ); ?>" />
                 </td>
             </tr>
         </table>
