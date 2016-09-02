@@ -110,6 +110,11 @@ function pof_settings_general() {
         if (isset($_POST["suggestions_email_sender_email"])) {
 			update_option("pof_settings_suggestions_email_sender_email", $_POST["suggestions_email_sender_email"]);
 		}
+
+        if (isset($_POST["suggestions_allowed_domains"])) {
+			update_option("pof_settings_suggestions_allowed_domains", $_POST["suggestions_allowed_domains"]);
+		}
+
         if (isset($_POST["lastupdate_overwrite"])) {
 			update_option("pof_settings_lastupdate_overwrite", $_POST["lastupdate_overwrite"]);
 		}
@@ -154,6 +159,12 @@ function pof_settings_general() {
             <tr valign="top">
                 <th scope="row">Mist&auml; osoitteesta l&auml;hetet&auml;&auml;n.</th>
                 <td><input id="suggestions_email_sender_email" autocomplete="off" type="text" name="suggestions_email_sender_email" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_email')); ?>" /></td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">Domainit, joista saa l‰hett‰‰ vinkkej‰ liitteineen (jokainen omalle rivilleen, koko domain, http:n kanssa).</th>
+                <td>
+                    <textarea id="suggestions_allowed_domains" autocomplete="off" name="suggestions_allowed_domains"><?php echo esc_attr( get_option('pof_settings_suggestions_allowed_domains')); ?></textarea>
+                </td>
             </tr>
         </table>
         <h2>Itemit</h2>

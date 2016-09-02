@@ -3,6 +3,14 @@
 Template Name: Suggestion form
 */
 
+$domains = pof_settings_get_suggestions_allowed_domains();
+
+foreach ($domains as $domain) {
+    if (strlen(trim($domain)) > 0) {
+        header('Access-Control-Allow-Origin: '.$domain);
+    }
+}
+
 $lang_key = 'fi';
 $partio_id = '';
 $post_guid = '';
