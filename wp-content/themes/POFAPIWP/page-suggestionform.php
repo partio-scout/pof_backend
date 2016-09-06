@@ -14,13 +14,16 @@ foreach ($domains as $domain) {
 $lang_key = 'fi';
 $partio_id = '';
 $post_guid = '';
+$parent_post = null;
+$parent_post_id = 0;
+$parent_post_title = "";
 
 if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST)
     && array_key_exists('suggestion_name', $_POST)
     && $_POST['suggestion_name'] != ""
-    && array_key_exists('suggestion_title', $_POST)
-    && $_POST['suggestion_title'] != ""
+/*    && array_key_exists('suggestion_title', $_POST)
+    && $_POST['suggestion_title'] != "" */
     && array_key_exists('suggestion_content', $_POST)
     && $_POST['suggestion_content'] != "" ) {
 
@@ -35,8 +38,65 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     }
     $wp_error = false;
 
+    $suggestion_title = "";
+
+    if (   array_key_exists('suggestion_title', $_POST)
+        && $_POST['suggestion_title'] != "") {
+        $suggestion_title = trim($_POST['suggestion_title']);
+    }
+
+    if ($suggestion_title == "") {
+        switch ($lang) {
+            default:
+            case "fi":
+                $suggestion_title = "Toteutusvinkki";
+                break;
+            case "sv":
+                $suggestion_title = "Tips";
+                break;
+            case "en":
+                $suggestion_title = "Example";
+                break;
+        }
+
+        if ($post_guid != "") {
+
+
+            $args = array(
+		        'numberposts' => -1,
+		        'posts_per_page' => -1,
+		        'post_type' => 'any',
+		        'meta_key' => 'post_guid',
+		        'meta_value' => $post_guid
+	        );
+
+            $the_query = new WP_Query( $args );
+
+            if( $the_query->have_posts() ) {
+                while ( $the_query->have_posts() ) {
+                    $the_query->the_post();
+                    $parent_post = $the_query->post;
+                    $parent_post_id = $the_query->post->ID;
+		        }
+
+                if ($parent_post_id > 0) {
+
+                    $parent_post_title = get_post_meta( $parent_post_id->ID, "title_".$lang, true );
+
+                    if ($parent_post_title != "") {
+                        $suggestion_title .= " " + $parent_post_title;
+                    } else {
+                        $suggestion_title .= " " + $parent_post->post_title;
+                    }
+
+                }
+	        }
+
+        }
+    }
+
     $suggestion = array(
-	    'post_title'    => trim($_POST['suggestion_title']),
+	    'post_title'    => $suggestion_title,
 		'post_content'  => $_POST['suggestion_content'],
 		'post_type' => 'pof_post_suggestion',
 		'post_status'   => 'draft'
@@ -47,7 +107,10 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     if ($post_guid != '') {
 
-        $args = array(
+        if ($parent_post_id > 0) {
+            update_post_meta($suggestion_id, "pof_suggestion_task", $parent_post_id);
+        } else {
+            $args = array(
 	        'numberposts' => -1,
 	        'posts_per_page' => -1,
 	        'post_type' => array('pof_post_task', 'pof_post_taskgroup', 'pof_post_program', 'pof_post_agegroup' ),
@@ -55,14 +118,15 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 	        'meta_value' => $post_guid
         );
 
-        $the_query = new WP_Query( $args );
+            $the_query = new WP_Query( $args );
 
-        if( $the_query->have_posts() ) {
-	        while ( $the_query->have_posts() ) {
-		        $the_query->the_post();
-		        $mypost = $the_query->post;
-                update_post_meta($suggestion_id, "pof_suggestion_task", $mypost->ID);
-	        }
+            if( $the_query->have_posts() ) {
+                while ( $the_query->have_posts() ) {
+                    $the_query->the_post();
+                    $mypost = $the_query->post;
+                    update_post_meta($suggestion_id, "pof_suggestion_task", $mypost->ID);
+                }
+            }
         }
     }
 
