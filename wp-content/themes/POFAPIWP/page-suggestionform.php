@@ -22,13 +22,11 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST)
     && array_key_exists('suggestion_name', $_POST)
     && $_POST['suggestion_name'] != ""
-/*    && array_key_exists('suggestion_title', $_POST)
-    && $_POST['suggestion_title'] != "" */
     && array_key_exists('suggestion_content', $_POST)
     && $_POST['suggestion_content'] != "" ) {
 
     if (array_key_exists('lang', $_POST) && $_POST['lang'] != "") {
-        $lang_key = $_POST['fi'];
+        $lang_key = $_POST['lang'];
     }
     if (array_key_exists('partio_id', $_POST) && $_POST['partio_id'] != "") {
         $partio_id = $_POST['partio_id'];
@@ -42,7 +40,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     if (   array_key_exists('suggestion_title', $_POST)
         && $_POST['suggestion_title'] != "") {
-        $suggestion_title = trim($_POST['suggestion_title']);
+        $suggestion_title = mb_convert_encoding(trim($_POST['suggestion_title']),"UTF-8", "auto");
     }
 
     if ($suggestion_title == "") {
@@ -95,13 +93,27 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         }
     }
 
-    $suggestion = array(
-	    'post_title'    => $suggestion_title,
-		'post_content'  => $_POST['suggestion_content'],
-		'post_type' => 'pof_post_suggestion',
-		'post_status'   => 'draft'
-	);
+    $wp_error = null;
+
+    $suggestion_content = mb_convert_encoding(trim($_POST['suggestion_content']),"UTF-8", "auto");
+
+    $suggestion = array(^M
+            'post_title'    => $suggestion_title,^M
+                'post_content'  => $suggestion_content,^M
+                'post_type' => 'pof_post_suggestion',^M
+                'post_status'   => 'draft',
+                'post_author'   => 0
+        );
 	$suggestion_id = wp_insert_post( $suggestion, $wp_error );
+
+    if ($suggestion_id == 0) {
+        $location = "Location: " . $url=strtok($_SERVER["REQUEST_URI"],'?') . "?form_submit=error&lang=" . $lang_key . "&return_val=" . $return_val;
+
+        header($location);
+        exit();
+    }
+
+
 
     $mypost = false;
 
@@ -130,13 +142,13 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         }
     }
 
-    if (array_key_exists('pof_suggestion_file_user', $_FILES)) {
+    if (array_key_exists('suggestion_file_user', $_FILES)) {
 
         if ( ! function_exists( 'wp_handle_upload' ) ) {
             require_once( ABSPATH . 'wp-admin/includes/file.php' );
         }
 
-        $uploadedfile = $_FILES['pof_suggestion_file_user'];
+        $uploadedfile = $_FILES['suggestion_file_user'];
 
         $upload_overrides = array( 'test_form' => false );
 
@@ -183,7 +195,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         }
     }
     update_post_meta($suggestion_id, "pof_suggestion_lang", $lang_key);
-	update_post_meta($suggestion_id, "pof_suggestion_writer", $_POST['suggestion_name']);
+	update_post_meta($suggestion_id, "pof_suggestion_writer", mb_convert_encoding(trim($_POST['suggestion_name']),"UTF-8", "auto"));
     update_post_meta($suggestion_id, "pof_suggestion_writer_id", $partio_id);
 
     $suggestion_guid = get_post_meta( $suggestion_id, "post_guid", true );
