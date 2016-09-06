@@ -97,13 +97,12 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     $suggestion_content = mb_convert_encoding(trim($_POST['suggestion_content']),"UTF-8", "auto");
 
-    $suggestion = array(^M
-            'post_title'    => $suggestion_title,^M
-                'post_content'  => $suggestion_content,^M
-                'post_type' => 'pof_post_suggestion',^M
-                'post_status'   => 'draft',
-                'post_author'   => 0
-        );
+    $suggestion = array(
+        'post_title'    => $suggestion_title,
+        'post_content'  => $suggestion_content,
+        'post_type'     => 'pof_post_suggestion',
+        'post_status'   => 'draft'
+    );
 	$suggestion_id = wp_insert_post( $suggestion, $wp_error );
 
     if ($suggestion_id == 0) {
@@ -112,8 +111,6 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         header($location);
         exit();
     }
-
-
 
     $mypost = false;
 
