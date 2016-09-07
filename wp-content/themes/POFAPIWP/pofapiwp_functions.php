@@ -958,6 +958,59 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	return $ret;
 }
 
+function get_post_tags_taskgroup_JSON($post_id, $agegroup_id, $lang) {
+	$ret = new stdClass();
+
+	$pakollisuus = array();
+
+	if (get_field("taskgroup_mandatory", $post_id)) {
+		$pakollinen = new stdClass();
+		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$pakollinen->name = $tmp_name[0]->content;
+		} else {
+			$pakollinen->name = 'Pakollinen';
+		}
+		$pakollinen->slug = 'mandatory';
+		$icon = pof_taxonomy_icons_get_icon('mandatory', 'mandatory', $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$pakollinen->icon = $icon_src[0];
+			}
+		}
+		array_push($pakollisuus, $pakollinen);
+	}
+
+    if (count($pakollisuus) > 0) {
+		$ret->pakollisuus = $pakollisuus;
+	} else {
+		$pakollinen = new stdClass();
+		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'not_mandatory', $agegroup_id, $lang, true);
+
+		if (!empty($tmp_name)) {
+			$pakollinen->name = $tmp_name[0]->content;
+		} else {
+			$pakollinen->name = 'Ei pakollinen';
+		}
+		$pakollinen->slug = 'not_mandatory';
+		$icon = pof_taxonomy_icons_get_icon('mandatory', 'not_mandatory', $agegroup_id, true);
+
+		if (!empty($icon)) {
+			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
+			if (!empty($icon_src)) {
+				$pakollinen->icon = $icon_src[0];
+			}
+		}
+		array_push($pakollisuus, $pakollinen);
+		$ret->pakollisuus = $pakollisuus;
+	}
+
+	return $ret;
+}
+
 function get_post_images_JSON($post_id) {
 	$ret = new stdClass();
 	$ret->logo = new stdClass();
