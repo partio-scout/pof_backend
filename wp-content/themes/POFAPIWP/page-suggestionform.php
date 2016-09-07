@@ -245,6 +245,7 @@ else if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         $tmp = new stdClass();
         $tmp->status = "error";
         $tmp->message = pof_taxonomy_translate_get_translation_content("common", "suggestion_form_error_empty", 0, $lang_key);
+        header('Content-Type: application/json');
         echo json_encode($tmp);
         exit();
     }
@@ -268,6 +269,7 @@ else {
             $tmp->status = "error";
             $tmp->message = pof_taxonomy_translate_get_translation_content("common", "suggestion_form_error", 0, $lang_key);
         }
+        header('Content-Type: application/json');
         echo json_encode($tmp);
         exit();
     }
