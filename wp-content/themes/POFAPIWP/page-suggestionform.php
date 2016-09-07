@@ -234,7 +234,23 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 //    echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_done", 0, $lang_key);
 
 }
+
+else if (   $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST)
+    && array_key_exists('suggestion_name', $_POST)
+    && array_key_exists('suggestion_content', $_POST) ) {
+    // Form post, but empty content
+    if (   $_SERVER['REQUEST_METHOD'] === 'POST'
+        && isset($_POST)) {
+        $tmp = new stdClass();
+        $tmp->status = "error";
+        $tmp->message = pof_taxonomy_translate_get_translation_content("common", "suggestion_form_error_empty", 0, $lang_key);
+        echo json_encode($tmp);
+        exit();
+    }
+}
 else {
+
     if (array_key_exists('lang', $_GET) && $_GET['lang'] != "") {
         $lang_key = $_GET['lang'];
     }
