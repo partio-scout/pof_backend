@@ -185,7 +185,9 @@ function pof_content_status_generic_get_content($agegroup_id) {
                     ?>
                 </td>
                 <td><?php echo get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true); ?></td>
-                <td colspan="10" class="pof_content_status_grey"></td>
+                <td colspan="4" class="pof_content_status_grey"></td>
+                <?php pof_content_status_get_checkbox_cell("taskgroup_mandatory", $the_query->post->ID); ?>
+                <td colspan="5" class="pof_content_status_grey"></td>
                 <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
 
@@ -329,7 +331,9 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
                     ?>
 
                 </td>
-                <td colspan="10" class="pof_content_status_grey"></td>
+                <td colspan="4" class="pof_content_status_grey"></td>
+                <?php pof_content_status_get_checkbox_cell("taskgroup_mandatory", $the_query->post->ID); ?>
+                <td colspan="5" class="pof_content_status_grey"></td>
 
                 <?php pof_content_status_get_suggestions($the_query->post->ID); ?>
             </tr>
@@ -560,12 +564,18 @@ function pof_content_status_get_field_count_cell($field, $post_id) {
 function pof_content_status_get_checkbox_cell($taxonomy, $post_id) {
     global $field_counters;
 
-    if (!array_key_exists($taxonomy, $field_counters)) {
-        $field_counters[$taxonomy] = new stdClass();
-        $field_counters[$taxonomy]->total = 0;
-        $field_counters[$taxonomy]->green = 0;
+    $counter_taxonomy = $taxonomy;
+
+    if ($taxonomy == "taskgroup_mandatory") {
+        $counter_taxonomy = "task_mandatory";
     }
-    $field_counters[$taxonomy]->total++;
+
+    if (!array_key_exists($taxonomy, $field_counters)) {
+        $field_counters[$counter_taxonomy] = new stdClass();
+        $field_counters[$counter_taxonomy]->total = 0;
+        $field_counters[$counter_taxonomy]->green = 0;
+    }
+    $field_counters[$counter_taxonomy]->total++;
 
     $class = "pof_content_status_black";
 
@@ -573,7 +583,7 @@ function pof_content_status_get_checkbox_cell($taxonomy, $post_id) {
 
     if ($content) {
         $class = "pof_content_status_green";
-        $field_counters[$taxonomy]->green++;
+        $field_counters[$counter_taxonomy]->green++;
     }
 
     ?>
