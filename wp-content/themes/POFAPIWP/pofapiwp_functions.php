@@ -897,7 +897,14 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 
 	if ($suoritus_kesto_tmp) {
 		$suoritus_kesto = new stdClass();
-		$suoritus_kesto->name = $suoritus_kesto_tmp;
+
+        $tmp_name = pof_taxonomy_translate_get_translation('taskduration', $suoritus_kesto_tmp, $agegroup_id, $lang, true);
+		if (!empty($tmp_name)) {
+			$suoritus_kesto->name = $tmp_name[0]->content;
+		} else {
+			$suoritus_kesto->name = $suoritus_kesto_tmp;
+		}
+
 		$suoritus_kesto->slug = $suoritus_kesto_tmp;
 		$icon = pof_taxonomy_icons_get_icon('taskduration', $suoritus_kesto_tmp, $agegroup_id, true);
 
