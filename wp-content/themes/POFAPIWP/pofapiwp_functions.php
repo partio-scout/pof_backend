@@ -448,21 +448,21 @@ function getJsonItemBaseDetailsItem($jsonItem, $post) {
 }
 
 function getJsonItemDetailsProgram($jsonItem, $post) {
-	$jsonItem->owner = get_field("program_owner", $post->ID);
-	$jsonItem->lang = get_field("program_lang", $post->ID);
+	$jsonItem->owner = get_post_meta($post->ID, "program_owner", true);
+	$jsonItem->lang = get_post_meta($post->ID, "program_lang", true);
 	return $jsonItem;
 }
 
 function getJsonItemDetailsAgegroup($jsonItem, $post, $lang) {
-	$jsonItem->minAge = get_field("agegroup_min_age", $post->ID);
-	$jsonItem->maxAge = get_field("agegroup_max_age", $post->ID);
+	$jsonItem->minAge = get_post_meta($post->ID, "agegroup_min_age", true);
+	$jsonItem->maxAge = get_post_meta($post->ID, "agegroup_max_age", true);
 	$jsonItem->subtaskgroup_term = getJsonSubtaskgroupTerm(get_field("agegroup_subtaskgroup_term", $post->ID), $lang);
 	return $jsonItem;
 }
 
 function getJsonItemDetailsTaskgroup($jsonItem, $post, $lang) {
-	$jsonItem->additional_tasks_count = get_field("taskgroup_additional_tasks_count", $post->ID);
-	$jsonItem->subtask_term = getJsonTaskTerm(get_field("taskgroup_subtask_term", $post->ID), $lang);
+	$jsonItem->additional_tasks_count = get_post_meta($post->ID, "taskgroup_additional_tasks_count", true);
+	$jsonItem->subtask_term = getJsonTaskTerm(get_post_meta($post->ID, "taskgroup_subtask_term", true), $lang);
 	return $jsonItem;
 }
 
@@ -592,7 +592,7 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 	global $mandatory_task_guids;
     global $pof_settings_lastupdate_overwrite;
 
-	if (get_field("task_mandatory", $post->ID)) {
+	if (get_post_meta($post->ID, "task_mandatory", true)) {
 		array_push($mandatory_task_guids, get_post_meta( $post->ID, "post_guid", true ));
 	}
 
@@ -603,7 +603,7 @@ function getJsonItemDetailsTask($jsonItem, $post) {
 
 	foreach ($pof_available_languages as $available_language) {
 		if (isset($suggestiongs_tmp[$available_language])) {
-			$tmp = get_field("title_".strtolower($available_language), $post->ID);
+			$tmp = get_post_meta($post->ID, "title_".strtolower($available_language), true);
 			if (!empty($tmp) || $available_language == 'fi') {
 				$lang_obj = new stdClass();
 				$lang_obj->lang = $available_language;
@@ -656,7 +656,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 
 	$pakollisuus = array();
 
-	if (get_field("task_mandatory", $post_id)) {
+	if (get_post_meta($post_id, "task_mandatory", true)) {
 		$pakollinen = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory', $agegroup_id, $lang, true);
 
@@ -794,8 +794,9 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		$ret->ryhmakoko = $ret_groupsizes;
 	}
     */
-	$place_of_performance = get_field("task_place_of_performance", $post_id);
+//	$place_of_performance = get_field("task_place_of_performance", $post_id);
 
+    $place_of_performance = get_post_meta($post_id, "task_place_of_performance", true);
 
 	$ret_places = array();
 
@@ -883,7 +884,10 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		$ret->johtamistaito = $johtamistaidot;
 	}
 
-	$suoritus_kesto_tmp = get_field("task_duration", $post_id);
+//	$suoritus_kesto_tmp = get_field("task_duration", $post_id);
+
+    $suoritus_kesto_tmp = get_post_meta($post_id, "task_duration", true);
+
 	if ($suoritus_kesto_tmp) {
 		$suoritus_kesto = new stdClass();
 		$suoritus_kesto->name = $suoritus_kesto_tmp;
@@ -963,7 +967,7 @@ function get_post_tags_taskgroup_JSON($post_id, $agegroup_id, $lang) {
 
 	$pakollisuus = array();
 
-	if (get_field("taskgroup_mandatory", $post_id)) {
+	if (get_post_meta($post_id, "taskgroup_mandatory", true)) {
 		$pakollinen = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory', $agegroup_id, $lang, true);
 
@@ -1223,7 +1227,7 @@ function getMandatoryTasksForTaskGroup($parent_id) {
 		while ( $the_query->have_posts() ) {
 			$the_query->the_post();
 
-			if (get_field("task_mandatory", $the_query->post->ID)) {
+			if (get_post_meta($the_query->post->ID, "task_mandatory")) {
 				array_push($ret->ids, $the_query->post->ID);
 				array_push($ret->hashes, wp_hash($the_query->post->ID));
 			}
