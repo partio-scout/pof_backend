@@ -828,12 +828,19 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 			$tmp_name = pof_taxonomy_translate_get_translation('place_of_performance', $tmp_place, $agegroup_id, $lang, true);
 
 			if (!empty($tmp_name)) {
-				$place->name = $tmp_name[0]->content;
+				$place->name = trim($tmp_name[0]->content);
 			} else {
-				$place->name = $tmp_place;
+				$place->name = trim($tmp_place);
 			}
 
-			$place->slug = $tmp_place;
+			$place->slug = trim($tmp_place);
+            //make sure that there are no duplicates
+            foreach ($ret_places as $tmp_ret_place)
+            {
+                if ($tmp_ret_place->slug == $place->slug) {
+                    break;
+                }
+            }
 
 			array_push($ret_places, $place);
 
