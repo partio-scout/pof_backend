@@ -114,10 +114,10 @@ switch ($post_type) {
 		$jsonItem->mandatory_task_hashes = implode(",", $mandatory_tasks->hashes);
 
 
-		$subtask_term = getJsonTaskTerm(get_post_meta($mypost->ID, "taskgroup_subtask_term", true));
+		$subtask_term = getJsonTaskTerm(get_post_meta($mypost->ID, "taskgroup_subtask_term", true), strtolower($lang));
 		if (empty($subtask_term)) {
 			foreach ($tree_array_orig as $tree_item) {
-				$subtask_term = getJsonTaskTerm(get_post_meta($tree_item->ID, "taskgroup_subtask_term", true));
+				$subtask_term = getJsonTaskTerm(get_post_meta($tree_item->ID, "taskgroup_subtask_term", true), strtolower($lang));
 
 				if ($subtask_term) {
 					$jsonItem->subtask_term = $subtask_term;
