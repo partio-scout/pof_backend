@@ -174,17 +174,27 @@ function pof_content_status_generic_get_content($agegroup_id) {
                 <td>
                     <?php
             $task_parent_term = "";
-            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtaskgroup_term", true); 
+            
+            $taskgroup_parent_term = "";
+            $taskgroup_term =  get_post_meta($the_query->post->ID, "taskgroup_subtaskgroup_term", true); 
+            if ($taskgroup_term == "" &&  $task_parent_term != "") {
+                echo "(".$taskgroup_term.")";
+            } else {
+                echo $taskgroup_term;
+                $taskgroup_parent_term = $taskgroup_term;
+            }
+
+                    ?>
+                </td>
+                <td><?php
+            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true); 
             if ($task_term == "" &&  $task_parent_term != "") {
                 echo "(".$task_parent_term.")";
             } else {
                 echo $task_term;
                 $task_parent_term = $task_term;
             }
-
-                    ?>
-                </td>
-                <td><?php echo get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true); ?></td>
+                    ?></td>
                 <td colspan="4" class="pof_content_status_grey"></td>
                 <?php pof_content_status_get_checkbox_cell("taskgroup_mandatory", $the_query->post->ID); ?>
                 <td colspan="5" class="pof_content_status_grey"></td>
@@ -327,7 +337,6 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
                 echo $task_term;
                 $task_parent_term = $task_term;
             }
-
                     ?>
 
                 </td>
@@ -339,7 +348,7 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
             </tr>
 
             <?php
-            pof_content_status_generic_content_get_taskgroups($the_query->post->ID, $indentation + 1, $taskgroup_term, $taskgroup_parent_term);
+            pof_content_status_generic_content_get_taskgroups($the_query->post->ID, $indentation + 1, $taskgroup_term, $task_parent_term);
             pof_content_status_generic_content_get_tasks($the_query->post->ID, $indentation + 1, $task_parent_term);
 		}
 	}
@@ -387,7 +396,7 @@ function pof_content_status_generic_content_get_tasks($taskgroup_id, $indentatio
                 <td>
                     <?php
                         $task_term = get_post_meta($the_query->post->ID, "task_task_term", true);
-                        if ($task_term == "" && $task_parent_term != "") {
+                        if (($task_term == "" || $task_term != "null" || $task_term != null) && $task_parent_term != "") {
                             $task_term = "(" . $task_parent_term . ")";
                         }
                         echo $task_term;

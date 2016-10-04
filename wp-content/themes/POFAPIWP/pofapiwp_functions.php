@@ -538,7 +538,7 @@ function getJsonSubtaskgroupTerm($term, $lang = 'fi') {
 }
 
 function getJsonTaskTerm($term, $lang = 'fi') {
-    if ($term != "" && $term != false && $term != "null") {
+    if ($term != "" && $term != false && $term != "null" && $term != null) {
 	    $ret = new stdClass();
 	    $ret->name = $term;
 
