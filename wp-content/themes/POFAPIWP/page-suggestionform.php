@@ -114,10 +114,13 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     $mypost = false;
 
+    $mypost_id = 0;
+
     if ($post_guid != '') {
 
         if ($parent_post_id > 0) {
             update_post_meta($suggestion_id, "pof_suggestion_task", $parent_post_id);
+            $mypost_id = $parent_post_id;
         } else {
             $args = array(
 	        'numberposts' => -1,
@@ -201,12 +204,28 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     $content = "Uusi vinkki\n\n";
     $content .= "Aktiviteetti: ";
-    if ($mypost == false) {
-        $content .= "--"."\n\n";
+    if ($mypost === false) {
+
+        if ($mypost_id > 0) {
+            $mypost = get_post($mypost_id);
+            if (!empty($mypost) && $mypost != null && $mypost != false) {
+                $content .= $mypost->post_title."\n\n";
+            } else {
+                $content .= "--"."\n\n";
+            }
+        }
+        else
+        {
+            $content .= "--"."\n\n";
+        }
+
+
     } else {
         $content .= $mypost->post_title."\n\n";
     }
     $content .= "Vinkin otsikko: ".$_POST['suggestion_title']."\n\n";
+
+    $content .= "Vinkin sisältö: ".$suggestion_content."\n\n";
 
     $content .= "Kirjoittaja: ".$_POST['suggestion_name']."\n\n";
 
