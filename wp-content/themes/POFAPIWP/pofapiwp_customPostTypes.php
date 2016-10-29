@@ -15,7 +15,8 @@ function AddPofApiCustomPostTypes() {
 				),
 			'public' => true,
 			'has_archive' => true,
-			'menu_icon' => 'dashicons-editor-customchar'
+			'menu_icon' => 'dashicons-editor-customchar',
+            'supports' => array('title', 'editor', 'revisions', 'page-attributes')
 		)
 	);
 
@@ -27,7 +28,8 @@ function AddPofApiCustomPostTypes() {
 				),
 			'public' => true,
 			'has_archive' => true,
-			'menu_icon' => 'dashicons-backup'
+			'menu_icon' => 'dashicons-backup',
+            'supports' => array('title', 'editor', 'revisions', 'page-attributes')
 		)
 	);
 
@@ -39,7 +41,8 @@ function AddPofApiCustomPostTypes() {
 				),
 			'public' => true,
 			'has_archive' => true,
-			'menu_icon' => 'dashicons-cart'
+			'menu_icon' => 'dashicons-cart',
+            'supports' => array('title', 'editor', 'revisions', 'page-attributes')
 		)
 	);
 
@@ -51,7 +54,8 @@ function AddPofApiCustomPostTypes() {
 				),
 			'public' => true,
 			'has_archive' => true,
-			'menu_icon' => 'dashicons-star-filled'
+			'menu_icon' => 'dashicons-star-filled',
+            'supports' => array('title', 'editor', 'revisions', 'page-attributes')
 		)
 	);
 
@@ -63,7 +67,8 @@ function AddPofApiCustomPostTypes() {
 				),
 			'public' => true,
 			'has_archive' => true,
-			'menu_icon' => 'dashicons-smiley'
+			'menu_icon' => 'dashicons-smiley',
+            'supports' => array('title', 'editor', 'revisions', 'page-attributes')
 		)
 	);
 }
