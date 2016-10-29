@@ -1339,7 +1339,23 @@ function pof_item_guid_add_meta_box_callback($post) {
     echo $guid;
     echo "<br />";
     if ($post->post_type != 'pof_post_suggestion') {
-        echo '<a href="/item-json/?postGUID='.$guid.'&lang=fi" target="_blank">View JSON</a>';
+        echo 'JSON: <a href="/item-json/?postGUID='.$guid.'&lang=fi" target="_blank">fi</a>';
+
+        $langs = pof_settings_get_all_languages();
+
+        foreach ($langs as $lang) {
+            if ($lang->lang_code == 'fi') { continue; }
+            $title = get_post_meta($post->ID, "title_".$lang->lang_code, true);
+            echo ', <a href="/item-json/?postGUID=' . $guid . '&lang=' . $lang->lang_code . '" target="_blank">';
+            if ($title != null && $title != "") {
+                echo $lang->lang_code;
+            } else {
+                echo "(" . $lang->lang_code . ")";
+            }
+
+            echo "</a>";
+        }
+
     } else {
         $parent_post_id = get_post_meta( $post->ID, "pof_suggestion_task", true );
         $lang = get_post_meta( $post->ID, "pof_suggestion_lang", true );
@@ -1374,11 +1390,19 @@ function pof_item_task_details_add_meta_box_callback($post) {
 
     $guid = get_post_meta( $post->ID, "post_guid", true );
 
+    $isEmpty = true;
+
     foreach ($langs as $lang) {
         $dt = get_post_meta($post->ID, "content_imported_".$lang->lang_code, true);
-        echo '<a href="/item-json/?postGUID=' . $guid . '&lang=' . $lang->lang_code . '" target="_blank">';
-        echo $lang->lang_title . "</a>: " . $dt;
-        echo "<br />";
+        if ($dt != null && $dt != "") {
+            echo '<a href="/item-json/?postGUID=' . $guid . '&lang=' . $lang->lang_code . '" target="_blank">';
+            echo $lang->lang_title . "</a>: " . $dt;
+            echo "<br />";
+            $isEmpty = false;
+        }
+    }
+    if ($isEmpty) {
+        echo "Ei importoitu.";
     }
 
 }
