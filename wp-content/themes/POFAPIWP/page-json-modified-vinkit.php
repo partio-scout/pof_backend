@@ -78,7 +78,7 @@ if( $the_query->have_posts() ) {
             }
 
         }
-        $item->additional_content = get_post_additional_content_JSON($suggestion->ID);
+        $item->additional_content = get_post_additional_content_JSON($suggestion->ID, $suggestiong_lang);
 
 		array_push($posts, $item);
 	}

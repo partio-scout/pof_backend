@@ -1110,7 +1110,34 @@ function get_post_images_JSON($post_id) {
 	return $ret;
 }
 
-function get_post_additional_content_JSON($post_id) {
+
+// Simple fields plugin doesn't allow us to define dropdown select value to differ from content (key and value are the same), so we need to match those
+// Returns boolean, if langs match
+function pof_match_pof_lang_to_simple_fields_lang_dropdown($pof_lang, $simple_fields_lang)
+{
+    if ($pof_lang == null || $pof_lang == "") {
+        $pof_lang = "fi";
+    }
+    if ($simple_fields_lang == null || $simple_fields_lang == "") {
+        $simple_fields_lang = "Suomi";
+    }
+
+    switch($pof_lang) {
+        case "fi":
+            if ($simple_fields_lang == "Suomi") { return true; }
+            break;
+        case "sv":
+            if ($simple_fields_lang == "Ruotsi") { return true; }
+            break;
+        case "en":
+            if ($simple_fields_lang == "Englanti") { return true; }
+            break;
+    }
+
+    return false;
+}
+
+function get_post_additional_content_JSON($post_id, $lang = null) {
 	$ret = new stdClass();
 
 	$images = simple_fields_fieldgroup("additional_images_fg", $post_id);
@@ -1121,6 +1148,20 @@ function get_post_additional_content_JSON($post_id) {
 		foreach ($images as $additional_image) {
 			if ($additional_image['additional_image']) {
 				$image = $additional_image['additional_image'];
+                $image_lang = null;
+
+                $image_lang_arr = $additional_image['additional_image_lang'];
+
+                if (is_array($image_lang_arr)) {
+                    $image_lang = $image_lang_arr["selected_value"];
+                }
+
+                $lang_match = pof_match_pof_lang_to_simple_fields_lang_dropdown($lang, $image_lang);
+
+                if (!$lang_match) {
+                    continue;
+                }
+
 
 				$image_obj = new stdClass();
 				$image_obj->description = $additional_image['additional_image_text'];
@@ -1182,6 +1223,22 @@ function get_post_additional_content_JSON($post_id) {
                     continue;
                 }
 
+                $file_lang = null;
+
+                $file_lang_arr = $additional_image['additional_file_lang'];
+
+                if (is_array($file_lang_arr)) {
+                    $file_lang = $file_lang_arr["selected_value"];
+                }
+
+                $lang_match = pof_match_pof_lang_to_simple_fields_lang_dropdown($lang, $file_lang);
+
+                if (!$lang_match) {
+                    continue;
+                }
+
+
+
 				$file_obj = new stdClass();
 				$file_obj->description = $additional_file['additional_file_text'];
 				$file_obj->mime_type = $file['mime'];
@@ -1204,6 +1261,20 @@ function get_post_additional_content_JSON($post_id) {
 			if ($additional_link['additional_link_url']) {
 
 				$link = $additional_link['additional_link_url'];
+
+                $link_lang = null;
+
+                $link_lang_arr = $additional_image['additional_link_lang'];
+
+                if (is_array($link_lang_arr)) {
+                    $link_lang = $link_lang_arr["selected_value"];
+                }
+
+                $lang_match = pof_match_pof_lang_to_simple_fields_lang_dropdown($lang, $link_lang);
+
+                if (!$lang_match) {
+                    continue;
+                }
 
 				$link_obj = new stdClass();
 				$link_obj->description = $additional_link['additional_link_text'];

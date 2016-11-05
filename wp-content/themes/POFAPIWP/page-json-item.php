@@ -200,7 +200,7 @@ if ($mypost->post_type == 'pof_post_taskgroup') {
 }
 
 $jsonItem->images = get_post_images_JSON($mypost->ID);
-$jsonItem->additional_content = get_post_additional_content_JSON($mypost->ID);
+$jsonItem->additional_content = get_post_additional_content_JSON($mypost->ID, strtolower($lang));
 
 echo json_encode($jsonItem);
 

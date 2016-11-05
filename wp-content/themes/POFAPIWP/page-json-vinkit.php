@@ -72,7 +72,7 @@ foreach ($suggestions as $suggestion) {
         }
 
 
-        $item->additional_content = get_post_additional_content_JSON($suggestion->ID);
+        $item->additional_content = get_post_additional_content_JSON($suggestion->ID, strtolower($lang));
 
 		pof_checkDatetime($suggestion);
 
