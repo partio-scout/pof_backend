@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 include( plugin_dir_path( __FILE__ ) . 'pof-content-status-generic.php');
 include( plugin_dir_path( __FILE__ ) . 'pof-content-status-localization.php');
 include( plugin_dir_path( __FILE__ ) . 'pof-content-status-orphan.php');
+include( plugin_dir_path( __FILE__ ) . 'pof-content-status-tags.php');
 
 add_action( 'admin_menu', 'pof_content_status_menu' );
 
@@ -35,6 +36,7 @@ function pof_content_status_menu() {
 	add_submenu_page( 'pof_content_status_frontpage-handle', 'Yleiset', 'Yleiset', 'manage_options', 'pof_content_status_generic-handle', 'pof_content_status_generic');
 	add_submenu_page( 'pof_content_status_frontpage-handle', 'Sis&auml;ll&ouml;t', 'Sis&auml;ll&ouml;t', 'manage_options', 'pof_content_status_localization-handle', 'pof_content_status_localization');
     add_submenu_page( 'pof_content_status_frontpage-handle', 'Orvot', 'Orvot', 'manage_options', 'pof_content_status_orphan-handle', 'pof_content_status_orphan');
+    add_submenu_page( 'pof_content_status_frontpage-handle', 'Tagit', 'Tagit', 'manage_options', 'pof_content_status_tags-handle', 'pof_content_status_tags');
 }
 
 function pof_content_status_frontpage() {

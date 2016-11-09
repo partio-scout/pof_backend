@@ -513,6 +513,8 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
 		WHERE lang = 'fi'
 			AND agegroup_id = 0
 			AND taxonomy_slug LIKE '".$taxonomy_base_key."::%'
+
+        ORDER BY taxonomy_slug, content
 		"
 	);
 
