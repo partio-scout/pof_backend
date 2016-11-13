@@ -1225,7 +1225,7 @@ function get_post_additional_content_JSON($post_id, $lang = null) {
 
                 $file_lang = null;
 
-                $file_lang_arr = $additional_image['additional_file_lang'];
+                $file_lang_arr = $additional_file['additional_file_lang'];
 
                 if (is_array($file_lang_arr)) {
                     $file_lang = $file_lang_arr["selected_value"];
@@ -1264,7 +1264,7 @@ function get_post_additional_content_JSON($post_id, $lang = null) {
 
                 $link_lang = null;
 
-                $link_lang_arr = $additional_image['additional_link_lang'];
+                $link_lang_arr = $additional_link['additional_link_lang'];
 
                 if (is_array($link_lang_arr)) {
                     $link_lang = $link_lang_arr["selected_value"];
