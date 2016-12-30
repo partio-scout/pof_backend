@@ -47,13 +47,13 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         switch ($lang_key) {
             default:
             case "fi":
-                $suggestion_title = "Toteutusvinkki ";
+                $suggestion_title = "Toteutusvinkki";
                 break;
             case "sv":
-                $suggestion_title = "Tips ";
+                $suggestion_title = "Tips";
                 break;
             case "en":
-                $suggestion_title = "Example ";
+                $suggestion_title = "Example";
                 break;
         }
 
@@ -78,17 +78,18 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
                 if ($parent_post_id > 0) {
 
-                    $parent_post_title = get_post_meta( $parent_post_id->ID, "title_".$lang_key, true );
+                    $parent_post_title = get_post_meta($parent_post_id, "title_".$lang_key, true );
 
-                    if ($parent_post_title != "") {
-                        $suggestion_title .= ": " + $parent_post_title;
-                    } else {
-                        $suggestion_title .= ": " + $parent_post->post_title;
+                    if ($parent_post_title != "") 
+                    {
+                        $suggestion_title .= ": " . $parent_post_title;
+                    } 
+                    else 
+                    {
+                        $suggestion_title .= ": " . $parent_post->post_title;
                     }
-
                 }
 	        }
-
         }
     }
 
