@@ -75,6 +75,10 @@ function pof_content_status_images_get_image_field($post_id, $image_field) {
                 $ret .= "<span class=\"nowrap\">t: <a href=\"" . $image['sizes']['thumbnail'] . "\" target=\"_blank\">" . $image['sizes']['thumbnail-width'] . " x " . $image['sizes']['thumbnail-height'] . "</a></span>";
                 $ret .= "<br />";
             }
+            if (!empty($image['sizes']['thumbnailcropped'])) {
+                $ret .= "<span class=\"nowrap\">tc: <a href=\"" . $image['sizes']['thumbnailcropped'] . "\" target=\"_blank\">" . $image['sizes']['thumbnailcropped-width'] . " x " . $image['sizes']['thumbnailcropped-height'] . "</a></span>";
+                $ret .= "<br />";
+            }
 			if (!empty($image['sizes']['medium'])) {
                 $ret .= "<span class=\"nowrap\">m: <a href=\"" . $image['sizes']['medium'] . "\" target=\"_blank\">" . $image['sizes']['medium-width'] . " x " . $image['sizes']['medium-height'] . "</a></span>";
                 $ret .= "<br />";

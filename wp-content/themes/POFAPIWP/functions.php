@@ -350,3 +350,6 @@ if (!class_exists("POFTREE\\program")) {
 	require_once( get_template_directory() . '/pofapiwp_jsonclasses.php');
 
 }
+
+
+add_image_size( 'thumbnailcropped', 150, 150, array( 'left', 'top' ) );

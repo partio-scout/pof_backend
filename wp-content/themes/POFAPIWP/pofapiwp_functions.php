@@ -1044,22 +1044,34 @@ function get_post_images_JSON($post_id) {
 		$ret->logo->width = $logo['width'];
 		$ret->logo->url = $logo['url'];
 
+        $thumb_url = "";
+
 		if (!empty($logo['sizes'])) {
 			if (!empty($logo['sizes']['thumbnail'])) {
 				$thumbnail = new stdClass();
 				$thumbnail->height = $logo['sizes']['thumbnail-height'];
 				$thumbnail->width = $logo['sizes']['thumbnail-width'];
 				$thumbnail->url = $logo['sizes']['thumbnail'];
+                $thumb_url = $logo['sizes']['thumbnail'];
 				$ret->logo->thumbnail = $thumbnail;
 			}
-			if (!empty($logo['sizes']['medium'])) {
+            if (!empty($logo['sizes']['thumbnailcropped'])
+                && $logo['sizes']['thumbnailcropped'] != $logo['url']
+                && $logo['sizes']['thumbnailcropped'] != $thumb_url) {
+				$thumbnailcropped = new stdClass();
+				$thumbnailcropped->height = $logo['sizes']['thumbnailcropped-height'];
+				$thumbnailcropped->width = $logo['sizes']['thumbnailcropped-width'];
+				$thumbnailcropped->url = $logo['sizes']['thumbnailcropped'];
+				$ret->logo->thumbnailcropped = $thumbnailcropped;
+			}
+			if (!empty($logo['sizes']['medium']) && $logo['sizes']['medium'] != $logo['url']) {
 				$medium = new stdClass();
 				$medium->height = $logo['sizes']['medium-height'];
 				$medium->width = $logo['sizes']['medium-width'];
 				$medium->url = $logo['sizes']['medium'];
 				$ret->logo->medium = $medium;
 			}
-			if (!empty($logo['sizes']['large'])) {
+			if (!empty($logo['sizes']['large']) && $logo['sizes']['large'] != $logo['url']) {
 				$large = new stdClass();
 				$large->height = $logo['sizes']['large-height'];
 				$large->width = $logo['sizes']['large-width'];
@@ -1081,22 +1093,34 @@ function get_post_images_JSON($post_id) {
 		$ret->main_image->width = $main_image['width'];
 		$ret->main_image->url = $main_image['url'];
 
+        $thumb_url = "";
+
 		if (!empty($main_image['sizes'])) {
 			if (!empty($main_image['sizes']['thumbnail'])) {
 				$thumbnail = new stdClass();
 				$thumbnail->height = $main_image['sizes']['thumbnail-height'];
 				$thumbnail->width = $main_image['sizes']['thumbnail-width'];
 				$thumbnail->url = $main_image['sizes']['thumbnail'];
+                $thumb_url = $main_image['sizes']['thumbnail'];
 				$ret->main_image->thumbnail = $thumbnail;
 			}
-			if (!empty($main_image['sizes']['medium'])) {
+            if (!empty($main_image['sizes']['thumbnailcropped'])
+                && $main_image['sizes']['thumbnailcropped'] != $main_image['url']
+                && $main_image['sizes']['thumbnailcropped'] != $thumb_url) {
+				$thumbnailcropped = new stdClass();
+				$thumbnailcropped->height = $main_image['sizes']['thumbnailcropped-height'];
+				$thumbnailcropped->width = $main_image['sizes']['thumbnailcropped-width'];
+				$thumbnailcropped->url = $main_image['sizes']['thumbnailcropped'];
+				$ret->main_image->thumbnailcropped = $thumbnailcropped;
+			}
+			if (!empty($main_image['sizes']['medium']) && $main_image['sizes']['medium'] != $main_image['url']) {
 				$medium = new stdClass();
 				$medium->height = $main_image['sizes']['medium-height'];
 				$medium->width = $main_image['sizes']['medium-width'];
 				$medium->url = $main_image['sizes']['medium'];
 				$ret->main_image->medium = $medium;
 			}
-			if (!empty($main_image['sizes']['large'])) {
+			if (!empty($main_image['sizes']['large']) && $main_image['sizes']['large'] != $main_image['url']) {
 				$large = new stdClass();
 				$large->height = $main_image['sizes']['large-height'];
 				$large->width = $main_image['sizes']['large-width'];
@@ -1162,7 +1186,6 @@ function get_post_additional_content_JSON($post_id, $lang = null) {
                     continue;
                 }
 
-
 				$image_obj = new stdClass();
 				$image_obj->description = $additional_image['additional_image_text'];
                 if (!is_array($image['metadata'])) {
@@ -1173,6 +1196,7 @@ function get_post_additional_content_JSON($post_id, $lang = null) {
 				$image_obj->width = $image['metadata']['width'];
 				$image_obj->url = $image['url'];
 
+                $thumb_url = "";
 
 				if (!empty($image['image_src'])) {
 					if (!empty($image['image_src']['thumbnail'])) {
@@ -1180,16 +1204,26 @@ function get_post_additional_content_JSON($post_id, $lang = null) {
 						$thumbnail->height = $image['image_src']['thumbnail'][1];
 						$thumbnail->width = $image['image_src']['thumbnail'][2];
 						$thumbnail->url = $image['image_src']['thumbnail'][0];
+                        $thumb_url = $image['image_src']['thumbnail'][0];
 						$image_obj->thumbnail = $thumbnail;
 					}
-					if (!empty($image['image_src']['medium'])) {
+                    if (   !empty($image['image_src']['thumbnailcropped'])
+                        && $image['image_src']['thumbnailcropped'][0] != $image['url']
+                        && $image['image_src']['thumbnailcropped'][0] != $thumb_url) {
+						$thumbnailcropped = new stdClass();
+						$thumbnailcropped->height = $image['image_src']['thumbnailcropped'][1];
+						$thumbnailcropped->width = $image['image_src']['thumbnailcropped'][2];
+						$thumbnailcropped->url = $image['image_src']['thumbnailcropped'][0];
+						$image_obj->thumbnailcropped = $thumbnailcropped;
+					}
+					if (!empty($image['image_src']['medium']) && $image['image_src']['medium'][0] != $image['url']) {
 						$medium = new stdClass();
 						$medium->height = $image['image_src']['medium'][1];
 						$medium->width = $image['image_src']['medium'][2];
 						$medium->url = $image['image_src']['medium'][0];
 						$image_obj->medium = $medium;
 					}
-					if (!empty($image['image_src']['large'])) {
+					if (!empty($image['image_src']['large']) && $image['image_src']['large'][0] != $image['url']) {
 						$large = new stdClass();
 						$large->height = $image['image_src']['large'][1];
 						$large->width = $image['image_src']['large'][2];
