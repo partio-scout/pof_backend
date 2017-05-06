@@ -13,10 +13,26 @@ $root = get_field("suoritusohjelma");
 
 $pof_settings_lastupdate_overwrite = pof_settings_get_lastupdate_overwrite();
 
+$pof_settings_fulljson_cache_ttl = pof_settings_get_fulljson_cache_ttl();
+
 $post_id = $root->ID;
+
+$post_guid = "";
+
 
 if (!empty($_GET["postGUID"])) {
 	$post_guid = $_GET["postGUID"];
+} else if (!empty($_POST["postGUID"])) {
+	$post_guid = $_POST["postGUID"];
+}
+
+$forceRun = false;
+if (   (!empty($_POST["forceRun"]) && $_POST["forceRun"] == "1")
+    || (!empty($_GET["forceRun"]) && $_GET["forceRun"] == "1")) {
+    $forceRun = true;
+}
+
+if (strlen($post_guid) >0) {
 
 	$args = array(
 		'numberposts' => -1,
@@ -34,26 +50,125 @@ if (!empty($_GET["postGUID"])) {
 			$post_id = $the_query->post->ID;
 		}
 	}
-
 }
 
-$tree = getJsonTree($post_id);
+$filepath = get_home_path() . "wp-content/cache/pof/pof-full-json-".$post_id.".json";
+if (!file_exists($filepath)) {
+    $forceRun = true;
+}
 
-$tree_hash = hash("md5", serialize($tree));
+$cache_last_run = (int)get_post_meta( $post_id, 'full_json_last_save', true);
+$cache_run_started = (int)get_post_meta( $post_id, 'full_json_cache_run_started', true);
 
-$tree->program[0]->treeDetails = new stdClass();
+if(!$forceRun) {
 
-if ($pof_settings_lastupdate_overwrite == null) {
-    $tree->program[0]->treeDetails->lastModified = date("Y-m-d H:i:s",$lastModified);
+
+    readfile($filepath);
+    flush();
+
+    if (($cache_last_run + $pof_settings_fulljson_cache_ttl) < time()) {
+        $time = new DateTime();
+        $time->modify('-10 minutes');
+
+        // if cache is older than ttl and cache is not running now (or has taken over 10 minutes), start cache run again
+        if ($cache_last_run > $cache_run_started
+            || $cache_run_started < $time->format('U')) {
+
+            $params = array(
+                "postGUID" => $post_guid,
+                "forceRun" => "1"
+            );
+
+            $absolute_url = full_url( $_SERVER );
+
+            curl_post_async($absolute_url, $params);
+        }
+    }
+
 } else {
-    $tree->program[0]->treeDetails->lastModified = $pof_settings_lastupdate_overwrite;
+
+    update_post_meta($post_id, 'full_json_cache_run_started', time());
+    $tree = getJsonTree($post_id);
+
+    $tree_hash = hash("md5", serialize($tree));
+
+    $tree->program[0]->treeDetails = new stdClass();
+
+    if ($pof_settings_lastupdate_overwrite == null) {
+        $tree->program[0]->treeDetails->lastModified = date("Y-m-d H:i:s",$lastModified);
+    } else {
+        $tree->program[0]->treeDetails->lastModified = $pof_settings_lastupdate_overwrite;
+    }
+
+    $tree->program[0]->treeDetails->lastModifiedBy = getLastModifiedBy($lastModifiedBy);
+    $tree->program[0]->treeDetails->hash = $tree_hash;
+
+    $jsconContent = json_encode($tree);
+
+    $cache_last_run2 = (int)get_post_meta( $post_id, 'full_json_last_save', true);
+
+    //make sure that there were no other processes that touched the file while this proces was doing it
+    if ($cache_last_run == $cache_last_run2) {
+
+        if (file_exists($filepath)) {
+	        unlink($filepath);
+        }
+
+        $file2 = fopen($filepath, "w+");
+        fputs($file2, $jsconContent);
+        fclose($file2);
+        echo $jsconContent;
+    }
+
+    update_post_meta($post_id, 'full_json_last_save', time());
 }
 
-$tree->program[0]->treeDetails->lastModifiedBy = getLastModifiedBy($lastModifiedBy);
-$tree->program[0]->treeDetails->hash = $tree_hash;
 
-echo json_encode($tree);
+function url_origin( $s, $use_forwarded_host = false )
+{
+    $ssl      = ( ! empty( $s['HTTPS'] ) && $s['HTTPS'] == 'on' );
+    $sp       = strtolower( $s['SERVER_PROTOCOL'] );
+    $protocol = substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
+    $port     = $s['SERVER_PORT'];
+    $port     = ( ( ! $ssl && $port=='80' ) || ( $ssl && $port=='443' ) ) ? '' : ':'.$port;
+    $host     = ( $use_forwarded_host && isset( $s['HTTP_X_FORWARDED_HOST'] ) ) ? $s['HTTP_X_FORWARDED_HOST'] : ( isset( $s['HTTP_HOST'] ) ? $s['HTTP_HOST'] : null );
+    $host     = isset( $host ) ? $host : $s['SERVER_NAME'] . $port;
+    return $protocol . '://' . $host;
+}
 
+function full_url( $s, $use_forwarded_host = false )
+{
+    return url_origin( $s, $use_forwarded_host ) . $s['REQUEST_URI'];
+}
+
+
+function curl_post_async($url, $params = array()){
+
+    $post_params = array();
+
+    foreach ($params as $key => &$val) {
+        if (is_array($val)) $val = implode(',', $val);
+        $post_params[] = $key.'='.urlencode($val);
+    }
+    $post_string = implode('&', $post_params);
+
+    $parts=parse_url($url);
+
+    $fp = fsockopen($parts['host'],
+        isset($parts['port'])?$parts['port']:80,
+        $errno, $errstr, 30);
+
+    $out = "POST ".$parts['path']." HTTP/1.1\r\n";
+    $out.= "Host: ".$parts['host']."\r\n";
+    $out.= "Content-Type: application/x-www-form-urlencoded\r\n";
+    $out.= "Content-Length: ".strlen($post_string)."\r\n";
+    $out.= "Connection: Close\r\n\r\n";
+    if (isset($post_string)) $out.= $post_string;
+
+    fwrite($fp, $out);
+    print_r($fp);
+    fclose($fp);
+}
 
 function getJsonTree($root_id) {
 

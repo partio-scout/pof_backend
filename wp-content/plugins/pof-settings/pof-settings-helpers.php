@@ -42,6 +42,14 @@ function pof_settings_get_lastupdate_overwrite() {
 
 }
 
+function pof_settings_get_fulljson_cache_ttl() {
+    $val = get_option('pof_settings_fulljson_cache_ttl');
+    if ((int) $val < 900) {
+        return 900;
+    }
+    return $val;
+}
+
 function pof_settings_get_all_languages($use_cache = true) {
 	global $pof_settings_langs;
 

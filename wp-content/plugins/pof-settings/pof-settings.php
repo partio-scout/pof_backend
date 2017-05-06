@@ -118,6 +118,10 @@ function pof_settings_general() {
         if (isset($_POST["lastupdate_overwrite"])) {
 			update_option("pof_settings_lastupdate_overwrite", $_POST["lastupdate_overwrite"]);
 		}
+
+        if (isset($_POST["fulljson_cache_ttl"])) {
+			update_option("pof_settings_fulljson_cache_ttl", $_POST["fulljson_cache_ttl"]);
+		}
 	}
 
 	echo '<div class="wrap">';
@@ -173,6 +177,13 @@ function pof_settings_general() {
                 <th scope="row">Yliaja viimeisimm&auml;n muokkauksen p&auml;iv&auml;m&auml;&auml;r&auml; (Muoto: YYYY-MM-DD HH:mm:ss (esim. 2016-08-29 12:00:00)).</th>
                 <td>
                     <input style="width: 600px;" id="lastupdate_overwrite" autocomplete="off" type="text" name="lastupdate_overwrite" value="<?php echo esc_attr( get_option('pof_settings_lastupdate_overwrite') ); ?>" />
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">T&auml;yden jsonin cache sekuntteina.</th>
+                <td>
+                    <input style="width: 600px;" id="fulljson_cache_ttl" autocomplete="off" type="number" min="60" name="fulljson_cache_ttl" value="<?php echo esc_attr( get_option('pof_settings_fulljson_cache_ttl') ); ?>" />
                 </td>
             </tr>
         </table>
