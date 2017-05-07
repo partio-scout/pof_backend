@@ -359,7 +359,7 @@ function getJsonItemBaseDetails($jsonItem, $post) {
     }
 
 
-	$jsonItem->lastModifiedBy = getLastModifiedBy(get_post_meta( $post->ID, '_edit_last', true));
+//	$jsonItem->lastModifiedBy = getLastModifiedBy(get_post_meta( $post->ID, '_edit_last', true));
 
 	$post_guid = get_post_meta( $post->ID, "post_guid", true );
 

@@ -68,7 +68,7 @@ if(!$forceRun) {
 
     if (($cache_last_run + $pof_settings_fulljson_cache_ttl) < time()) {
         $time = new DateTime();
-        $time->modify('-10 minutes');
+        $time->modify('-15 minutes');
 
         // if cache is older than ttl and cache is not running now (or has taken over 10 minutes), start cache run again
         if ($cache_last_run > $cache_run_started
@@ -81,6 +81,7 @@ if(!$forceRun) {
 
             $absolute_url = full_url( $_SERVER );
 
+            update_post_meta($post_id, 'full_json_cache_run_started', time());
             curl_post_async($absolute_url, $params);
         }
     }
