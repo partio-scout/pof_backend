@@ -167,7 +167,7 @@ function curl_post_async($url, $params = array()){
     if (isset($post_string)) $out.= $post_string;
 
     fwrite($fp, $out);
-    print_r($fp);
+
     fclose($fp);
 }
 
