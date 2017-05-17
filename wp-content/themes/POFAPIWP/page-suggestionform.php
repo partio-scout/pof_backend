@@ -80,11 +80,11 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
                     $parent_post_title = get_post_meta($parent_post_id, "title_".$lang_key, true );
 
-                    if ($parent_post_title != "") 
+                    if ($parent_post_title != "")
                     {
                         $suggestion_title .= ": " . $parent_post_title;
-                    } 
-                    else 
+                    }
+                    else
                     {
                         $suggestion_title .= ": " . $parent_post->post_title;
                     }
@@ -197,6 +197,8 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     update_post_meta($suggestion_id, "pof_suggestion_lang", $lang_key);
     update_post_meta($suggestion_id, "pof_suggestion_writer", mb_convert_encoding(trim($_POST['suggestion_name']),"UTF-8", "auto"));
     update_post_meta($suggestion_id, "pof_suggestion_writer_id", $partio_id);
+    update_post_meta($suggestion_id, "pof_suggestion_from_form", 1);
+    update_post_meta($suggestion_id, "pof_suggestion_from_form_date", date("Y-m-d H:i:s"));
 
     $suggestion_guid = get_post_meta( $suggestion_id, "post_guid", true );
 
