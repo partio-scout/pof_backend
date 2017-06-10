@@ -37,14 +37,13 @@ if(!$forceRun) {
             || $cache_run_started < $time->format('U')) {
 
             $params = array(
-                "postGUID" => $post_guid,
                 "forceRun" => "1"
             );
 
-            $absolute_url = full_url( $_SERVER );
+            $absolute_url = pof_full_url( $_SERVER );
 
             update_post_meta($post_id, 'vinkit_json_cache_run_started', time());
-            curl_post_async($absolute_url, $params);
+            pof_curl_post_async($absolute_url, $params);
         }
     }
 
