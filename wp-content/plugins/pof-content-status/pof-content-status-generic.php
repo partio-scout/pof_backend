@@ -84,6 +84,12 @@ function pof_content_status_generic_get_content($agegroup_id) {
         color: white;
     }
 
+    .pof_content_status_red {
+        background: red;
+        text-align: center;
+        color: black;
+    }
+
      .pof_content_status_grey {
         background: #808080;
         text-align: center;
@@ -481,7 +487,23 @@ function pof_content_status_get_suggestions($post_id) {
 
 
         if (array_key_exists($lang->lang_code, $tmp)) {
-            echo "<td class=\"pof_content_status_green\">";
+            $lang_exists = false;
+            if ($lang->lang_code != 'fi') {
+                $post_title = get_post_meta($post_id, "title_".$lang->lang_code, true);
+                if ($post_title != "") {
+                    $lang_exists = true;    
+                }
+            } else {
+                $lang_exists = true;
+            }
+            
+
+            if ($lang_exists) {
+                echo "<td class=\"pof_content_status_green\">";    
+            } else {
+                echo "<td class=\"pof_content_status_red\">";
+            }
+            
             $field_counters['suggestion_'.$lang->lang_code]->green++;
             echo $tmp[$lang->lang_code];
             echo "</td>";
