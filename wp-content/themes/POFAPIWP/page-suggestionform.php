@@ -4,9 +4,10 @@ Template Name: Suggestion form
 */
 
 $domains = pof_settings_get_suggestions_allowed_domains();
+$http_origin = $_SERVER['HTTP_ORIGIN'];
 
 foreach ($domains as $domain) {
-    if (strlen(trim($domain)) > 0) {
+    if (strlen(trim($domain)) > 0 && $domain = $http_origin) {
         header('Access-Control-Allow-Origin: '.$domain);
     }
 }
@@ -234,7 +235,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     }
     $content .= "Vinkin otsikko: ".$suggestion_title."\n\n";
 
-    $content .= "Vinkin sisältö: ".$suggestion_content."\n\n";
+    $content .= "Vinkin sisï¿½ltï¿½: ".$suggestion_content."\n\n";
 
     $content .= "Kirjoittaja: ".$_POST['suggestion_name']."\n\n";
 
@@ -324,7 +325,7 @@ else {
                         }
                     }
 
-                        
+
                     ?>
                     <form action="" method="POST" class="tips__form" enctype="multipart/form-data">
                         <input type="hidden" name="return_val" value="html" />
@@ -349,5 +350,5 @@ else {
 <?php get_footer(); ?>
 
 <?php    }
-    } 
+    }
 ?>
