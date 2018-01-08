@@ -235,7 +235,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     }
     $content .= "Vinkin otsikko: ".$suggestion_title."\n\n";
 
-    $content .= "Vinkin sis�lt�: ".$suggestion_content."\n\n";
+    $content .= "Vinkin sisältö: ".$suggestion_content."\n\n";
 
     $content .= "Kirjoittaja: ".$_POST['suggestion_name']."\n\n";
 
