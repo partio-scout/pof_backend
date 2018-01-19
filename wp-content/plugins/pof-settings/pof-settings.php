@@ -176,7 +176,10 @@ function pof_settings_general() {
                 </td>
             </tr>
             <tr valign="top">
-                <th scope="row">Sallitut tiedostotyypit vinkkien liitteille (yksi per rivi, ilman pistettä)</th>
+                <th scope="row">
+                  Sallitut tiedostotyypit vinkkien liitteille (yksi per rivi, ilman pistettä)<br>
+                  Huom! Käytä MIME-tyyppiä, esim. image/png tai application/pdf
+                </th>
                 <td>
                     <textarea id="suggestions_allowed_file_types" rows="10" cols="80" autocomplete="off" name="suggestions_allowed_file_types"><?php echo esc_attr( get_option('pof_settings_suggestions_allowed_file_types')); ?></textarea>
                 </td>
