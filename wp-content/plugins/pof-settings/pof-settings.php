@@ -103,6 +103,11 @@ function pof_settings_general() {
 		if (isset($_POST["suggestions_emails"])) {
 			update_option("pof_settings_suggestions_emails", $_POST["suggestions_emails"]);
 		}
+
+    if (isset($_POST["suggestions_email_interval"])) {
+      update_option("pof_settings_suggestions_email_interval", $_POST["suggestions_email_interval"]);
+    }
+
         if (isset($_POST["suggestions_email_sender_name"])) {
 			update_option("pof_settings_suggestions_email_sender_name", $_POST["suggestions_email_sender_name"]);
 		}
@@ -139,12 +144,12 @@ function pof_settings_general() {
 				<th scope="row">Certifikaatin nimi (sijoita kyseinen tiedosto plugins\pof-settings\certificates-kansioon</th>
 				<td><input style="width: 600px;" id="google_api_certificate_name_search" autocomplete="off" type="text" name="google_api_certificate_name" value="<?php echo esc_attr( get_option('pof_settings_google_api_certificate_name') ); ?>" /></td>
 			</tr>
-		 
+
 			<tr valign="top">
 				<th scope="row">Api k&auml;ytt&auml;j&auml;</th>
 				<td><input style="width: 600px;" id="google_api_user_search" autocomplete="off" type="text" name="google_api_user" value="<?php echo esc_attr( get_option('pof_settings_google_api_user') ); ?>" /></td>
 			</tr>
-		
+
 			<tr valign="top">
 				<th scope="row">Salasana</th>
 				<td><input style="width: 600px;" id="google_api_password_search" autocomplete="off" type="password" name="google_api_password" value="<?php echo esc_attr( get_option('pof_settings_google_api_password') ); ?>" /></td>
@@ -152,10 +157,14 @@ function pof_settings_general() {
 		</table>
         <h2>Vinkit</h2>
         <table class="form-table">
-			<tr valign="top">
-				<th scope="row">Kelle l&auml;hetet&auml;&auml;n s&auml;hk&ouml;postia uuista vinkeist&auml;. Erottele pilkulla</th>
-				<td><input style="width: 600px;" id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
-			</tr>
+      			<tr valign="top">
+      				<th scope="row">Kelle l&auml;hetet&auml;&auml;n s&auml;hk&ouml;postia uuista vinkeist&auml;. Erottele pilkulla</th>
+      				<td><input style="width: 600px;" id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
+      			</tr>
+            <tr valign="top">
+                <th scope="row">Sähköpostien maksimi lähetysväli (min) ?</th>
+                <td><input style="width: 600px;" id="suggestions_email_interval" autocomplete="off" type="number" min="0" name="suggestions_email_interval" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_interval') ); ?>" /></td>
+            </tr>
             <tr valign="top">
                 <th scope="row">Mill&auml; nimell&auml; l&auml;hetet&auml;&auml;n</th>
                 <td><input style="width: 600px;" id="suggestions_email_sender_name" autocomplete="off" type="text" name="suggestions_email_sender_name" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_name') ); ?>" /></td>
@@ -187,7 +196,7 @@ function pof_settings_general() {
                 </td>
             </tr>
         </table>
-	
+
 		<input type="submit" name="Submit" value="Submit" />
 
 	</form>
@@ -238,19 +247,19 @@ function pof_settings_languages() {
 				$lang_active = 1;
 			}
 
-			$tmp = $wpdb->insert( 
-				$table_name_languages, 
-				array( 
-					'lang_title' => $_POST["pof_settings_add_lang"]["title"], 
+			$tmp = $wpdb->insert(
+				$table_name_languages,
+				array(
+					'lang_title' => $_POST["pof_settings_add_lang"]["title"],
 					'lang_code' => $_POST["pof_settings_add_lang"]["code"],
 					'is_active' => (int) $lang_active,
 					'is_default' => (int) $default
-				), 
-				array( 
-					'%s', 
+				),
+				array(
+					'%s',
 					'%s',
 					'%d',
-				) 
+				)
 			);
 
 		}
@@ -274,24 +283,24 @@ function pof_settings_languages() {
 					}
 
 
-					$tmp = $wpdb->update( 
-						$table_name_languages, 
-						array( 
-							'lang_title' => $lang["title"], 
+					$tmp = $wpdb->update(
+						$table_name_languages,
+						array(
+							'lang_title' => $lang["title"],
 							'lang_code' => $lang["code"],
 							'is_active' => (int) $lang_active
-						), 
+						),
 						array(
 							'id' => $lang_id
 						),
-						array( 
+						array(
 							'%s',
 							'%s',
 							'%d'
 						),
-						array(  
+						array(
 							'%d'
-						) 
+						)
 					);
 				}
 
@@ -300,10 +309,10 @@ function pof_settings_languages() {
 
 		$languages = pof_settings_get_all_languages(false);
 	}
-	
+
 	echo '<div class="wrap">';
 	echo '<h1>POF Settings, kielet</h1>';
-	
+
 	echo '<form method="post" action="">';
 
 	echo '<table cellpadding="2" cellspacing="2" border="2">';

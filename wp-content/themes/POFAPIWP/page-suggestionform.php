@@ -204,51 +204,60 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     $emails_str = pof_settings_get_suggestions_emails();
 
-    $content = "Uusi vinkki\n\n";
-    $content .= "Aktiviteetti: ";
-    if ($mypost === false) {
+    $last_sent_email = get_option('pof_settings_last_sent_email');
+    $email_interval = get_option('pof_settings_suggestions_email_interval');
 
-        if ($mypost_id > 0) {
-            $mypost = get_post($mypost_id);
-            if (!empty($mypost) && $mypost != null && $mypost != false) {
-                $content .= $mypost->post_title."\n\n";
-            } else {
-                $content .= "--"."\n\n";
-            }
-        }
-        else
-        {
-            $content .= "--"."\n\n";
-        }
+    if((time() - $last_sent_email) > $email_interval * 60) {
+      $content = "Uusi vinkki\n\n";
+      $content .= "Aktiviteetti: ";
+      if ($mypost === false) {
+
+          if ($mypost_id > 0) {
+              $mypost = get_post($mypost_id);
+              if (!empty($mypost) && $mypost != null && $mypost != false) {
+                  $content .= $mypost->post_title."\n\n";
+              } else {
+                  $content .= "--"."\n\n";
+              }
+          }
+          else
+          {
+              $content .= "--"."\n\n";
+          }
 
 
-    } else {
-        $lang_title = '';
-        if ($lang_key != 'fi') {
-            $parent_post_title = get_post_meta( $mypost->ID, "title_".$lang_key, true );
-            if (trim($parent_post_title) != "") {
-                $lang_title = " (".$parent_post_title.")";
-            }
-        }
-        $content .= $mypost->post_title.$lang_title."\n\n";
+      } else {
+          $lang_title = '';
+          if ($lang_key != 'fi') {
+              $parent_post_title = get_post_meta( $mypost->ID, "title_".$lang_key, true );
+              if (trim($parent_post_title) != "") {
+                  $lang_title = " (".$parent_post_title.")";
+              }
+          }
+          $content .= $mypost->post_title.$lang_title."\n\n";
+      }
+      $content .= "Vinkin otsikko: ".$suggestion_title."\n\n";
+
+      $content .= "Vinkin sisï¿½ltï¿½: ".$suggestion_content."\n\n";
+
+      $content .= "Kirjoittaja: ".$_POST['suggestion_name']."\n\n";
+
+      $content .= "Kieli: ".$lang_key."\n\n";
+
+      $content .= "Lue: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
+
+      $success = wp_mail( $emails_str, "[POF] Uusi vinkki", $content, 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
+
+      if($success) {
+        update_option("pof_settings_last_sent_email", time());
+      }
     }
-    $content .= "Vinkin otsikko: ".$suggestion_title."\n\n";
 
-    $content .= "Vinkin sisältö: ".$suggestion_content."\n\n";
-
-    $content .= "Kirjoittaja: ".$_POST['suggestion_name']."\n\n";
-
-    $content .= "Kieli: ".$lang_key."\n\n";
-
-    $content .= "Lue: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
-
-    wp_mail( $emails_str, "[POF] Uusi vinkki", $content, 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
-
-	$return_val = 'json';
-	if (array_key_exists('return_val', $_POST)
-    && $_POST['return_val'] != "") {
-		$return_val = $_POST['return_val'];
-	}
+  	$return_val = 'json';
+  	if (array_key_exists('return_val', $_POST)
+      && $_POST['return_val'] != "") {
+  		$return_val = $_POST['return_val'];
+  	}
 
     $location = "Location: " . $url=strtok($_SERVER["REQUEST_URI"],'?') . "?form_submit=ok&lang=" . $lang_key . "&return_val=" . $return_val;
 
@@ -324,7 +333,7 @@ else {
                         }
                     }
 
-                        
+
                     ?>
                     <form action="" method="POST" class="tips__form" enctype="multipart/form-data">
                         <input type="hidden" name="return_val" value="html" />
@@ -349,5 +358,5 @@ else {
 <?php get_footer(); ?>
 
 <?php    }
-    } 
+    }
 ?>
