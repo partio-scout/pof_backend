@@ -103,7 +103,7 @@ function pof_settings_general() {
 		if (isset($_POST["suggestions_emails"])) {
 			update_option("pof_settings_suggestions_emails", $_POST["suggestions_emails"]);
 		}
-    
+
     if (isset($_POST["suggestions_email_sender_name"])) {
 			update_option("pof_settings_suggestions_email_sender_name", $_POST["suggestions_email_sender_name"]);
 		}
@@ -114,6 +114,10 @@ function pof_settings_general() {
 
     if (isset($_POST["suggestions_allowed_domains"])) {
 			update_option("pof_settings_suggestions_allowed_domains", $_POST["suggestions_allowed_domains"]);
+		}
+
+    if (isset($_POST["suggestions_allowed_file_types"])) {
+			update_option("pof_settings_suggestions_allowed_file_types", $_POST["suggestions_allowed_file_types"]);
 		}
 
     if (isset($_POST["lastupdate_overwrite"])) {
@@ -169,6 +173,12 @@ function pof_settings_general() {
                 <th scope="row">Domainit, joista saa l&auml;hett&auml; vinkkej&auml; liitteineen (jokainen omalle rivilleen, koko domain, http:n kanssa).</th>
                 <td>
                     <textarea id="suggestions_allowed_domains" rows="10" cols="80" autocomplete="off" name="suggestions_allowed_domains"><?php echo esc_attr( get_option('pof_settings_suggestions_allowed_domains')); ?></textarea>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">Sallitut tiedostotyypit vinkkien liitteille (yksi per rivi, ilman pistettä)</th>
+                <td>
+                    <textarea id="suggestions_allowed_file_types" rows="10" cols="80" autocomplete="off" name="suggestions_allowed_file_types"><?php echo esc_attr( get_option('pof_settings_suggestions_allowed_file_types')); ?></textarea>
                 </td>
             </tr>
         </table>
