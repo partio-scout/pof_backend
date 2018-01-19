@@ -103,23 +103,24 @@ function pof_settings_general() {
 		if (isset($_POST["suggestions_emails"])) {
 			update_option("pof_settings_suggestions_emails", $_POST["suggestions_emails"]);
 		}
-        if (isset($_POST["suggestions_email_sender_name"])) {
+    
+    if (isset($_POST["suggestions_email_sender_name"])) {
 			update_option("pof_settings_suggestions_email_sender_name", $_POST["suggestions_email_sender_name"]);
 		}
 
-        if (isset($_POST["suggestions_email_sender_email"])) {
+    if (isset($_POST["suggestions_email_sender_email"])) {
 			update_option("pof_settings_suggestions_email_sender_email", $_POST["suggestions_email_sender_email"]);
 		}
 
-        if (isset($_POST["suggestions_allowed_domains"])) {
+    if (isset($_POST["suggestions_allowed_domains"])) {
 			update_option("pof_settings_suggestions_allowed_domains", $_POST["suggestions_allowed_domains"]);
 		}
 
-        if (isset($_POST["lastupdate_overwrite"])) {
+    if (isset($_POST["lastupdate_overwrite"])) {
 			update_option("pof_settings_lastupdate_overwrite", $_POST["lastupdate_overwrite"]);
 		}
 
-        if (isset($_POST["fulljson_cache_ttl"])) {
+    if (isset($_POST["fulljson_cache_ttl"])) {
 			update_option("pof_settings_fulljson_cache_ttl", $_POST["fulljson_cache_ttl"]);
 		}
 	}
@@ -139,12 +140,12 @@ function pof_settings_general() {
 				<th scope="row">Certifikaatin nimi (sijoita kyseinen tiedosto plugins\pof-settings\certificates-kansioon</th>
 				<td><input style="width: 600px;" id="google_api_certificate_name_search" autocomplete="off" type="text" name="google_api_certificate_name" value="<?php echo esc_attr( get_option('pof_settings_google_api_certificate_name') ); ?>" /></td>
 			</tr>
-		 
+
 			<tr valign="top">
 				<th scope="row">Api k&auml;ytt&auml;j&auml;</th>
 				<td><input style="width: 600px;" id="google_api_user_search" autocomplete="off" type="text" name="google_api_user" value="<?php echo esc_attr( get_option('pof_settings_google_api_user') ); ?>" /></td>
 			</tr>
-		
+
 			<tr valign="top">
 				<th scope="row">Salasana</th>
 				<td><input style="width: 600px;" id="google_api_password_search" autocomplete="off" type="password" name="google_api_password" value="<?php echo esc_attr( get_option('pof_settings_google_api_password') ); ?>" /></td>
@@ -187,7 +188,7 @@ function pof_settings_general() {
                 </td>
             </tr>
         </table>
-	
+
 		<input type="submit" name="Submit" value="Submit" />
 
 	</form>
@@ -238,19 +239,19 @@ function pof_settings_languages() {
 				$lang_active = 1;
 			}
 
-			$tmp = $wpdb->insert( 
-				$table_name_languages, 
-				array( 
-					'lang_title' => $_POST["pof_settings_add_lang"]["title"], 
+			$tmp = $wpdb->insert(
+				$table_name_languages,
+				array(
+					'lang_title' => $_POST["pof_settings_add_lang"]["title"],
 					'lang_code' => $_POST["pof_settings_add_lang"]["code"],
 					'is_active' => (int) $lang_active,
 					'is_default' => (int) $default
-				), 
-				array( 
-					'%s', 
+				),
+				array(
+					'%s',
 					'%s',
 					'%d',
-				) 
+				)
 			);
 
 		}
@@ -274,24 +275,24 @@ function pof_settings_languages() {
 					}
 
 
-					$tmp = $wpdb->update( 
-						$table_name_languages, 
-						array( 
-							'lang_title' => $lang["title"], 
+					$tmp = $wpdb->update(
+						$table_name_languages,
+						array(
+							'lang_title' => $lang["title"],
 							'lang_code' => $lang["code"],
 							'is_active' => (int) $lang_active
-						), 
+						),
 						array(
 							'id' => $lang_id
 						),
-						array( 
+						array(
 							'%s',
 							'%s',
 							'%d'
 						),
-						array(  
+						array(
 							'%d'
-						) 
+						)
 					);
 				}
 
@@ -300,10 +301,10 @@ function pof_settings_languages() {
 
 		$languages = pof_settings_get_all_languages(false);
 	}
-	
+
 	echo '<div class="wrap">';
 	echo '<h1>POF Settings, kielet</h1>';
-	
+
 	echo '<form method="post" action="">';
 
 	echo '<table cellpadding="2" cellspacing="2" border="2">';
