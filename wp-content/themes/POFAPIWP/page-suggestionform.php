@@ -4,9 +4,10 @@ Template Name: Suggestion form
 */
 
 $domains = pof_settings_get_suggestions_allowed_domains();
+$http_origin = $_SERVER['HTTP_ORIGIN'];
 
 foreach ($domains as $domain) {
-    if (strlen(trim($domain)) > 0) {
+    if (strlen(trim($domain)) > 0 && $domain = $http_origin) {
         header('Access-Control-Allow-Origin: '.$domain);
     }
 }
@@ -142,10 +143,41 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         }
     }
 
-    if (array_key_exists('suggestion_file_user', $_FILES)) {
+    if (
+    array_key_exists('suggestion_file_user', $_FILES) &&
+    file_exists($_FILES['suggestion_file_user']['tmp_name']) &&
+    is_uploaded_file($_FILES['suggestion_file_user']['tmp_name'])
+    ) {
+
+      try {
 
         if ( ! function_exists( 'wp_handle_upload' ) ) {
             require_once( ABSPATH . 'wp-admin/includes/file.php' );
+        }
+
+        if (!isset($_FILES['suggestion_file_user']['error']) || is_array($_FILES['suggestion_file_user']['error'])) {
+            throw new RuntimeException('Virheelliset tiedostoparametrit.');
+        }
+
+        switch ($_FILES['suggestion_file_user']['error']) {
+          case UPLOAD_ERR_OK:
+              break;
+          case UPLOAD_ERR_INI_SIZE:
+          case UPLOAD_ERR_FORM_SIZE:
+              throw new RuntimeException('Liitetiedoston koko on liian suuri.');
+          default:
+              throw new RuntimeException('Tuntematon virhe.');
+        }
+
+        $allowed_file_types = pof_settings_get_suggestions_allowed_file_types();
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        if (false === $ext = array_search(
+            $finfo->file($_FILES['suggestion_file_user']['tmp_name']),
+            $allowed_file_types,
+            true
+        )) {
+            throw new RuntimeException('Virheellinen tiedostotyyppi');
         }
 
         $uploadedfile = $_FILES['suggestion_file_user'];
@@ -189,9 +221,17 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
             wp_update_attachment_metadata( $attach_id, $attach_data );
 
             // Update File Field
-//            update_field('pof_suggestion_file_user', $attach_id, $suggestion_id);
+            // update_field('pof_suggestion_file_user', $attach_id, $suggestion_id);
 
             update_post_meta($suggestion_id, "pof_suggestion_file_user", $attach_id);
+          }
+        } catch (RuntimeException $e) {
+            $tmp = new stdClass();
+            $tmp->status = "error";
+            $tmp->message = pof_taxonomy_translate_get_translation_content("common", "suggestion_form_error_invalid_upload", 0, $lang_key);
+            header('Content-Type: application/json');
+            echo json_encode($tmp);
+            exit();
         }
     }
     update_post_meta($suggestion_id, "pof_suggestion_lang", $lang_key);
@@ -238,7 +278,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
       }
       $content .= "Vinkin otsikko: ".$suggestion_title."\n\n";
 
-      $content .= "Vinkin sis�lt�: ".$suggestion_content."\n\n";
+      $content .= "Vinkin sisältö: ".$suggestion_content."\n\n";
 
       $content .= "Kirjoittaja: ".$_POST['suggestion_name']."\n\n";
 
@@ -253,11 +293,10 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
       }
     }
 
-  	$return_val = 'json';
-  	if (array_key_exists('return_val', $_POST)
+    if (array_key_exists('return_val', $_POST)
       && $_POST['return_val'] != "") {
-  		$return_val = $_POST['return_val'];
-  	}
+      $return_val = $_POST['return_val'];
+    }
 
     $location = "Location: " . $url=strtok($_SERVER["REQUEST_URI"],'?') . "?form_submit=ok&lang=" . $lang_key . "&return_val=" . $return_val;
 
@@ -267,7 +306,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
 	header($location);
 	exit();
-//    echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_done", 0, $lang_key);
+  //echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_done", 0, $lang_key);
 
 }
 
@@ -347,6 +386,9 @@ else {
                         <textarea class="radius form-textarea" name="suggestion_content" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_content_placeholder", 0, $lang_key, true); ?>"></textarea>
                         <br />
                         <br />
+                        <!-- -->
+                        <input type="file" name="suggestion_file_user">
+                        <!-- -->
                         <input class="button radius" type="submit" name="submit-tip" value="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_sendbutton", 0, $lang_key, true); ?>" aria-label="Send" />
 
                     </form>
