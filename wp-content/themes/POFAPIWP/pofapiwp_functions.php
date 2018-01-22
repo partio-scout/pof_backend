@@ -333,7 +333,7 @@ function getXML($data) {
 
 //$pof_available_languages = array('sv', 'en');
 $pof_settings_langs = array();
-$pof_available_languages = pof_settigs_get_active_lang_codes();
+$pof_available_languages = pof_settings_get_active_lang_codes();
 
 $pof_settings_lastupdate_overwrite = pof_settings_get_lastupdate_overwrite();
 

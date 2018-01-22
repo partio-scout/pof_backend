@@ -232,7 +232,7 @@ function pof_importer_tasksdriveimport_importRow($row, $row_index, $saveToDataBa
 
 		wp_set_post_terms( $post_id, $growth_targets, "pof_tax_growth_target", false );
 
-		update_post_meta($post_id, "content_imported_fi", pof_settigs_getDatetimeNow());
+		update_post_meta($post_id, "content_imported_fi", pof_settings_getDatetimeNow());
 
 		wp_update_post($post, $wp_error);
 	}
@@ -594,7 +594,7 @@ function pof_importer_tasksdrivelocalizationcontent_importRow($lang, $row, $row_
 		update_field("ingress_".$lang, trim($row[$colums['ingress']]), $post_id);
         update_field("content_".$lang, trim($row[$colums['content']]), $post_id);
 		update_field("leader_tasks_".$lang, trim($row[$colums['leadertask']]), $post_id);
-		update_post_meta($post_id, "content_imported_".$lang, pof_settigs_getDatetimeNow());
+		update_post_meta($post_id, "content_imported_".$lang, pof_settings_getDatetimeNow());
 
         echo " UPDATED";
 
