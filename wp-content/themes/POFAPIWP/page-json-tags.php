@@ -20,7 +20,7 @@ $ret = new stdClass();
 
 $languages = pof_taxonomy_translate_get_languages();
 
-function pof_pages_get_tags($languages, $items, $item_tax_key) 
+function pof_pages_get_tags($languages, $items, $item_tax_key)
 {
 	global $filter_langs;
 	$items_arr = array();
@@ -101,6 +101,27 @@ if ($filter_tags == "all" || strstr($filter_tags, "taitoalueet")) {
 if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
 	//Kasvatustavoitteet
 	$item_tax_key = 'growth_target';
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);
+}
+
+if ($filter_tags == "all" || strstr($filter_tags, "aktiviteettipaketin_ylakasite")) {
+	//Kasvatustavoitteet
+	$item_tax_key = 'taskgroup_term';
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);
+}
+
+if ($filter_tags == "all" || strstr($filter_tags, "aktiviteettipaketin_ylakasite")) {
+	//aktiviteettipaketin yläkäsite
+	$item_tax_key = 'taskgroup_term';
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);
+}
+
+if ($filter_tags == "all" || strstr($filter_tags, "aktiviteetin_ylakasite")) {
+	//Aktiviteetin yläkäsite
+	$item_tax_key = 'task_term';
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
 	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
