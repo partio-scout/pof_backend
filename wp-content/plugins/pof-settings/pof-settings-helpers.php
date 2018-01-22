@@ -28,8 +28,13 @@ function pof_settings_get_suggestions_email_sender_email() {
 }
 
 function pof_settings_get_suggestions_allowed_domains() {
-    $domains = explode("\n", get_option('pof_settings_suggestions_allowed_domains'));
+  $domains = explode("\n", get_option('pof_settings_suggestions_allowed_domains'));
 	return $domains;
+}
+
+function pof_settings_get_suggestions_allowed_file_types() {
+  $file_types = explode("\r\n", get_option('pof_settings_suggestions_allowed_file_types'));
+	return $file_types;
 }
 
 function pof_settings_get_lastupdate_overwrite() {
