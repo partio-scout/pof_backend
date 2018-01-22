@@ -84,7 +84,7 @@ function pof_settings_get_all_languages($use_cache = true) {
 	return $languages_res;
 }
 
-function pof_settigs_get_active_lang_codes() {
+function pof_settings_get_active_lang_codes() {
 	global $pof_settings_langs;
 
 	$toret = array();
@@ -104,7 +104,7 @@ function pof_settigs_get_active_lang_codes() {
 	return $toret;
 }
 
-function pof_settigs_getDatetimeNow() {
+function pof_settings_getDatetimeNow() {
     $tz_object = new DateTimeZone('Europe/Helsinki');
 
     $datetime = new DateTime();
