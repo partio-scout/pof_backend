@@ -127,27 +127,27 @@ function pof_taxonomy_translate_get_agegroups() {
 
 
 function pof_taxonomy_translate_menu() {
-	add_menu_page('POF Taxonomy Translate', 'K&auml;&auml;nn&ouml;kset', 'manage_options', 'pof_taxonomy_translate_frontpage-handle', 'pof_taxonomy_translate_frontpage', 'dashicons-translation');
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Suorituspaikat', 'Suorituspaikat', 'manage_options', 'pof_taxonomy_translate_places-handle', 'pof_taxonomy_translate_places');
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Ryhm&auml;koko', 'Ryhm&auml;koot', 'manage_options', 'pof_taxonomy_translate_groupsizes-handle', 'pof_taxonomy_translate_groupsizes');
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Pakollisuus', 'Pakollisuus', 'manage_options', 'pof_taxonomy_translate_mandatory-handle', 'pof_taxonomy_translate_mandatory');
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteetin kestot', 'Aktiviteetin kestot', 'manage_options', 'pof_taxonomy_translate_taskduration-handle', 'pof_taxonomy_translate_taskduration');
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteetin valmistelun kestot', 'Aktiviteetin valmistelun kestot', 'manage_options', 'pof_taxonomy_translate_taskpreparationduration-handle', 'pof_taxonomy_translate_taskpreparationduration');
+	add_menu_page('POF Taxonomy Translate', 'K&auml;&auml;nn&ouml;kset', 'pof_manage_translations', 'pof_taxonomy_translate_frontpage-handle', 'pof_taxonomy_translate_frontpage', 'dashicons-translation');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Suorituspaikat', 'Suorituspaikat', 'pof_manage_translations', 'pof_taxonomy_translate_places-handle', 'pof_taxonomy_translate_places');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Ryhm&auml;koko', 'Ryhm&auml;koot', 'pof_manage_translations', 'pof_taxonomy_translate_groupsizes-handle', 'pof_taxonomy_translate_groupsizes');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Pakollisuus', 'Pakollisuus', 'pof_manage_translations', 'pof_taxonomy_translate_mandatory-handle', 'pof_taxonomy_translate_mandatory');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteetin kestot', 'Aktiviteetin kestot', 'pof_manage_translations', 'pof_taxonomy_translate_taskduration-handle', 'pof_taxonomy_translate_taskduration');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteetin valmistelun kestot', 'Aktiviteetin valmistelun kestot', 'pof_manage_translations', 'pof_taxonomy_translate_taskpreparationduration-handle', 'pof_taxonomy_translate_taskpreparationduration');
 
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_translate_equpments-handle', 'pof_taxonomy_translate_equpments');
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_translate_skillareas-handle', 'pof_taxonomy_translate_skillareas');
-    add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'manage_options', 'pof_taxonomy_translate_growthtarget-handle', 'pof_taxonomy_translate_growthtarget');
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'manage_options', 'pof_taxonomy_translate_leaderships-handle', 'pof_taxonomy_translate_leaderships');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'pof_manage_translations', 'pof_taxonomy_translate_equpments-handle', 'pof_taxonomy_translate_equpments');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'pof_manage_translations', 'pof_taxonomy_translate_skillareas-handle', 'pof_taxonomy_translate_skillareas');
+    add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'pof_manage_translations', 'pof_taxonomy_translate_growthtarget-handle', 'pof_taxonomy_translate_growthtarget');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'pof_manage_translations', 'pof_taxonomy_translate_leaderships-handle', 'pof_taxonomy_translate_leaderships');
 
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteettipaketin yl&auml;k&auml;site', 'Aktiviteettipaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_translate_taskgroupterm-handle', 'pof_taxonomy_translate_taskgroupterm');
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteetin yl&auml;k&auml;site', 'Aktiviteetin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_translate_taskterm-handle', 'pof_taxonomy_translate_taskterm');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteettipaketin yl&auml;k&auml;site', 'Aktiviteettipaketin yl&auml;k&auml;site', 'pof_manage_translations', 'pof_taxonomy_translate_taskgroupterm-handle', 'pof_taxonomy_translate_taskgroupterm');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteetin yl&auml;k&auml;site', 'Aktiviteetin yl&auml;k&auml;site', 'pof_manage_translations', 'pof_taxonomy_translate_taskterm-handle', 'pof_taxonomy_translate_taskterm');
 
-	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Yleiset', 'Yleiset', 'manage_options', 'pof_taxonomy_translate_common-handle', 'pof_taxonomy_translate_common');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Yleiset', 'Yleiset', 'pof_manage_translations', 'pof_taxonomy_translate_common-handle', 'pof_taxonomy_translate_common');
 
 }
 
 function pof_taxonomy_translate_frontpage() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_translations' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
@@ -277,7 +277,7 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 
 
 function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2, $additional_text = "") {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_translations' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 

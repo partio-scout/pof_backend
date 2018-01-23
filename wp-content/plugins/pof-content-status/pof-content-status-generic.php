@@ -2,7 +2,7 @@
 
 
 function pof_content_status_generic() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_status' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 	echo '<div class="wrap">';
@@ -24,11 +24,11 @@ function pof_content_status_generic() {
 function pof_content_status_generic_get_form() {
     $ret = "";
 
-    
-    
+
+
 
     $ret .= "<form method=\"POST\">";
-    
+
     $ret .=  "Valitse ik&auml;kausi: <br />";
     $ret .=  '<select name="agegroup">';
 
@@ -49,7 +49,7 @@ function pof_content_status_generic_get_form() {
 	}
 
     $ret .=  '</select>';
-    
+
 	$ret .= '<br /><br /><input type="submit" name="Submit" value="N&auml;yt&auml;" />';
 
     $ret .= "</form>";
@@ -59,11 +59,11 @@ function pof_content_status_generic_get_form() {
 }
 
 function pof_content_status_generic_get_content($agegroup_id) {
-    
+
 ?>
 
     <style>
-    
+
     #pof_content_status_table td {
         padding: 2px;
         text-align: center;
@@ -106,7 +106,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
 <?php
     $langs = pof_settings_get_all_languages();
     $langs_count = count($langs);
-    
+
 ?>
 
     <table cellpadding="1" cellspacing="1" border="1" id="pof_content_status_table">
@@ -139,11 +139,11 @@ function pof_content_status_generic_get_content($agegroup_id) {
                 ?>
                 <th><?php echo  $lang->lang_title; ?></th>
 
-             
+
                 <?php
             }
                 ?>
-                
+
             </tr>
         </thead>
         <tbody>
@@ -170,7 +170,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
 			if ($the_query->post->ID == $agegroup_id) {
 				continue;
 			}
-            
+
     ?>
             <tr>
                 <td>Paketti</td>
@@ -180,9 +180,9 @@ function pof_content_status_generic_get_content($agegroup_id) {
                 <td>
                     <?php
             $task_parent_term = "";
-            
+
             $taskgroup_parent_term = "";
-            $taskgroup_term =  get_post_meta($the_query->post->ID, "taskgroup_subtaskgroup_term", true); 
+            $taskgroup_term =  get_post_meta($the_query->post->ID, "taskgroup_subtaskgroup_term", true);
             if (($taskgroup_term == "" || $taskgroup_term == false || $taskgroup_term == "null" || $taskgroup_term == null) &&  $task_parent_term != "") {
                 echo "(".$taskgroup_term.")";
             } else {
@@ -193,7 +193,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
                     ?>
                 </td>
                 <td><?php
-            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true); 
+            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true);
             if (($task_term == "" || $task_term == false || $task_term == "null" || $task_term == null) &&  $task_parent_term != "") {
                 echo "(".$task_parent_term.")";
             } else {
@@ -224,7 +224,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
     echo pof_content_status_get_counters_cell("pof_tax_equipment");
     echo pof_content_status_get_counters_cell("pof_tax_growth_target");
     echo pof_content_status_get_counters_cell("task_mandatory");
-    
+
     echo pof_content_status_get_counters_cell("task_groupsize");
     echo pof_content_status_get_counters_cell("task_place_of_performance");
     echo pof_content_status_get_counters_cell("task_duration");
@@ -250,7 +250,7 @@ function pof_content_status_generic_get_content($agegroup_id) {
     echo pof_content_status_get_counters_cell_pros("task_groupsize");
     echo pof_content_status_get_counters_cell_pros("task_place_of_performance");
 
-    
+
     echo pof_content_status_get_counters_cell_pros("task_duration");
     echo pof_content_status_get_counters_cell_pros("task_preparationduration");
     echo pof_content_status_get_counters_cell_pros("task_level");
@@ -301,7 +301,7 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
 			if ($the_query->post->ID == $taskgroup_id) {
 				continue;
 			}
-            
+
     ?>
             <tr>
                 <td>Paketti</td>
@@ -309,7 +309,7 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
                 <td><?php echo get_post_meta($the_query->post->ID, "taskgroup_additional_tasks_count", true); ?></td>
                 <td>
                     <?php
-                        $taskgroup_term =  get_post_meta($the_query->post->ID, "taskgroup_taskgroup_term", true); 
+                        $taskgroup_term =  get_post_meta($the_query->post->ID, "taskgroup_taskgroup_term", true);
                         if (($taskgroup_term == "" || $taskgroup_term == false || $taskgroup_term == "null" || $taskgroup_term == null) && $taskgroup_parent_term != "") {
                             echo "(".$taskgroup_parent_term.")";
                         } else {
@@ -323,7 +323,7 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
                 </td>
                 <td>
                     <?php
-            $taskgroup_term =  get_post_meta($the_query->post->ID, "taskgroup_subtaskgroup_term", true); 
+            $taskgroup_term =  get_post_meta($the_query->post->ID, "taskgroup_subtaskgroup_term", true);
             if (($taskgroup_term == "" || $taskgroup_term == false || $taskgroup_term == "null" || $taskgroup_term == null) && $taskgroup_parent_term != "") {
                 echo "(".$taskgroup_parent_term.")";
             } else {
@@ -336,7 +336,7 @@ function pof_content_status_generic_content_get_taskgroups($taskgroup_id, $inden
                 </td>
                 <td>
                     <?php
-            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true); 
+            $task_term =  get_post_meta($the_query->post->ID, "taskgroup_subtask_term", true);
             if (($task_term == "" || $task_term == false || $task_term == "null" || $task_term == null) &&  $task_parent_term != "") {
                 echo "(".$task_parent_term.")";
             } else {
@@ -393,7 +393,7 @@ function pof_content_status_generic_content_get_tasks($taskgroup_id, $indentatio
 			if ($the_query->post->ID == $taskgroup_id) {
 				continue;
 			}
-                        
+
             ?>
             <tr>
                 <td>Aktiviteetti</td>
@@ -491,19 +491,19 @@ function pof_content_status_get_suggestions($post_id) {
             if ($lang->lang_code != 'fi') {
                 $post_title = get_post_meta($post_id, "title_".$lang->lang_code, true);
                 if ($post_title != "") {
-                    $lang_exists = true;    
+                    $lang_exists = true;
                 }
             } else {
                 $lang_exists = true;
             }
-            
+
 
             if ($lang_exists) {
-                echo "<td class=\"pof_content_status_green\">";    
+                echo "<td class=\"pof_content_status_green\">";
             } else {
                 echo "<td class=\"pof_content_status_red\">";
             }
-            
+
             $field_counters['suggestion_'.$lang->lang_code]->green++;
             echo $tmp[$lang->lang_code];
             echo "</td>";
@@ -540,7 +540,7 @@ function pof_content_status_get_tag_count_cell($taxonomy, $post_id) {
 }
 
 function pof_content_status_get_field_cell_exists($field, $post_id) {
-    
+
     global $field_counters;
 
     if (!array_key_exists($field, $field_counters)) {
@@ -568,7 +568,7 @@ function pof_content_status_get_field_cell_exists($field, $post_id) {
 
 function pof_content_status_get_field_count_cell($field, $post_id) {
     $res = get_post_meta($post_id, $field, true);
-    
+
     $count = count($res);
 
     global $field_counters;
