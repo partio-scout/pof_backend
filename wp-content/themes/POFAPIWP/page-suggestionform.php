@@ -156,7 +156,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         }
 
         if (!isset($_FILES['suggestion_file_user']['error']) || is_array($_FILES['suggestion_file_user']['error'])) {
-            throw new RuntimeException('Virheelliset tiedostoparametrit.');
+            throw new RuntimeException('suggestion_form_error_invalid_parameters.');
         }
 
         switch ($_FILES['suggestion_file_user']['error']) {
@@ -164,9 +164,9 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
               break;
           case UPLOAD_ERR_INI_SIZE:
           case UPLOAD_ERR_FORM_SIZE:
-              throw new RuntimeException('Liitetiedoston koko on liian suuri.');
+              throw new RuntimeException('suggestion_form_error_too_large_filesize');
           default:
-              throw new RuntimeException('Tuntematon virhe.');
+              throw new RuntimeException('suggestion_form_error_unknown');
         }
 
         $allowed_file_types = pof_settings_get_suggestions_allowed_file_types();
@@ -177,7 +177,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
             $allowed_file_types,
             true
         )) {
-            throw new RuntimeException('Virheellinen tiedostotyyppi');
+            throw new RuntimeException('suggestion_form_error_invalid_filetype');
         }
 
         $uploadedfile = $_FILES['suggestion_file_user'];
@@ -226,9 +226,10 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
             update_post_meta($suggestion_id, "pof_suggestion_file_user", $attach_id);
           }
         } catch (RuntimeException $e) {
+            $error = $e->getMessage();
             $tmp = new stdClass();
             $tmp->status = "error";
-            $tmp->message = pof_taxonomy_translate_get_translation_content("common", "suggestion_form_error_invalid_upload", 0, $lang_key);
+            $tmp->message = pof_taxonomy_translate_get_translation_content("common", $error, 0, $lang_key);
             header('Content-Type: application/json');
             echo json_encode($tmp);
             exit();
