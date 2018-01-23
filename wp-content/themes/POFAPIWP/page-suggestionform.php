@@ -379,9 +379,6 @@ else {
                         <textarea class="radius form-textarea" name="suggestion_content" placeholder="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_content_placeholder", 0, $lang_key, true); ?>"></textarea>
                         <br />
                         <br />
-                        <!-- -->
-                        <input type="file" name="suggestion_file_user">
-                        <!-- -->
                         <input class="button radius" type="submit" name="submit-tip" value="<?php echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_sendbutton", 0, $lang_key, true); ?>" aria-label="Send" />
 
                     </form>
