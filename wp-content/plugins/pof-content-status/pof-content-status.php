@@ -33,16 +33,16 @@ include( plugin_dir_path( __FILE__ ) . 'pof-content-status-images.php');
 add_action( 'admin_menu', 'pof_content_status_menu' );
 
 function pof_content_status_menu() {
-	add_menu_page('POF status', 'POF status', 'manage_options', 'pof_content_status_frontpage-handle', 'pof_content_status_frontpage', 'dashicons-dashboard');
-	add_submenu_page( 'pof_content_status_frontpage-handle', 'Yleiset', 'Yleiset', 'manage_options', 'pof_content_status_generic-handle', 'pof_content_status_generic');
-	add_submenu_page( 'pof_content_status_frontpage-handle', 'Sis&auml;ll&ouml;t', 'Sis&auml;ll&ouml;t', 'manage_options', 'pof_content_status_localization-handle', 'pof_content_status_localization');
-    add_submenu_page( 'pof_content_status_frontpage-handle', 'Orvot', 'Orvot', 'manage_options', 'pof_content_status_orphan-handle', 'pof_content_status_orphan');
-    add_submenu_page( 'pof_content_status_frontpage-handle', 'Tagit', 'Tagit', 'manage_options', 'pof_content_status_tags-handle', 'pof_content_status_tags');
-    add_submenu_page( 'pof_content_status_frontpage-handle', 'Kuvat ja liitteet', 'Kuvat ja liitteet', 'manage_options', 'pof_content_status_images-handle', 'pof_content_status_images');
+	add_menu_page('POF status', 'POF status', 'pof_manage_status', 'pof_content_status_frontpage-handle', 'pof_content_status_frontpage', 'dashicons-dashboard');
+	add_submenu_page( 'pof_content_status_frontpage-handle', 'Yleiset', 'Yleiset', 'pof_manage_status', 'pof_content_status_generic-handle', 'pof_content_status_generic');
+	add_submenu_page( 'pof_content_status_frontpage-handle', 'Sis&auml;ll&ouml;t', 'Sis&auml;ll&ouml;t', 'pof_manage_status', 'pof_content_status_localization-handle', 'pof_content_status_localization');
+    add_submenu_page( 'pof_content_status_frontpage-handle', 'Orvot', 'Orvot', 'pof_manage_status', 'pof_content_status_orphan-handle', 'pof_content_status_orphan');
+    add_submenu_page( 'pof_content_status_frontpage-handle', 'Tagit', 'Tagit', 'pof_manage_status', 'pof_content_status_tags-handle', 'pof_content_status_tags');
+    add_submenu_page( 'pof_content_status_frontpage-handle', 'Kuvat ja liitteet', 'Kuvat ja liitteet', 'pof_manage_status', 'pof_content_status_images-handle', 'pof_content_status_images');
 }
 
 function pof_content_status_frontpage() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_status' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 

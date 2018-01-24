@@ -1,6 +1,6 @@
 <?php
 function pof_content_status_tags() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_status' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 	echo '<div class="wrap">';
