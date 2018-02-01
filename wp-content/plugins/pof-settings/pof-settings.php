@@ -104,7 +104,11 @@ function pof_settings_general() {
 			update_option("pof_settings_suggestions_emails", $_POST["suggestions_emails"]);
 		}
 
-    if (isset($_POST["suggestions_email_sender_name"])) {
+    if (isset($_POST["suggestions_email_interval"])) {
+      update_option("pof_settings_suggestions_email_interval", $_POST["suggestions_email_interval"]);
+    }
+
+    if (isset($_POST["suggestions_email_sender_name"])) { 
 			update_option("pof_settings_suggestions_email_sender_name", $_POST["suggestions_email_sender_name"]);
 		}
 
@@ -157,10 +161,14 @@ function pof_settings_general() {
 		</table>
         <h2>Vinkit</h2>
         <table class="form-table">
-			<tr valign="top">
-				<th scope="row">Kelle l&auml;hetet&auml;&auml;n s&auml;hk&ouml;postia uuista vinkeist&auml;. Erottele pilkulla</th>
-				<td><input style="width: 600px;" id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
-			</tr>
+      			<tr valign="top">
+      				<th scope="row">Kelle l&auml;hetet&auml;&auml;n s&auml;hk&ouml;postia uuista vinkeist&auml;. Erottele pilkulla</th>
+      				<td><input style="width: 600px;" id="suggestions_emails" autocomplete="off" type="text" name="suggestions_emails" value="<?php echo esc_attr( get_option('pof_settings_suggestions_emails') ); ?>" /></td>
+      			</tr>
+            <tr valign="top">
+                <th scope="row">Sähköpostien maksimi lähetysväli (min) ?</th>
+                <td><input style="width: 600px;" id="suggestions_email_interval" autocomplete="off" type="number" min="0" name="suggestions_email_interval" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_interval') ); ?>" /></td>
+            </tr>
             <tr valign="top">
                 <th scope="row">Mill&auml; nimell&auml; l&auml;hetet&auml;&auml;n</th>
                 <td><input style="width: 600px;" id="suggestions_email_sender_name" autocomplete="off" type="text" name="suggestions_email_sender_name" value="<?php echo esc_attr( get_option('pof_settings_suggestions_email_sender_name') ); ?>" /></td>
@@ -209,9 +217,6 @@ function pof_settings_general() {
 
 	echo '</div>';
 }
-
-
-
 
 function pof_settings_languages() {
 	if ( !current_user_can( 'pof_manage_options' ) )  {
