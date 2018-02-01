@@ -345,11 +345,15 @@ if (!function_exists("getXML")) {
 	require_once( get_template_directory() . '/pofapiwp_acf_functions.php');
 }
 
-
 if (!class_exists("POFTREE\\program")) {
 	require_once( get_template_directory() . '/pofapiwp_jsonclasses.php');
 
 }
 
+// Always redirect a user to the home_url() upon successful password reset
+add_filter( 'lostpassword_redirect', 'my_redirect_home' );
+function my_redirect_home( $lostpassword_redirect ) {
+	return home_url();
+}
 
 add_image_size( 'thumbnailcropped', 150, 150, array( 'left', 'top' ) );

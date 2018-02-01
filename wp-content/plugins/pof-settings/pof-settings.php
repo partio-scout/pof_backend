@@ -65,14 +65,14 @@ function pof_settings_install() {
 pof_settings_install();
 
 function pof_settings_menu() {
-	add_menu_page('POF Settings', 'POF Asetukset', 'manage_options', 'pof_settings_frontpage-handle', 'pof_settings_frontpage', 'dashicons-admin-settings');
-	add_submenu_page( 'pof_settings_frontpage-handle', 'Yleiset asetukset', 'Yleiset asetukset', 'manage_options', 'pof_settings_general-handle', 'pof_settings_general');
-	add_submenu_page( 'pof_settings_frontpage-handle', 'Kielet', 'Kielet', 'manage_options', 'pof_settings_languages-handle', 'pof_settings_languages');
+	add_menu_page('POF Settings', 'POF Asetukset', 'pof_manage_options', 'pof_settings_frontpage-handle', 'pof_settings_frontpage', 'dashicons-admin-settings');
+	add_submenu_page( 'pof_settings_frontpage-handle', 'Yleiset asetukset', 'Yleiset asetukset', 'pof_manage_options', 'pof_settings_general-handle', 'pof_settings_general');
+	add_submenu_page( 'pof_settings_frontpage-handle', 'Kielet', 'Kielet', 'pof_manage_options', 'pof_settings_languages-handle', 'pof_settings_languages');
 }
 
 
 function pof_settings_frontpage() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 	echo '<div class="wrap">';
@@ -82,7 +82,7 @@ function pof_settings_frontpage() {
 }
 
 function pof_settings_general() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
@@ -218,11 +218,8 @@ function pof_settings_general() {
 	echo '</div>';
 }
 
-
-
-
 function pof_settings_languages() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
