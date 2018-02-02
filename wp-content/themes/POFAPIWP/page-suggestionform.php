@@ -4,9 +4,10 @@ Template Name: Suggestion form
 */
 
 $domains = pof_settings_get_suggestions_allowed_domains();
+$http_origin = $_SERVER['HTTP_ORIGIN'];
 
 foreach ($domains as $domain) {
-    if (strlen(trim($domain)) > 0) {
+    if (strlen(trim($domain)) > 0 && $domain = $http_origin) {
         header('Access-Control-Allow-Origin: '.$domain);
     }
 }
@@ -150,10 +151,41 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         }
     }
 
-    if (array_key_exists('suggestion_file_user', $_FILES)) {
+    if (
+    array_key_exists('suggestion_file_user', $_FILES) &&
+    file_exists($_FILES['suggestion_file_user']['tmp_name']) &&
+    is_uploaded_file($_FILES['suggestion_file_user']['tmp_name'])
+    ) {
+
+      try {
 
         if ( ! function_exists( 'wp_handle_upload' ) ) {
             require_once( ABSPATH . 'wp-admin/includes/file.php' );
+        }
+
+        if (!isset($_FILES['suggestion_file_user']['error']) || is_array($_FILES['suggestion_file_user']['error'])) {
+            throw new RuntimeException('suggestion_form_error_invalid_parameters.');
+        }
+
+        switch ($_FILES['suggestion_file_user']['error']) {
+          case UPLOAD_ERR_OK:
+              break;
+          case UPLOAD_ERR_INI_SIZE:
+          case UPLOAD_ERR_FORM_SIZE:
+              throw new RuntimeException('suggestion_form_error_too_large_filesize');
+          default:
+              throw new RuntimeException('suggestion_form_error_unknown');
+        }
+
+        $allowed_file_types = pof_settings_get_suggestions_allowed_file_types();
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        if (false === $ext = array_search(
+            $finfo->file($_FILES['suggestion_file_user']['tmp_name']),
+            $allowed_file_types,
+            true
+        )) {
+            throw new RuntimeException('suggestion_form_error_invalid_filetype');
         }
 
         $uploadedfile = $_FILES['suggestion_file_user'];
@@ -197,9 +229,18 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
             wp_update_attachment_metadata( $attach_id, $attach_data );
 
             // Update File Field
-//            update_field('pof_suggestion_file_user', $attach_id, $suggestion_id);
+            // update_field('pof_suggestion_file_user', $attach_id, $suggestion_id);
 
             update_post_meta($suggestion_id, "pof_suggestion_file_user", $attach_id);
+          }
+        } catch (RuntimeException $e) {
+            $error = $e->getMessage();
+            $tmp = new stdClass();
+            $tmp->status = "error";
+            $tmp->message = pof_taxonomy_translate_get_translation_content("common", $error, 0, $lang_key);
+            header('Content-Type: application/json');
+            echo json_encode($tmp);
+            exit();
         }
     }
     update_post_meta($suggestion_id, "pof_suggestion_lang", $lang_key);
@@ -212,51 +253,59 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
     $emails_str = pof_settings_get_suggestions_emails();
 
-    $content = "Uusi vinkki\n\n";
-    $content .= "Aktiviteetti: ";
-    if ($mypost === false) {
+    $last_sent_email = get_option('pof_settings_last_sent_email');
+    $email_interval = get_option('pof_settings_suggestions_email_interval');
 
-        if ($mypost_id > 0) {
-            $mypost = get_post($mypost_id);
-            if (!empty($mypost) && $mypost != null && $mypost != false) {
-                $content .= $mypost->post_title."\n\n";
-            } else {
-                $content .= "--"."\n\n";
-            }
-        }
-        else
-        {
-            $content .= "--"."\n\n";
-        }
+    if((time() - $last_sent_email) > $email_interval * 60) {
+      $content = "Uusi vinkki\n\n";
+      $content .= "Aktiviteetti: ";
+      if ($mypost === false) {
+
+          if ($mypost_id > 0) {
+              $mypost = get_post($mypost_id);
+              if (!empty($mypost) && $mypost != null && $mypost != false) {
+                  $content .= $mypost->post_title."\n\n";
+              } else {
+                  $content .= "--"."\n\n";
+              }
+          }
+          else
+          {
+              $content .= "--"."\n\n";
+          }
 
 
-    } else {
-        $lang_title = '';
-        if ($lang_key != 'fi') {
-            $parent_post_title = get_post_meta( $mypost->ID, "title_".$lang_key, true );
-            if (trim($parent_post_title) != "") {
-                $lang_title = " (".$parent_post_title.")";
-            }
-        }
-        $content .= $mypost->post_title.$lang_title."\n\n";
+      } else {
+          $lang_title = '';
+          if ($lang_key != 'fi') {
+              $parent_post_title = get_post_meta( $mypost->ID, "title_".$lang_key, true );
+              if (trim($parent_post_title) != "") {
+                  $lang_title = " (".$parent_post_title.")";
+              }
+          }
+          $content .= $mypost->post_title.$lang_title."\n\n";
+      }
+      $content .= "Vinkin otsikko: ".$suggestion_title."\n\n";
+
+      $content .= "Vinkin sisältö: ".$suggestion_content."\n\n";
+
+      $content .= "Kirjoittaja: ".$suggestion_name."\n\n";
+
+      $content .= "Kieli: ".$lang_key."\n\n";
+
+      $content .= "Lue: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
+
+      $success = wp_mail( $emails_str, "[POF] Uusi vinkki", $content, 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
+
+      if($success) {
+        update_option("pof_settings_last_sent_email", time());
+      }
     }
-    $content .= "Vinkin otsikko: ".$suggestion_title."\n\n";
 
-    $content .= "Vinkin sisältö: ".$suggestion_content."\n\n";
-
-    $content .= "Kirjoittaja: ".$suggestion_name."\n\n";
-
-    $content .= "Kieli: ".$lang_key."\n\n";
-
-    $content .= "Lue: " . get_site_url()."/wp-admin/post.php?post=".$suggestion_id."&action=edit";
-
-    wp_mail( $emails_str, "[POF] Uusi vinkki", $content, 'From: "' . pof_settings_get_suggestions_email_sender_name() . '" <'.pof_settings_get_suggestions_email_sender_email().'>');
-
-	$return_val = 'json';
-	if (array_key_exists('return_val', $_POST)
-    && $_POST['return_val'] != "") {
-		$return_val = $_POST['return_val'];
-	}
+    if (array_key_exists('return_val', $_POST)
+      && $_POST['return_val'] != "") {
+      $return_val = $_POST['return_val'];
+    }
 
     $location = "Location: " . $url=strtok($_SERVER["REQUEST_URI"],'?') . "?form_submit=ok&lang=" . $lang_key . "&return_val=" . $return_val;
 
@@ -266,7 +315,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
 	header($location);
 	exit();
-//    echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_done", 0, $lang_key);
+  //echo pof_taxonomy_translate_get_translation_content("common", "suggestion_form_done", 0, $lang_key);
 
 }
 

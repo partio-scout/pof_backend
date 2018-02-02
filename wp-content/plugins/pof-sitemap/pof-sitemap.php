@@ -64,7 +64,7 @@ function pof_sitemap_run() {
 			    "
 		    );
 
-    $langs = pof_settigs_get_active_lang_codes(false);
+    $langs = pof_settings_get_active_lang_codes(false);
 
     $content = "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
     foreach ($res as $item)
