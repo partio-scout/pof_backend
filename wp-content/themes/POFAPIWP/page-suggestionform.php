@@ -21,8 +21,6 @@ $parent_post_title = "";
 
 if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST)
-    && array_key_exists('suggestion_name', $_POST)
-    && $_POST['suggestion_name'] != ""
     && array_key_exists('suggestion_content', $_POST)
     && $_POST['suggestion_content'] != "" ) {
 
@@ -38,10 +36,16 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     $wp_error = false;
 
     $suggestion_title = "";
+    $suggestion_name = "";
 
     if (   array_key_exists('suggestion_title', $_POST)
         && trim($_POST['suggestion_title']) != "") {
         $suggestion_title = mb_convert_encoding(trim($_POST['suggestion_title']),"UTF-8", "auto");
+    }
+
+    if (   array_key_exists('suggestion_name', $_POST)
+        && trim($_POST['suggestion_name']) != "") {
+        $suggestion_name = mb_convert_encoding(trim($_POST['suggestion_name']),"UTF-8", "auto");
     }
 
     if ($suggestion_title == "") {
@@ -92,6 +96,10 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
                 }
 	        }
         }
+    }
+
+    if ($suggestion_name == "") {
+        $suggestion_name = "Tuntematon";
     }
 
     $wp_error = null;
@@ -236,7 +244,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
         }
     }
     update_post_meta($suggestion_id, "pof_suggestion_lang", $lang_key);
-    update_post_meta($suggestion_id, "pof_suggestion_writer", mb_convert_encoding(trim($_POST['suggestion_name']),"UTF-8", "auto"));
+    update_post_meta($suggestion_id, "pof_suggestion_writer", mb_convert_encoding(trim($suggestion_name),"UTF-8", "auto"));
     update_post_meta($suggestion_id, "pof_suggestion_writer_id", $partio_id);
     update_post_meta($suggestion_id, "pof_suggestion_from_form", 1);
     update_post_meta($suggestion_id, "pof_suggestion_from_form_date", date("Y-m-d H:i:s"));
@@ -281,7 +289,7 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
       $content .= "Vinkin sisältö: ".$suggestion_content."\n\n";
 
-      $content .= "Kirjoittaja: ".$_POST['suggestion_name']."\n\n";
+      $content .= "Kirjoittaja: ".$suggestion_name."\n\n";
 
       $content .= "Kieli: ".$lang_key."\n\n";
 
@@ -313,7 +321,6 @@ if (   $_SERVER['REQUEST_METHOD'] === 'POST'
 
 else if (   $_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST)
-    && array_key_exists('suggestion_name', $_POST)
     && array_key_exists('suggestion_content', $_POST) ) {
     // Form post, but empty content
     if (   $_SERVER['REQUEST_METHOD'] === 'POST'
