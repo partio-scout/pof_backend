@@ -2,7 +2,7 @@
 
 
 function pof_content_status_images() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_status' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 	echo '<div class="wrap">';
@@ -25,7 +25,7 @@ function pof_content_status_images_get_form() {
     $ret = "";
 
     $ret .= "<form method=\"POST\">";
-    
+
     $ret .=  "Valitse ik&auml;kausi: <br />";
     $ret .=  '<select name="agegroup">';
 
@@ -46,7 +46,7 @@ function pof_content_status_images_get_form() {
 	}
 
     $ret .=  '</select>';
-    
+
 	$ret .= '<br /><br /><input type="submit" name="Submit" value="N&auml;yt&auml;" />';
 
     $ret .= "</form>";
@@ -94,11 +94,11 @@ function pof_content_status_images_get_image_field($post_id, $image_field) {
 }
 
 function pof_content_status_images_get_content($agegroup_id) {
-    
+
 ?>
 
     <style>
-    
+
     #pof_content_status_table td {
         padding: 2px;
         text-align: left;
@@ -140,7 +140,7 @@ function pof_content_status_images_get_content($agegroup_id) {
 <?php
     $langs = pof_settings_get_all_languages();
     $langs_count = count($langs);
-    
+
 ?>
 
     <table cellpadding="1" cellspacing="1" border="1" id="pof_content_status_table">
@@ -201,7 +201,7 @@ function pof_content_status_images_get_content($agegroup_id) {
 			if ($the_query->post->ID == $agegroup_id) {
 				continue;
 			}
-            
+
     ?>
             <tr>
                 <td>Paketti</td>
@@ -232,7 +232,7 @@ function pof_content_status_images_get_content($agegroup_id) {
 	}
     wp_reset_query();
 
-            
+
 	echo "</tbody>";
     echo "</table>";
 
@@ -270,7 +270,7 @@ function pof_content_status_images_content_get_taskgroups($taskgroup_id, $indent
 			if ($the_query->post->ID == $taskgroup_id) {
 				continue;
 			}
-            
+
     ?>
             <tr>
                 <td>Paketti</td>
@@ -335,7 +335,7 @@ function pof_content_status_images_content_get_tasks($taskgroup_id, $indentation
 			if ($the_query->post->ID == $taskgroup_id) {
 				continue;
 			}
-                        
+
             ?>
             <tr>
                 <td>Aktiviteetti</td>
@@ -463,7 +463,7 @@ function pof_content_status_images_get_additional_files($post_id, $lang) {
         $additional_files[$post_id] = simple_fields_fieldgroup("additional_files_fg", $post_id);
     }
 
-	
+
 	if ($additional_files[$post_id]) {
 		foreach ($additional_files[$post_id] as $additional_file) {
 
@@ -482,7 +482,7 @@ function pof_content_status_images_get_additional_files($post_id, $lang) {
                 if (is_array($file_lang_arr)) {
                     $file_lang = $file_lang_arr["selected_value"];
                 }
-                
+
                 $lang_match = pof_content_status_images_pof_lang_to_simple_fields_lang_dropdown($lang, $file_lang);
 
                 if (!$lang_match) {
@@ -491,7 +491,7 @@ function pof_content_status_images_get_additional_files($post_id, $lang) {
 
                 $ret .= "<span class=\"nowrap\"><a href=\"" . $file['url'] . "\" target=\"_blank\">" . $additional_file['additional_file_text'] . "</a></span><br />";
                 $ret .= $file['mime'] . "<br />";
-                
+
                 if (!empty($file['post'])) {
                     $ret .= $file['post']->post_name . "<br />";
                 }
@@ -503,7 +503,7 @@ function pof_content_status_images_get_additional_files($post_id, $lang) {
 }
 
 function pof_content_status_images_get_additional_links($post_id, $lang) {
-    global $additional_links;  
+    global $additional_links;
     $ret= "";
 
     if (!array_key_exists($post_id, $additional_links)) {

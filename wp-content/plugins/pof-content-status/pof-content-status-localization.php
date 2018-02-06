@@ -2,7 +2,7 @@
 
 
 function pof_content_status_localization() {
-	if ( !current_user_can( 'manage_options' ) )  {
+	if ( !current_user_can( 'pof_manage_status' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 	echo '<div class="wrap">';
@@ -52,7 +52,7 @@ function pof_content_status_content_get_tasks($lang, $taskgroup_id, $indentation
 			if ($the_query->post->ID == $taskgroup_id) {
 				continue;
 			}
-                        
+
 			?>
             <tr>
                 <td>Aktiviteetti</td>
@@ -61,7 +61,7 @@ function pof_content_status_content_get_tasks($lang, $taskgroup_id, $indentation
                 echo pof_content_status_localization_get_field_cell("ingress", $the_query->post->ID);
                 echo pof_content_status_localization_get_content_cell($the_query->post->post_content, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("leader_tasks_fi", $the_query->post->ID);
-                
+
                 echo pof_content_status_localization_get_field_cell("title_".$lang, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("ingress_".$lang, $the_query->post->ID);
                 echo pof_content_status_localization_get_field_cell("content_".$lang, $the_query->post->ID);
@@ -107,7 +107,7 @@ function pof_content_status_localization_get_content_get_taskgroups($lang, $task
 			if ($the_query->post->ID == $taskgroup_id) {
 				continue;
 			}
-                        
+
 			?>
             <tr>
                 <td>Paketti</td>
@@ -137,11 +137,11 @@ function pof_content_status_localization_get_content_get_taskgroups($lang, $task
 
 
 function pof_content_status_localization_get_content($lang, $agegroup_id) {
-    
+
             ?>
 
     <style>
-    
+
     #pof_content_status_table td {
         padding: 2px;
         text-align: center;
@@ -212,7 +212,7 @@ function pof_content_status_localization_get_content($lang, $agegroup_id) {
 			if ($the_query->post->ID == $agegroup_id) {
 				continue;
 			}
-                        
+
 			?>
             <tr>
                 <td>Paketti</td>
@@ -353,10 +353,10 @@ function pof_content_status_localization_get_form() {
     $ret = "";
 
     $langs = pof_settings_get_all_languages();
-    
+
 
     $ret .= "<form method=\"POST\">";
-    
+
     $ret .=  "Valitse kieli: <br />";
     $ret .= "<select name=\"lang\">";
 
@@ -399,7 +399,7 @@ function pof_content_status_localization_get_form() {
 	}
 
     $ret .=  '</select>';
-    
+
 	$ret .= '<br /><br /><input type="submit" name="Submit" value="N&auml;yt&auml;" />';
 
     $ret .= "</form>";

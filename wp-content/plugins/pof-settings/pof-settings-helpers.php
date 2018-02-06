@@ -28,8 +28,13 @@ function pof_settings_get_suggestions_email_sender_email() {
 }
 
 function pof_settings_get_suggestions_allowed_domains() {
-    $domains = explode("\n", get_option('pof_settings_suggestions_allowed_domains'));
+  $domains = explode("\n", get_option('pof_settings_suggestions_allowed_domains'));
 	return $domains;
+}
+
+function pof_settings_get_suggestions_allowed_file_types() {
+  $file_types = explode("\r\n", get_option('pof_settings_suggestions_allowed_file_types'));
+	return $file_types;
 }
 
 function pof_settings_get_lastupdate_overwrite() {
@@ -79,7 +84,7 @@ function pof_settings_get_all_languages($use_cache = true) {
 	return $languages_res;
 }
 
-function pof_settigs_get_active_lang_codes() {
+function pof_settings_get_active_lang_codes() {
 	global $pof_settings_langs;
 
 	$toret = array();
@@ -99,7 +104,7 @@ function pof_settigs_get_active_lang_codes() {
 	return $toret;
 }
 
-function pof_settigs_getDatetimeNow() {
+function pof_settings_getDatetimeNow() {
     $tz_object = new DateTimeZone('Europe/Helsinki');
 
     $datetime = new DateTime();
