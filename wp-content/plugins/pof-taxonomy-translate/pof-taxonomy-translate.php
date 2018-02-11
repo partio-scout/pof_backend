@@ -304,14 +304,30 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 
 				$taxonomy_key = trim($tmp["key"]);
 
-                if (strlen($taxonomy_key) == 0) {
-                    continue;
-                }
+        if (strlen($taxonomy_key) == 0) {
+            continue;
+        }
 
 				$taxonomy_full_key = $taxonomy_base_key . "::" . $taxonomy_key;
 				$agegroup_id = $tmp["agegroup_id"];
 
 				$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key, $taxonomy_key, $agegroup_id, $selected_lang, false);
+        $taxonomy_deletion_key = 'taxonomy_delete_' . $taxonomy_key;
+
+
+
+        if(isset($_POST[$taxonomy_deletion_key])) {
+          $table_name = pof_taxonomy_translate_get_table_name();
+					$wpdb->delete(
+						$table_name,
+						array(
+							'id' => $translation[0]->id
+						),
+						array( '%d' )
+					);
+					echo "<br />Deleted " . $key . "";
+          continue;
+				}
 
 				if (empty($translation)
 					&& $item != "") {
@@ -445,6 +461,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	foreach ($agegroups as $agegroup) {
 		echo '<th><h2>'.$agegroup->title.'</h2></th>';
 	}
+  echo '<th><h2>Poista</h2></th>';
 	echo '</tr>';
 	echo '</thead>';
 	echo '<tbody>';
@@ -468,6 +485,12 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 			echo '<input type="text" name="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" id="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" value="'.$translation_content.'" />';
 			echo '</td>';
 		}
+    echo '<td style="text-align:center;">';
+    if(!pof_is_tag_used($taxonomy_base_key, $tmp_key)) {
+      echo '<input name="taxonomy_delete_' .$tmp_key.'" type="checkbox">';
+    }
+    echo '</td>';
+
 		echo '</tr>';
 	}
 
@@ -785,4 +808,93 @@ function pof_taxonomy_translate_common() {
 	$title2 = "Termi";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_is_tag_used($taxonomy, $tag) {
+  // Right now this uses function defined in pof-content-status plugin. Consider rewriting function in case content status plugin is deactivated
+  $options = pof_content_status_tags_get_tag_options();
+
+  $option = $options[$taxonomy];
+
+  $meta_key = $taxonomy;
+  if (!empty($option->meta_key)) {
+      $meta_key = $option->meta_key;
+  }
+
+  global $wpdb;
+  $res = array();
+
+  if ($option->type == 'boolean') {
+      $query = "
+  SELECT posts.ID, posts.post_title, posts.post_status, posts.post_type
+      FROM wp_posts posts
+          JOIN wp_postmeta meta ON posts.ID = meta.post_id
+      WHERE posts.post_status NOT IN ('trash', 'inherit')";
+
+      $query_types = "";
+      $query_boolean = "";
+
+      if (strstr($tag, 'NON_')) {
+          $query_boolean .=  "
+              AND meta.meta_value = '0'
+      ";
+      }
+      else {
+          $query_boolean .=  "
+          AND meta.meta_value = '1'
+  ";
+      }
+
+
+      foreach ($option->types as $type) {
+          if ($query_types == "") {
+              $query_types = "(meta.meta_key = '".$type."_".$meta_key."' AND posts.post_type = 'pof_post_".$type."' ".$query_boolean.")";
+          } else {
+              $query_types .= " OR (meta.meta_key = '".$type."_".$meta_key."' AND posts.post_type = 'pof_post_".$type."' ".$query_boolean.")";
+          }
+      }
+
+
+      $query .= "AND (".$query_types.") ";
+
+
+
+      $query .=  " GROUP BY posts.ID, posts.post_title, posts.post_status, posts.post_type ORDER BY posts.post_type, posts.post_title";
+
+  }
+  else {
+      $query = "
+  SELECT posts.ID, posts.post_title, posts.post_status, posts.post_type
+      FROM wp_posts posts
+          JOIN wp_postmeta meta ON posts.ID = meta.post_id
+      WHERE posts.post_status NOT IN ('trash', 'inherit')";
+
+      $query_types = "";
+
+      $meta_value_query = "";
+      if ($option->type == "multiselect") {
+          $meta_value_query = "AND meta.meta_value LIKE '%\"".$tag."\"%'";
+      } else {
+          $meta_value_query = "AND meta.meta_value = '".$tag."'";
+      }
+
+      foreach ($option->types as $type) {
+          if ($query_types == "") {
+              $query_types = "(meta.meta_key = '".$type."_".$meta_key."' AND posts.post_type = 'pof_post_".$type."' ".$meta_value_query.")";
+          } else {
+              $query_types .= " OR (meta.meta_key = '".$type."_".$meta_key."' AND posts.post_type = 'pof_post_".$type."' ".$meta_value_query.")";
+          }
+      }
+
+      $query .= " AND (".$query_types.") ";
+
+
+      $query .=  " GROUP BY posts.ID, posts.post_title, posts.post_status, posts.post_type ORDER BY posts.post_type, posts.post_title";
+  }
+
+
+
+  $res = $wpdb->get_results($query);
+
+  return $res;
 }
