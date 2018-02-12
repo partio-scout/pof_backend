@@ -829,6 +829,36 @@ function pof_is_tag_used($taxonomy, $tag) {
   }
 
   global $wpdb;
+
+  /*
+   * Check if translation is custom taxonomy term before performing
+   */
+  $activity_taxonomies = get_object_taxonomies( 'pof_post_task' );
+  $terms = $wpdb->get_results( $wpdb->prepare(
+  	"
+  		SELECT term_id
+  		FROM $wpdb->terms
+  		WHERE slug = %s
+  	",
+  	$tag
+  ), ARRAY_A );
+
+  if(!empty($terms)) {
+    foreach($terms as $term) {
+      $term_id = $term['term_id'];
+      $term_count = $wpdb->get_var( $wpdb->prepare(
+        "
+        SELECT count
+        FROM $wpdb->term_taxonomy
+        WHERE term_id = %d",
+        $term_id
+      ) );
+      if($term_count > 0) {
+        return true;
+      }
+    }
+  }
+
   $res = array();
 
   if ($option->type == 'boolean') {
@@ -899,9 +929,7 @@ function pof_is_tag_used($taxonomy, $tag) {
       $query .=  " GROUP BY posts.ID, posts.post_title, posts.post_status, posts.post_type ORDER BY posts.post_type, posts.post_title";
   }
 
-
-
   $res = $wpdb->get_results($query);
 
-  return $res;
+  return count($res) > 0;
 }
