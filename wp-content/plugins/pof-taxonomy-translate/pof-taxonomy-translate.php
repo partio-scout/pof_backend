@@ -367,14 +367,21 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 						echo "<br />Updated" . $key . "";
 					}
 				} else if (!empty($translation) && $item == "") {
-					$wpdb->delete(
-						$table_name,
-						array(
-							'id' => $translation[0]->id
-						),
-						array( '%d' )
-					);
-					echo "<br />Deleted " . $key . "";
+          $wpdb->update(
+            $table_name,
+            array(
+              'content' => ""
+            ),
+            array(
+              'id' => $translation[0]->id
+            ),
+            array(
+              '%s'
+            ),
+            array(
+              '%d'
+            )
+          );
 				}
 
 			}
