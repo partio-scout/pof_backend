@@ -206,8 +206,7 @@ function getJsonTaskGroups($parent_id) {
 		'numberposts' => -1,
 		'posts_per_page' => -1,
 		'post_type' => 'pof_post_taskgroup',
-		'orderby' => 'title',
-		'order' => 'ASC',
+		'orderby' => 'menu_order',
 		'meta_key' => 'ikakausi',
 		'meta_value' => $parent_id
 	);
@@ -258,7 +257,7 @@ function getJsonTaskGroupsForTaskGroup($parent_id) {
 		'numberposts' => -1,
 		'posts_per_page' => -1,
 		'post_type' => 'pof_post_taskgroup',
-		'orderby' => 'title',
+		'orderby' => 'menu_order',
 		'order' => 'ASC',
 		'meta_key' => 'suoritepaketti',
 		'meta_value' => $parent_id
@@ -310,7 +309,8 @@ function getJsonTasks($parent_id) {
 		'posts_per_page' => -1,
 		'post_type' => 'pof_post_task',
 		'meta_key' => 'suoritepaketti',
-		'meta_value' => $parent_id
+		'meta_value' => $parent_id,
+    'orderby' => 'menu_order'
 	);
 
 	$the_query = new WP_Query( $args );

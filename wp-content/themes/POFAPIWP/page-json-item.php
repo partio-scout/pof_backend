@@ -12,7 +12,8 @@ $args = array(
 	'posts_per_page' => -1,
 	'post_type' => array('pof_post_task', 'pof_post_taskgroup', 'pof_post_program', 'pof_post_agegroup' ),
 	'meta_key' => 'post_guid',
-	'meta_value' => $post_guid
+	'meta_value' => $post_guid,
+  'orderby' => 'menu_order'
 );
 
 $the_query = new WP_Query( $args );
@@ -197,6 +198,8 @@ if ($mypost->post_type == 'pof_post_taskgroup') {
 
 $jsonItem->images = get_post_images_JSON($mypost->ID);
 $jsonItem->additional_content = get_post_additional_content_JSON($mypost->ID, $lang_lowercase);
+
+$jsonItem->menu_order = $mypost->menu_order;
 
 echo json_encode($jsonItem);
 
