@@ -403,7 +403,6 @@ function getJsonItemBaseDetails($jsonItem, $post) {
 	    $jsonItem->lastModified = $pof_settings_lastupdate_overwrite;
     }
 
-    $jsonItem->menu_order = $post->menu_order;
 
 //	$jsonItem->lastModifiedBy = getLastModifiedBy(get_post_meta( $post->ID, '_edit_last', true));
 
