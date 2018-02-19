@@ -1,46 +1,52 @@
 <?php
 
-add_action( 'admin_footer', 'update_menu_order_javascript' );
-function update_menu_order_javascript() { ?>
+add_action( 'admin_footer', 'jquery_sortable' );
+function jquery_sortable() { ?>
 	<script type="text/javascript">
-    function update_menu_order(t, event, post_id, menu_order) {
-      var href = t.href;
+  jQuery(document).ready(function(){
+    jQuery("#post-children").sortable({
+      cursor:'move',
+      update: function( event, ui ) {
+        var order = jQuery('#post-children').sortable('toArray');
+        var data = {
+    			'action': 'update_menu_order',
+    			'order': order
+    		};
 
-      event.preventDefault();
+        jQuery.post(ajaxurl, data, function(response) {
+          console.log(response);
+        });
 
-      var data = {
-        'action': 'update_menu_order',
-        'menu_order': menu_order,
-        'post_id': post_id
-      };
-
-      jQuery.post(ajaxurl, data, function(response) {
-        window.location = href;
-      });
-    }
+      }
+    });
+    jQuery("#post-children").disableSelection();
+  });
 
 	</script> <?php
 }
 
 add_action( 'wp_ajax_update_menu_order', 'update_menu_order' );
 function update_menu_order() {
-	$post_id = intval( $_POST['post_id'] );
-  $selected_post = get_post($post_id);
-  $menu_order = $selected_post->menu_order;
+	$order = array_reverse($_POST['order']);
 
-  $my_post = array(
-      'ID'           => $post_id,
-      'menu_order' => $menu_order + $_POST['menu_order'],
-  );
+  for($i=0; $i < count($order); $i++) {
+    $post_id = intval($order[$i]);
+    $selected_post = get_post($post_id);
+    $post_data = array(
+        'ID'         => $post_id,
+        'menu_order' => $i
+    );
+    $updated_post = wp_update_post( $post_data, true );
 
-  $new_post = wp_update_post( $my_post, true );
-
-  if (is_wp_error($new_post)) {
-    $errors = $post_id->get_error_messages();
-    foreach ($errors as $error) {
-      echo $error;
+    if (is_wp_error($updated_post)) {
+      $errors = $post_id->get_error_messages();
+      foreach ($errors as $error) {
+        echo $error;
+      }
     }
   }
+
+  echo "Order updated";
 
 	wp_die();
 }
@@ -1697,16 +1703,14 @@ function pof_item_childs_meta_box() {
 function pof_item_childs_meta_box_callback($post) {
 	$childs = pof_get_childs($post);
 
-
+  echo "<ul id=\"post-children\" style=\"margin-left: 10px; list-style-type: round;\">";
 	foreach ($childs as $child_key => $child_post) {
-		echo "<ul style=\"margin-left: 10px; list-style-type: round;\">";
-		echo "<li>";
+		echo "<li id=\"$child_post->ID\" style=\"display:flex; align-items:center; justify-content: space-between; padding-bottom: 10px;\">";
 		echo "<a href=\"/wp-admin/post.php?post=" . $child_post->ID . "&action=edit\" target=\"_blank\">" . $child_post->post_title . "</a>";
-    echo " (" . $child_post->menu_order . ")";
-    echo "<a href='' style='margin-left: 10px;' onClick='update_menu_order( this, event, $child_post->ID, 1)'>&uarr;</a><a href='' style='margin-left: 10px;' onClick='update_menu_order( this, event, $child_post->ID, -1)'>&darr;</a>";
+    echo '<span class="dashicons dashicons-move" style="float: right;"></span>';
 		echo "</li>";
-		echo "</ul>";
 	}
+	echo "</ul>";
 }
 
 function pof_get_childs($post_item) {
