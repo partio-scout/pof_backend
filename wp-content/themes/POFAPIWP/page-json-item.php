@@ -201,6 +201,31 @@ $jsonItem->additional_content = get_post_additional_content_JSON($mypost->ID, $l
 
 $jsonItem->menu_order = $mypost->menu_order;
 
+/*
+ * Check the menu_order of siblings to determine what order number this specific item should have
+ */
+$siblings = pof_get_siblings($mypost);
+$sibling_order = array();
+
+for($i=0; $i < count($siblings); $i++) {
+  array_push($sibling_order, array('ID' => $siblings[$i]->ID, 'menu_order' => $siblings[$i]->menu_order));
+}
+
+array_push($sibling_order, array('ID' => $mypost->ID, 'menu_order' => $mypost->menu_order));
+
+usort($sibling_order, function ($item1, $item2) {
+    if ($item1['menu_order'] == $item2['menu_order']) return 0;
+    return $item1['menu_order'] > $item2['menu_order'] ? -1 : 1;
+});
+
+foreach ($sibling_order as $key => $val) {
+   if ($val['ID'] === $mypost->ID) {
+       $order = $key;
+   }
+}
+
+$jsonItem->order = $order;
+
 echo json_encode($jsonItem);
 
 
