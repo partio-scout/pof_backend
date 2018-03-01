@@ -15,7 +15,7 @@ function pof_pages_get_tag_icons($agegroups, $items, $item_tax_key)
 	foreach ($agegroups as $agegroup_key => $agegroup) {
 		$tmp = new stdClass();
 		$tmp->agegroup = $agegroup->title;
-    $tmp->lastModified = "test";
+    $tmp->lastModified = "0000-00-00 00:00:00";
 		$tmp->post_guid = $agegroup->guid;
 		$tmp->items = array();
 		$agegroup_id = $agegroup->id;
