@@ -9,20 +9,28 @@ $ret = new stdClass();
 
 $agegroups = pof_taxonomy_icons_get_agegroups();
 
-function pof_pages_get_tag_icons($agegroups, $items, $item_tax_key) 
+function pof_pages_get_tag_icons($agegroups, $items, $item_tax_key)
 {
 	$items_arr = array();
 	foreach ($agegroups as $agegroup_key => $agegroup) {
 		$tmp = new stdClass();
 		$tmp->agegroup = $agegroup->title;
+    $tmp->lastModified = "test";
 		$tmp->post_guid = $agegroup->guid;
 		$tmp->items = array();
 		$agegroup_id = $agegroup->id;
+
+    $lastModified = "0000-00-00 00:00:00";
 		foreach ($items as $item_key => $item) {
 			$tmp_item = new stdClass();
 			$tmp_item->key = $item_key;
 
 			$icon = pof_taxonomy_icons_get_icon($item_tax_key, $item_key, $agegroup_id, false);
+
+      $item_timestamp = $icon[0]->time;
+      if(strtotime($item_timestamp) > strtotime($lastModified)) {
+        $lastModified = $item_timestamp;
+      }
 
 			if (!empty($icon)) {
 				$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
@@ -32,6 +40,7 @@ function pof_pages_get_tag_icons($agegroups, $items, $item_tax_key)
 			}
 			array_push($tmp->items, $tmp_item);
 		}
+    $tmp->lastModified = $lastModified;
 		array_push($items_arr, $tmp);
 	}
 	return $items_arr;
