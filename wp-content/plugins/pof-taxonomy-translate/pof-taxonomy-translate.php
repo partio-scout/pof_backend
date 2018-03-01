@@ -248,13 +248,15 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 					'taxonomy_slug' => $taxonomy_slug,
 					'agegroup_id' => 0,
 					'lang' => 'fi',
-                    'content' => $tmp_key
+          'content' => $tmp_key,
+          'time' => current_time( 'mysql' )
 				),
 				array(
 					'%s',
 					'%d',
 					'%s',
-                    '%s'
+          '%s',
+          '%s'
 				)
 			);
 
@@ -337,13 +339,15 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 							'taxonomy_slug' => $taxonomy_full_key,
 							'agegroup_id' => (int) $agegroup_id,
 							'lang' => $selected_lang,
-							'content' => $item
+							'content' => $item,
+              'time' => current_time( 'mysql' )
 						),
 						array(
 							'%s',
 							'%d',
 							'%s',
 							'%s',
+              '%s'
 						)
 					);
 					echo "<br />Added " . $key . "";
@@ -352,13 +356,15 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 						$tmp = $wpdb->update(
 							$table_name,
 							array(
-								'content' => $item
+								'content' => $item,
+                'time' => current_time( 'mysql' )
 							),
 							array(
 								'id' => $translation[0]->id
 							),
 							array(
-								'%s'
+								'%s',
+                '%s'
 							),
 							array(
 								'%d'
@@ -405,13 +411,15 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 						'taxonomy_slug' => $taxonomy_full_key,
 						'agegroup_id' => 0,
 						'lang' => 'fi',
-						'content' => $_POST['add_taxonomy_translate_key_0']
+						'content' => $_POST['add_taxonomy_translate_key_0'],
+            'time' => current_time( 'mysql' )
 					),
 					array(
 						'%s',
 						'%d',
 						'%s',
 						'%s',
+            '%s'
 					)
 				);
 
@@ -425,13 +433,15 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 							'taxonomy_slug' => $taxonomy_full_key,
 							'agegroup_id' => $agegroup->id,
 							'lang' => 'fi',
-							'content' => $_POST['add_taxonomy_translate_key_'.$agegroup->id]
+							'content' => $_POST['add_taxonomy_translate_key_'.$agegroup->id],
+              'time' => current_time( 'mysql' )
 						),
 						array(
 							'%s',
 							'%d',
 							'%s',
 							'%s',
+              '%s'
 						)
 					);
 				}
