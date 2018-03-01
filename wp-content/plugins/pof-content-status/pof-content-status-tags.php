@@ -67,6 +67,14 @@ function pof_content_status_tags_get_form() {
 
     $ret = "";
 
+    if (isset($_POST)
+        && isset($_POST["remove-tag"])) {
+          $tax = $_POST["pof_taxonomy_to_delete"];
+          $tag = $_POST["pof_tag_to_delete"];
+          pof_content_status_remove_tag($tax, $tag);
+          $ret .= "<div id=\"message\" class=\"updated notice is-dismissible\"><p>Tagi poistettu</p><button type=\"button\" class=\"notice-dismiss\"><span class=\"screen-reader-text\">Sulje tämä ilmoitus.</span></button></div>";
+    }
+
     $ret .= "<form method=\"POST\">";
 
     $selected_taxonomy = '';
@@ -369,7 +377,12 @@ function pof_content_status_tags_get_content($selected_taxonomy, $selected_tag) 
         $ret .=  "</tbody>";
         $ret .=  "</table>";
     } else {
-        $ret .=  "No items";
+        $ret .= "<form method=\"POST\">";
+        $ret .= "<h3>No items</h3><br>";
+        $ret .= "<input type=\"hidden\" name=\"pof_taxonomy_to_delete\" value=\"".$selected_taxonomy."\" />";
+        $ret .= "<input type=\"hidden\" name=\"pof_tag_to_delete\" value=\"".$selected_tag."\" />";
+        $ret .= "<input name=\"remove-tag\" class=\"button button-primary\" value=\"Poista tagi\" type=\"submit\">";
+        $ret .= "</form>";
     }
 
 
@@ -377,4 +390,17 @@ function pof_content_status_tags_get_content($selected_taxonomy, $selected_tag) 
 
     return $ret;
 
+}
+
+function pof_content_status_remove_tag($taxonomy, $tag) {
+    $taxonomy_slug = $taxonomy . '::' . $tag;
+    $table_name = pof_taxonomy_translate_get_table_name();
+    global $wpdb;
+    $wpdb->delete(
+      $table_name,
+      array(
+        'taxonomy_slug' => $taxonomy_slug
+      ),
+      array( '%s' )
+    );
 }

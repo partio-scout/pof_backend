@@ -177,6 +177,8 @@ function getJsonAgeGroups($parent_id) {
 
 	$the_query = new WP_Query( $args );
 
+  $order_number = 0;
+
 	if( $the_query->have_posts() ) {
 		while ( $the_query->have_posts() ) {
 			$the_query->the_post();
@@ -186,6 +188,8 @@ function getJsonAgeGroups($parent_id) {
 			$child = getJsonItemDetailsAgegroup($child, $the_query->post, 'fi');
 			$child->title = $the_query->post->post_title;
 			$child->taskgroups = getJsonTaskGroups($the_query->post->ID);
+      $child->order = $order_number;
+      $order_number++;
 
 			array_push($childs, $child);
 
@@ -206,13 +210,14 @@ function getJsonTaskGroups($parent_id) {
 		'numberposts' => -1,
 		'posts_per_page' => -1,
 		'post_type' => 'pof_post_taskgroup',
-		'orderby' => 'title',
-		'order' => 'ASC',
+		'orderby' => 'menu_order',
 		'meta_key' => 'ikakausi',
 		'meta_value' => $parent_id
 	);
 
 	$the_query = new WP_Query( $args );
+
+  $order_number = 0;
 
 	if( $the_query->have_posts() ) {
 		while ( $the_query->have_posts() ) {
@@ -227,8 +232,8 @@ function getJsonTaskGroups($parent_id) {
 			$child = getJsonItemBaseDetails($child, $the_query->post);
 			$child = getJsonItemDetailsTaskgroup($child, $the_query->post, 'fi');
 			$child->title = $the_query->post->post_title;
-
-
+      $child->order = $order_number;
+      $order_number++;
 
 			$child->taskgroups = getJsonTaskGroupsForTaskGroup($the_query->post->ID);
 
@@ -258,13 +263,14 @@ function getJsonTaskGroupsForTaskGroup($parent_id) {
 		'numberposts' => -1,
 		'posts_per_page' => -1,
 		'post_type' => 'pof_post_taskgroup',
-		'orderby' => 'title',
-		'order' => 'ASC',
+		'orderby' => 'menu_order',
 		'meta_key' => 'suoritepaketti',
 		'meta_value' => $parent_id
 	);
 
 	$the_querysub = new WP_Query( $args );
+
+  $order_number = 0;
 
 	if( $the_querysub->have_posts() ) {
 		while ( $the_querysub->have_posts() ) {
@@ -279,7 +285,8 @@ function getJsonTaskGroupsForTaskGroup($parent_id) {
 			$child = getJsonItemBaseDetails($child, $the_querysub->post);
 			$child = getJsonItemDetailsTaskgroup($child, $the_querysub->post, 'fi');
 			$child->title = $the_querysub->post->post_title;
-
+      $child->order = $order_number;
+      $order_number++;
 
 
 			$child->taskgroups = getJsonTaskGroupsForTaskGroup($the_querysub->post->ID, 'fi');
@@ -310,10 +317,13 @@ function getJsonTasks($parent_id) {
 		'posts_per_page' => -1,
 		'post_type' => 'pof_post_task',
 		'meta_key' => 'suoritepaketti',
-		'meta_value' => $parent_id
+		'meta_value' => $parent_id,
+    'orderby' => 'menu_order'
 	);
 
 	$the_query = new WP_Query( $args );
+
+  $order_number = 0;
 
 	if( $the_query->have_posts() ) {
 		while ( $the_query->have_posts() ) {
@@ -325,6 +335,8 @@ function getJsonTasks($parent_id) {
 			$child = getJsonItemDetailsTask($child, $the_query->post);
 
 			$child->title = $the_query->post->post_title;
+      $child->order = $order_number;
+      $order_number++;
 
 			array_push($childs, $child);
 

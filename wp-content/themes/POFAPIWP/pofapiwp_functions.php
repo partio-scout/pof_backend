@@ -1,5 +1,56 @@
 <?php
 
+add_action( 'admin_footer', 'jquery_sortable' );
+function jquery_sortable() { ?>
+	<script type="text/javascript">
+  jQuery(document).ready(function(){
+    jQuery("#post-children").sortable({
+      cursor:'move',
+      update: function( event, ui ) {
+        var order = jQuery('#post-children').sortable('toArray');
+        var data = {
+    			'action': 'update_menu_order',
+    			'order': order
+    		};
+
+        jQuery.post(ajaxurl, data, function(response) {
+          console.log(response);
+        });
+
+      }
+    });
+    jQuery("#post-children").disableSelection();
+  });
+
+	</script> <?php
+}
+
+add_action( 'wp_ajax_update_menu_order', 'update_menu_order' );
+function update_menu_order() {
+	$order = array_reverse($_POST['order']);
+
+  for($i=0; $i < count($order); $i++) {
+    $post_id = intval($order[$i]);
+    $selected_post = get_post($post_id);
+    $post_data = array(
+        'ID'         => $post_id,
+        'menu_order' => $i
+    );
+    $updated_post = wp_update_post( $post_data, true );
+
+    if (is_wp_error($updated_post)) {
+      $errors = $post_id->get_error_messages();
+      foreach ($errors as $error) {
+        echo $error;
+      }
+    }
+  }
+
+  echo "Order updated";
+
+	wp_die();
+}
+
 function get_post_custom_attributes($post) {
 
 	$ret = array();
@@ -488,8 +539,8 @@ function getJsonSubtaskgroupTerm($term, $lang = 'fi') {
 				    return null;
 				    break;
 			    case "jalki":
-				    $ret->single = mb_convert_encoding("Jälki","UTF-8", "auto");
-				    $ret->plural = mb_convert_encoding("Jäljet","UTF-8", "auto");
+				    $ret->single = mb_convert_encoding("JÃ¤lki","UTF-8", "auto");
+				    $ret->plural = mb_convert_encoding("JÃ¤ljet","UTF-8", "auto");
 				    break;
 			    case "kasvatusosio":
 				    $ret->single = "Kasvatusosio";
@@ -508,8 +559,8 @@ function getJsonSubtaskgroupTerm($term, $lang = 'fi') {
 				    $ret->plural = "Tarpot";
 				    break;
 			    case "ryhma":
-				    $ret->single = mb_convert_encoding("Ryhmä","UTF-8", "auto");
-				    $ret->plural = mb_convert_encoding("Ryhmät","UTF-8", "auto");
+				    $ret->single = mb_convert_encoding("RyhmÃ¤","UTF-8", "auto");
+				    $ret->plural = mb_convert_encoding("RyhmÃ¤t","UTF-8", "auto");
 				    break;
 			    case "aktiviteetti":
 				    $ret->single = "Aktiviteetti";
@@ -1652,14 +1703,14 @@ function pof_item_childs_meta_box() {
 function pof_item_childs_meta_box_callback($post) {
 	$childs = pof_get_childs($post);
 
-
+  echo "<ul id=\"post-children\" style=\"margin-left: 10px; list-style-type: round;\">";
 	foreach ($childs as $child_key => $child_post) {
-		echo "<ul style=\"margin-left: 10px; list-style-type: round;\">";
-		echo "<li>";
+		echo "<li id=\"$child_post->ID\" style=\"display:flex; align-items:center; justify-content: space-between; padding-bottom: 10px;\">";
 		echo "<a href=\"/wp-admin/post.php?post=" . $child_post->ID . "&action=edit\" target=\"_blank\">" . $child_post->post_title . "</a>";
+    echo '<span class="dashicons dashicons-move" style="float: right;"></span>';
 		echo "</li>";
-		echo "</ul>";
 	}
+	echo "</ul>";
 }
 
 function pof_get_childs($post_item) {
@@ -1671,7 +1722,8 @@ function pof_get_childs($post_item) {
 	$args = array(
 		'numberposts' => -1,
 		'posts_per_page' => -1,
-		'meta_value' => null
+    'meta_value' => null,
+    'orderby' => 'menu_order'
 	);
 
 	switch ($post_type) {
