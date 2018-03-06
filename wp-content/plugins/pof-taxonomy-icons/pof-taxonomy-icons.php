@@ -242,12 +242,14 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 							array(
 								'taxonomy_slug' => $taxonomy_full_key,
 								'agegroup_id' => (int) $agegroup_id,
-								'attachment_id' => $attachment_id
+								'attachment_id' => $attachment_id,
+                'time' => current_time( 'mysql' )
 							),
 							array(
 								'%s',
 								'%d',
-								'%d'
+								'%d',
+                '%s',
 							)
 						);
 						echo "<br />Added " . $key . "";
@@ -259,7 +261,7 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 						$tmp = $wpdb->update(
 							$table_name,
 							array(
-
+                'time' => current_time( 'mysql' ),
 								'attachment_id' => $attachment_id
 							),
 							array(
@@ -267,6 +269,7 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 								'agegroup_id' => (int) $agegroup_id
 							),
 							array(
+                '%s',
 								'%d'
 							),
 							array(
