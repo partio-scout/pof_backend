@@ -2,27 +2,28 @@
 
 add_action( 'admin_footer', 'jquery_sortable' );
 function jquery_sortable() { ?>
-	<script type="text/javascript">
+  <script type="text/javascript">
   jQuery(document).ready(function(){
-    jQuery("#post-children").sortable({
-      cursor:'move',
-      update: function( event, ui ) {
-        var order = jQuery('#post-children').sortable('toArray');
-        var data = {
-    			'action': 'update_menu_order',
-    			'order': order
-    		};
+    if(jQuery("#post-children").length) {
+      jQuery("#post-children").sortable({
+        cursor:'move',
+        update: function( event, ui ) {
+          var order = jQuery('#post-children').sortable('toArray');
+          var data = {
+            'action': 'update_menu_order',
+            'order': order
+          };
 
-        jQuery.post(ajaxurl, data, function(response) {
-          console.log(response);
-        });
+          jQuery.post(ajaxurl, data, function(response) {
+            console.log(response);
+          });
 
-      }
-    });
-    jQuery("#post-children").disableSelection();
+        }
+      });
+      jQuery("#post-children").disableSelection();
+    }
   });
-
-	</script> <?php
+  </script> <?php
 }
 
 add_action( 'wp_ajax_update_menu_order', 'update_menu_order' );
