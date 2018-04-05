@@ -169,10 +169,7 @@ function getJsonAgeGroups($parent_id) {
                 'value'         => $parent_id
             )
         ),
-        'order'				=> 'ASC',
-        'orderby'			=> 'meta_value',
-        'meta_key'			=> 'agegroup_min_age',
-        'meta_type'			=> 'NUMERIC'
+        'orderby' => 'menu_order'
 	);
 
 	$the_query = new WP_Query( $args );

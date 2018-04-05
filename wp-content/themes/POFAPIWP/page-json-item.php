@@ -199,8 +199,6 @@ if ($mypost->post_type == 'pof_post_taskgroup') {
 $jsonItem->images = get_post_images_JSON($mypost->ID);
 $jsonItem->additional_content = get_post_additional_content_JSON($mypost->ID, $lang_lowercase);
 
-$jsonItem->menu_order = $mypost->menu_order;
-
 /*
  * Check the menu_order of siblings to determine what order number this specific item should have
  */
