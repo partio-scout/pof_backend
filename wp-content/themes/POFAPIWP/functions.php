@@ -356,6 +356,18 @@ if (!class_exists("POFTREE\\program")) {
 
 }
 
+/**
+ * Remove /wp/v2/media/:id permission check
+ */
+add_filter( 'rest_endpoints', function( array $endpoints ) {
+    foreach ( $endpoints['/wp/v2/media/(?P<id>[\d]+)'] as &$endpoint ) {
+        if ( $endpoint['methods'] === 'GET' && in_array( 'get_item', $endpoint['callback'] ) ) {
+            unset( $endpoint['permission_callback'] );
+        }
+    }
+    return $endpoints;
+});
+
 // Always redirect a user to the home_url() upon successful password reset
 add_filter( 'lostpassword_redirect', 'my_redirect_home' );
 function my_redirect_home( $lostpassword_redirect ) {
