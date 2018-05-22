@@ -81,10 +81,65 @@ function pof_taxonomy_searchpage_frontpage() {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
+  $searchItems = [
+    'place_of_performance' => 'Suorituspaikat',
+    'groupsizes' => 'Ryhm&auml;koko',
+    'mandatory' => 'Pakollisuus',
+    'taskduration' => 'Aktiviteetin kestot',
+    'taskpreparationduration' => 'Aktiviteetin valmistelun kestot',
+    'equpment' => 'Tarvikkeet',
+    'skillarea' => 'Taitoalueet',
+    'growth_target' => 'Kasvatustavoitteen avainsanat',
+    'leadership' => 'Johtamistaidot'
+  ];
 	echo '<div class="wrap">';
+
+  if(isset($_POST['Submit'])) {
+    foreach ($searchItems as $key => $item) {
+      if(isset($_POST['taxonomy_searchoptions_' . $key])) {
+        update_option( 'taxonomy_searchoptions_' . $key, $_POST['taxonomy_searchoptions_' . $key]);
+      }
+    }
+    echo "<div class=\"updated notice notice-success is-dismissible\">
+        <p>Hakukenttien tyypit päivitetty</p>
+        </div>";
+  }
+
 	echo '<h1>POF Taxonomy searchpage</h1>';
-	echo '<p>Valitse vasemmasta valikosta, mit&auml; haluat muokata.</p>';
-	echo '</div>';
+	echo '<p>Valitse vasemmasta valikosta, mit&auml; haluat muokata.</p>'; ?>
+  <form id="featured_upload" method="post" action="">
+  <table cellpadding="2" cellspacing="2" border="2">
+    <thead>
+      <tr>
+        <th><h2>Kenttä</h2></th>
+        <th><h2>Tyyppi</h2></th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($searchItems as $key => $item): ?>
+        <?php
+        $select_name = "taxonomy_searchoptions_$key";
+        $selected_value = get_option('taxonomy_searchoptions_' . $key);
+
+        ?>
+      <tr>
+        <td><?php echo $item; ?></td>
+        <td>
+          <select name="<?php echo $select_name; ?>">
+            <option value="checkbox" <?php echo $selected_value == "checkbox" ? "selected": ""?>>Checkbox</option>
+            <option value="radiobutton" <?php echo $selected_value == "radiobutton" ? "selected": ""?>>Radiobutton</option>
+            <option value="min-max-input" <?php echo $selected_value == "min-max-input" ? "selected": ""?>>Min-max input</option>
+          </select>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+
+  </table>
+  <br>
+  <input type="submit" name="Submit" value="Submit" />
+  </form>
+	<?php echo '</div>';
 }
 
 
