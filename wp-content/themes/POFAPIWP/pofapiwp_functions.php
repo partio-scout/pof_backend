@@ -1094,6 +1094,7 @@ function get_post_images_JSON($post_id) {
 		$ret->logo->height = $logo['height'];
 		$ret->logo->width = $logo['width'];
 		$ret->logo->url = $logo['url'];
+		$ret->logo->id = $logo['id'];
 
         $thumb_url = "";
 
@@ -1143,6 +1144,7 @@ function get_post_images_JSON($post_id) {
 		$ret->main_image->height = $main_image['height'];
 		$ret->main_image->width = $main_image['width'];
 		$ret->main_image->url = $main_image['url'];
+		$ret->main_image->id = $main_image['id'];
 
         $thumb_url = "";
 
@@ -1246,6 +1248,7 @@ function get_post_additional_content_JSON($post_id, $lang = null) {
 				$image_obj->height = $image['metadata']['height'];
 				$image_obj->width = $image['metadata']['width'];
 				$image_obj->url = $image['url'];
+				$image_obj->id = $image['id'];
 
                 $thumb_url = "";
 
