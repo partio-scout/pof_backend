@@ -81,10 +81,86 @@ function pof_taxonomy_searchpage_frontpage() {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
+  $searchItems = [
+    'place_of_performance' => 'Suorituspaikat',
+    'groupsizes' => 'Ryhm&auml;koko',
+    'mandatory' => 'Pakollisuus',
+    'taskduration' => 'Aktiviteetin kestot',
+    'taskpreparationduration' => 'Aktiviteetin valmistelun kestot',
+    'equpment' => 'Tarvikkeet',
+    'skillarea' => 'Taitoalueet',
+    'growth_target' => 'Kasvatustavoitteen avainsanat',
+    'leadership' => 'Johtamistaidot'
+  ];
 	echo '<div class="wrap">';
+
+  if(isset($_POST['update-fields'])) {
+
+    foreach ($searchItems as $key => $item) {
+      if(isset($_POST['taxonomy_searchoptions_' . $key])) {
+        update_option( 'taxonomy_searchoptions_' . $key, $_POST['taxonomy_searchoptions_' . $key]);
+      }
+    }
+
+    echo "<div class=\"updated notice notice-success is-dismissible\">
+        <p>Hakukenttien tyypit päivitetty</p>
+        </div>";
+  }
+
+  if(isset($_POST['update-types'])) {
+      if(isset($_POST['taxonomy_searchoptions_types'])) {
+        update_option('taxonomy_searchoptions_types', $_POST['taxonomy_searchoptions_types']);
+      }
+      echo "<div class=\"updated notice notice-success is-dismissible\">
+          <p>Datatyypit päivitetty</p>
+          </div>";
+  }
+
+  $searchTypes = explode("\n", get_option('taxonomy_searchoptions_types'));
+
 	echo '<h1>POF Taxonomy searchpage</h1>';
-	echo '<p>Valitse vasemmasta valikosta, mit&auml; haluat muokata.</p>';
-	echo '</div>';
+	echo '<p>Valitse vasemmasta valikosta, mit&auml; haluat muokata.</p>'; ?>
+  <h2>Muokkaa kenttiä</h2>
+  <form id="featured_upload" method="post" action="">
+  <table cellpadding="2" cellspacing="2" border="2">
+    <thead>
+      <tr>
+        <th><h2>Kenttä</h2></th>
+        <th><h2>Tyyppi</h2></th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($searchItems as $key => $item): ?>
+        <?php
+        $select_name = "taxonomy_searchoptions_$key";
+        $selected_value = get_option('taxonomy_searchoptions_' . $key);
+
+        ?>
+      <tr>
+        <td><?php echo $item; ?></td>
+        <td>
+          <select name="<?php echo $select_name; ?>">
+            <?php foreach ($searchTypes as $key => $item): ?>
+              <option value="<?php echo sanitize_title($item); ?>" <?php echo $selected_value == sanitize_title($item) ? "selected": ""?>><?php echo $item; ?></option>
+            <?php endforeach; ?>
+          </select>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+
+  </table>
+  <br>
+  <input type="submit" name="update-fields" value="Päivitä kentät" />
+  <br>
+  <br>
+  <h2>Muokkaa kenttätyyppejä</h2>
+  <p class="description" id="tagline-description">Yksi kenttätyyppi per rivi</p>
+  <textarea id="taxonomy_searchoptions_types" rows="10" cols="80" autocomplete="off" name="taxonomy_searchoptions_types"><?php echo esc_attr( get_option('taxonomy_searchoptions_types')); ?></textarea>
+  <br>
+  <input type="submit" name="update-types" value="Päivitä kenttätyypit" />
+  </form>
+	<?php echo '</div>';
 }
 
 

@@ -30,12 +30,19 @@ function pof_pages_get_tags($languages, $items, $item_tax_key)
 		}
 		$tmp = new stdClass();
 		$tmp->lang = $lang_key;
+    $tmp->lastModified = "0000-00-00 00:00:00";
 		$tmp->items = array();
+    $lastModified = "0000-00-00 00:00:00";
 		foreach ($items as $item_key => $item) {
 			$tmp_item = new stdClass();
 			$tmp_item->key = $item_key;
 
 			$tmp_name = pof_taxonomy_translate_get_translation($item_tax_key, $item_key, 0, $lang_key, false);
+
+      $item_timestamp = $tmp_name[0]->time;
+      if(strtotime($item_timestamp) > strtotime($lastModified)) {
+        $lastModified = $item_timestamp;
+      }
 
 			if (!empty($tmp_name)) {
 				$tmp_item->value = $tmp_name[0]->content;
@@ -44,6 +51,7 @@ function pof_pages_get_tags($languages, $items, $item_tax_key)
 			}
 			array_push($tmp->items, $tmp_item);
 		}
+    $tmp->lastModified = $lastModified;
 		array_push($items_arr, $tmp);
 	}
 	return $items_arr;
@@ -113,14 +121,14 @@ if ($filter_tags == "all" || strstr($filter_tags, "aktiviteettipaketin_ylakasite
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "aktiviteettipaketin_ylakasite")) {
-	//aktiviteettipaketin yläkäsite
+	//aktiviteettipaketin ylï¿½kï¿½site
 	$item_tax_key = 'taskgroup_term';
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
 	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "aktiviteetin_ylakasite")) {
-	//Aktiviteetin yläkäsite
+	//Aktiviteetin ylï¿½kï¿½site
 	$item_tax_key = 'task_term';
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
 	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);

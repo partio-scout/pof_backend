@@ -232,9 +232,13 @@ function twentyfifteen_scripts() {
 		'collapse' => '<span class="screen-reader-text">' . __( 'collapse child menu', 'twentyfifteen' ) . '</span>',
 	) );
 
-  wp_enqueue_script( 'jquery-ui', get_template_directory_uri() . '/js/jquery-ui.min.js', array( 'jquery' ) );
 }
 add_action( 'wp_enqueue_scripts', 'twentyfifteen_scripts' );
+
+function twentyfifteen_admin_scripts() {
+  wp_enqueue_script( 'jquery-ui', get_template_directory_uri() . '/js/jquery-ui.min.js', array( 'jquery' ) );
+}
+add_action( 'admin_enqueue_scripts', 'twentyfifteen_admin_scripts' );
 
 /**
  * Add featured image as background image to post navigation elements.
