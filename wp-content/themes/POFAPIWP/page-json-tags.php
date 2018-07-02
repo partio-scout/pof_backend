@@ -141,6 +141,13 @@ if ($filter_tags == "all" || strstr($filter_tags, "yleiset")) {
 	$ret->yleiset = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
 
+if ($filter_tags == "all" || strstr($filter_tags, "haku")) {
+	//Yleiset
+	$item_tax_key = 'search';
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$ret->haku = pof_pages_get_tags($languages, $items, $item_tax_key);
+}
+
 echo json_encode($ret);
 
 ?>
