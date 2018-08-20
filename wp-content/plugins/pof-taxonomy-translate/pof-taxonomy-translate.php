@@ -144,6 +144,8 @@ function pof_taxonomy_translate_menu() {
 
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Yleiset', 'Yleiset', 'pof_manage_translations', 'pof_taxonomy_translate_common-handle', 'pof_taxonomy_translate_common');
 
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Hakusivu', 'Hakusivu', 'pof_manage_translations', 'pof_taxonomy_translate_search-handle', 'pof_taxonomy_translate_search');
+
 }
 
 function pof_taxonomy_translate_frontpage() {
@@ -822,6 +824,16 @@ function pof_taxonomy_translate_common() {
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 
 	$title = "Yleiset";
+	$title2 = "Termi";
+
+	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_translate_search() {
+	$taxonomy_base_key = "search";
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+
+	$title = "Hakusivun yläkäsitteet";
 	$title2 = "Termi";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
