@@ -135,14 +135,14 @@ if ($filter_tags == "all" || strstr($filter_tags, "yleiset")) {
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "haku")) {
-	//Yleiset
+	//Haku
 	$item_tax_key = 'search';
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
 	$ret->haku = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "api_type")) {
-	//Yleiset
+	//Api type
 	$item_tax_key = 'apitype';
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
 	$ret->api_type = pof_pages_get_tags($languages, $items, $item_tax_key);
