@@ -136,7 +136,7 @@ function pof_taxonomy_translate_menu() {
 
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'pof_manage_translations', 'pof_taxonomy_translate_equpments-handle', 'pof_taxonomy_translate_equpments');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'pof_manage_translations', 'pof_taxonomy_translate_skillareas-handle', 'pof_taxonomy_translate_skillareas');
-    add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'pof_manage_translations', 'pof_taxonomy_translate_growthtarget-handle', 'pof_taxonomy_translate_growthtarget');
+  add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'pof_manage_translations', 'pof_taxonomy_translate_growthtarget-handle', 'pof_taxonomy_translate_growthtarget');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'pof_manage_translations', 'pof_taxonomy_translate_leaderships-handle', 'pof_taxonomy_translate_leaderships');
 
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteettipaketin yl&auml;k&auml;site', 'Aktiviteettipaketin yl&auml;k&auml;site', 'pof_manage_translations', 'pof_taxonomy_translate_taskgroupterm-handle', 'pof_taxonomy_translate_taskgroupterm');
@@ -145,6 +145,7 @@ function pof_taxonomy_translate_menu() {
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Yleiset', 'Yleiset', 'pof_manage_translations', 'pof_taxonomy_translate_common-handle', 'pof_taxonomy_translate_common');
 
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Hakusivu', 'Hakusivu', 'pof_manage_translations', 'pof_taxonomy_translate_search-handle', 'pof_taxonomy_translate_search');
+	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Api Type', 'Api Type', 'pof_manage_translations', 'pof_taxonomy_translate_api_type-handle', 'pof_taxonomy_translate_api_type');
 
 }
 
@@ -834,6 +835,16 @@ function pof_taxonomy_translate_search() {
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 
 	$title = "Hakusivun yläkäsitteet";
+	$title2 = "Termi";
+
+	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_translate_api_type() {
+	$taxonomy_base_key = "apitype";
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+
+	$title = "Api Type";
 	$title2 = "Termi";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
