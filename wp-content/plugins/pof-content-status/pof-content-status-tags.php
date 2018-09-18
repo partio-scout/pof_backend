@@ -42,7 +42,7 @@ function pof_content_status_tags_get_tag_options() {
     $options["mandatory"]->title = "Pakollinen";
     $options["mandatory"]->type = "boolean";
     $options["mandatory"]->types = array('task', 'taskgroup');
-    $options["mandatory"]->options = array('mandatory', 'mandatory_seascouts');
+    $options["mandatory"]->options = array('mandatory');
 
     $options["taskduration"] = new stdClass();
     $options["taskduration"]->title = "Aktiviteetin kestot";

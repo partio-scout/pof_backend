@@ -448,14 +448,6 @@ if(function_exists("register_field_group"))
 				'default_value' => 0,
 			),
 			array (
-				'key' => 'field_558fba1cff3ad',
-				'label' => 'Pakollinen meripartiolaisille',
-				'name' => 'task_mandatory_seascouts',
-				'type' => 'true_false',
-				'message' => '',
-				'default_value' => 0,
-			),
-			array (
 				'key' => 'field_558fbb0d4a808',
 				'label' => 'Ryhmäkoko',
 				'name' => 'task_groupsize',

@@ -728,28 +728,6 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		}
 		array_push($pakollisuus, $pakollinen);
 	}
-    /*
-	if (get_field("task_mandatory_seascouts", $post_id)) {
-		$pakollinen = new stdClass();
-		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory_seascouts', $agegroup_id, $lang, true);
-
-		if (!empty($tmp_name)) {
-			$pakollinen->name = $tmp_name[0]->content;
-		} else {
-			$pakollinen->name = 'Pakollinen meripartiolaisille';
-		}
-		$pakollinen->slug = 'mandatory_seascouts';
-		$icon = pof_taxonomy_icons_get_icon('mandatory', 'mandatory_seascouts', $agegroup_id, true);
-
-		if (!empty($icon)) {
-			$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
-			if (!empty($icon_src)) {
-				$pakollinen->icon = $icon_src[0];
-			}
-		}
-		array_push($pakollisuus, $pakollinen);
-	}
-    */
 
 	if (count($pakollisuus) > 0) {
 		$ret->pakollisuus = $pakollisuus;
