@@ -97,7 +97,7 @@ function pof_content_status_tags_get_form() {
 
     $ret .= '</select>';
 
-	$ret .= '<input type="submit" name="Submit" value="Vaihda" />';
+	$ret .= '<input type="submit" name="Submit" value="Näytä" />';
 
     $ret .= "</form>";
 
@@ -341,7 +341,7 @@ function pof_content_status_tags_get_sub_form($selected_taxonomy) {
 
     $ret .= '</select>';
 
-	$ret .= '<input type="submit" name="Submit" value="Vaihda" />';
+	$ret .= '<input type="submit" name="Submit" value="Näytä" />';
 
     $ret .= "</form>";
 
