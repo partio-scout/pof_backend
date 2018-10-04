@@ -451,7 +451,22 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 			}
 		}
 		// reload items:
-		$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+		switch ($taxonomy_base_key) {
+	    	case 'skillarea':
+						$items = pof_taxonomy_translate_get_skillareas();
+						break;
+				case 'equpment':
+						$items = pof_taxonomy_translate_get_equpments();
+						break;
+				case 'growth_target':
+						$items = pof_taxonomy_translate_get_growthtargets();
+						break;
+				case 'leadership':
+						$items = pof_taxonomy_translate_get_leaderships();
+						break;
+		    default:
+		        $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+		}
 	}
 
 	echo '<div class="wrap">';
