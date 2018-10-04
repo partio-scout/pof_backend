@@ -96,6 +96,17 @@ if ($filter_tags == "all" || strstr($filter_tags, "tarvikkeet")) {
 	//Equipments
 	$item_tax_key = 'equpment';
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+  $equipment_tags = [];
+  foreach(get_terms('pof_tax_equipment', array('hide_empty' => false)) as $item) {
+    $equipment_tags[$item->slug] = $item->name;
+  }
+
+  foreach($items as $item_key => $item_name) {
+    if(!array_key_exists($item_key, $equipment_tags)) {
+      unset($items[$item_key]);
+    }
+  }
+
 	$ret->tarvikkeet = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
 
@@ -103,6 +114,16 @@ if ($filter_tags == "all" || strstr($filter_tags, "taitoalueet")) {
 	//Taitoalueet
 	$item_tax_key = 'skillarea';
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+  $skillarea_tags = [];
+  foreach(get_terms('pof_tax_skillarea', array('hide_empty' => false)) as $item) {
+    $skillarea_tags[$item->slug] = $item->name;
+  }
+
+  foreach($items as $item_key => $item_name) {
+    if(!array_key_exists($item_key, $skillarea_tags)) {
+      unset($items[$item_key]);
+    }
+  }
 	$ret->taitoalueet = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
 
@@ -110,6 +131,16 @@ if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
 	//Kasvatustavoitteet
 	$item_tax_key = 'growth_target';
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+  $growth_target_tags = [];
+  foreach(get_terms('pof_tax_growth_target', array('hide_empty' => false)) as $item) {
+    $growth_target_tags[$item->slug] = $item->name;
+  }
+
+  foreach($items as $item_key => $item_name) {
+    if(!array_key_exists($item_key, $growth_target_tags)) {
+      unset($items[$item_key]);
+    }
+  }
 	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
 
