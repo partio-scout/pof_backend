@@ -144,6 +144,23 @@ if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
 	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
 
+if ($filter_tags == "all" || strstr($filter_tags, "johtamistaidot")) {
+	//Kasvatustavoitteet
+	$item_tax_key = 'leadership';
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+  $leadership_tags = [];
+  foreach(get_terms('pof_tax_leadership', array('hide_empty' => false)) as $item) {
+    $leadership_tags[$item->slug] = $item->name;
+  }
+
+  foreach($items as $item_key => $item_name) {
+    if(!array_key_exists($item_key, $leadership_tags)) {
+      unset($items[$item_key]);
+    }
+  }
+	$ret->johtamistaidot = pof_pages_get_tags($languages, $items, $item_tax_key);
+}
+
 if ($filter_tags == "all" || strstr($filter_tags, "aktiviteettipaketin_ylakasite")) {
 	//Aktiviteettipaketin ylakasite
 	$item_tax_key = 'taskgroup_term';
