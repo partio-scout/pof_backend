@@ -653,7 +653,7 @@ function pof_taxonomy_translate_taskpreparationduration() {
 function pof_taxonomy_translate_get_equpments() {
 	$ret = array();
 
-	foreach (get_terms('pof_tax_equipment') as $term) {
+	foreach (get_terms('pof_tax_equipment', array('hide_empty' => false)) as $term) {
 		$ret[$term->slug] = $term->name;
 	}
 
@@ -674,7 +674,7 @@ function pof_taxonomy_translate_equpments() {
 function pof_taxonomy_translate_get_skillareas() {
 	$ret = array();
 
-	foreach (get_terms('pof_tax_skillarea') as $term) {
+	foreach (get_terms('pof_tax_skillarea', array('hide_empty' => false)) as $term) {
 		$ret[$term->slug] = $term->name;
 	}
 
@@ -695,7 +695,7 @@ function pof_taxonomy_translate_skillareas() {
 function pof_taxonomy_translate_get_leaderships() {
 	$ret = array();
 
-	foreach (get_terms('pof_tax_leadership') as $term) {
+	foreach (get_terms('pof_tax_leadership', array('hide_empty' => false)) as $term) {
 		$ret[$term->slug] = $term->name;
 	}
 
@@ -716,7 +716,7 @@ function pof_taxonomy_translate_leaderships() {
 function pof_taxonomy_translate_get_growthtargets() {
 	$ret = array();
 
-	foreach (get_terms('pof_tax_growth_target') as $term) {
+	foreach (get_terms('pof_tax_growth_target', array('hide_empty' => false)) as $term) {
 		$ret[$term->slug] = $term->name;
 	}
 
