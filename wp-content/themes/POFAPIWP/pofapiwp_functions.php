@@ -712,7 +712,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		$pakollinen = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory', $agegroup_id, $lang, true);
 
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$pakollinen->name = $tmp_name[0]->content;
 		} else {
 			$pakollinen->name = 'Pakollinen';
@@ -735,7 +735,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		$pakollinen = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'not_mandatory', $agegroup_id, $lang, true);
 
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$pakollinen->name = $tmp_name[0]->content;
 		} else {
 			$pakollinen->name = 'Ei pakollinen';
@@ -834,7 +834,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		$place = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('place_of_performance', 'meeting_place', $agegroup_id, $lang, true);
 
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$place->name = $tmp_name[0]->content;
 		} else {
 			$place->name = 'Kolo';
@@ -857,7 +857,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 
 			$tmp_name = pof_taxonomy_translate_get_translation('place_of_performance', $tmp_place, $agegroup_id, $lang, true);
 
-			if (!empty($tmp_name)) {
+			if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 				$place->name = trim($tmp_name[0]->content);
 			} else {
 				$place->name = trim($tmp_place);
@@ -888,7 +888,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	foreach ($taitoalueet_tags as $taitoalue_tag) {
 		$taitoalue = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('skillarea', $taitoalue_tag->slug, $agegroup_id, $lang, true);
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$taitoalue->name = $tmp_name[0]->content;
 		} else {
 			$taitoalue->name = $taitoalue_tag->name;
@@ -908,7 +908,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	foreach ($johtamistaito_tags as $johtamistaito_tag) {
 		$johtamistaito = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('leadership', $johtamistaito_tag->slug, $agegroup_id, $lang, true);
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$johtamistaito->name = $tmp_name[0]->content;
 		} else {
 			$johtamistaito->name = $johtamistaito_tag->name;
@@ -929,7 +929,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		$suoritus_kesto = new stdClass();
 
         $tmp_name = pof_taxonomy_translate_get_translation('taskduration', $suoritus_kesto_tmp, $agegroup_id, $lang, true);
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$suoritus_kesto->name = $tmp_name[0]->content;
 		} else {
 			$suoritus_kesto->name = $suoritus_kesto_tmp;
@@ -971,7 +971,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		$tarvike = new stdClass();
 
 		$tmp_name = pof_taxonomy_translate_get_translation('equpment', $tarvike_tag->slug, $agegroup_id, $lang, true);
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$tarvike->name = $tmp_name[0]->content;
 		} else {
 			$tarvike->name = $tarvike_tag->name;
@@ -991,7 +991,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 		$growth_target = new stdClass();
 
 		$tmp_name = pof_taxonomy_translate_get_translation('growth_target', $growth_target_tag->slug, $agegroup_id, $lang, true);
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$growth_target->name = $tmp_name[0]->content;
 		} else {
 			$growth_target->name = $growth_target_tag->name;
@@ -1015,7 +1015,7 @@ function get_post_tags_taskgroup_JSON($post_id, $agegroup_id, $lang) {
 		$pakollinen = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'mandatory', $agegroup_id, $lang, true);
 
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$pakollinen->name = $tmp_name[0]->content;
 		} else {
 			$pakollinen->name = 'Pakollinen';
@@ -1038,7 +1038,7 @@ function get_post_tags_taskgroup_JSON($post_id, $agegroup_id, $lang) {
 		$pakollinen = new stdClass();
 		$tmp_name = pof_taxonomy_translate_get_translation('mandatory', 'not_mandatory', $agegroup_id, $lang, true);
 
-		if (!empty($tmp_name)) {
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$pakollinen->name = $tmp_name[0]->content;
 		} else {
 			$pakollinen->name = 'Ei pakollinen';
