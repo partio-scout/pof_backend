@@ -190,38 +190,26 @@ function pof_content_status_orphan_get_content($pof_post_type) {
 		    );
 
             $res3 = $wpdb->get_results(
-                       "SELECT wp_posts.ID,
-												       wp_posts.post_type,
-												       wp_posts.post_name,
-												       wp_posts.post_title,
-												       parentpost.id AS parentpostid
-												FROM   wp_posts
-												       JOIN wp_postmeta AS wppostmeta1
-												         ON wppostmeta1.post_id = wp_posts.ID
-												            AND ( ( wppostmeta1.meta_key = 'ikakausi'
-												                    AND wppostmeta1.meta_value <> 'null' AND wppostmeta1.meta_value <> '' )
-												                   OR ( wppostmeta1.meta_key = 'suoritepaketti'
-												                        AND wppostmeta1.meta_value <> 'null' AND wppostmeta1.meta_value <> '' ) )
-												       LEFT JOIN wp_posts AS parentpost
-												              ON wppostmeta1.meta_value = parentpost.id
-												WHERE  wp_posts.post_status = 'publish'
-												       AND wp_posts.post_type = 'pof_post_taskgroup'
-												       AND parentpost.id IS NULL"
+	           "SELECT wp_posts.ID,
+							       wp_posts.post_type,
+							       wp_posts.post_name,
+							       wp_posts.post_title,
+							       parentpost.id AS parentpostid
+							FROM   wp_posts
+							       JOIN wp_postmeta AS wppostmeta1
+							         ON wppostmeta1.post_id = wp_posts.ID
+							            AND ( ( wppostmeta1.meta_key = 'ikakausi'
+							                    AND wppostmeta1.meta_value <> 'null' AND wppostmeta1.meta_value <> '' )
+							                   OR ( wppostmeta1.meta_key = 'suoritepaketti'
+							                        AND wppostmeta1.meta_value <> 'null' AND wppostmeta1.meta_value <> '' ) )
+							       LEFT JOIN wp_posts AS parentpost
+							              ON wppostmeta1.meta_value = parentpost.id
+							WHERE  wp_posts.post_status = 'publish'
+							       AND wp_posts.post_type = 'pof_post_taskgroup'
+							       AND parentpost.id IS NULL"
            );
 
-					 /* $emptys = array();
-
-					 foreach($res3 as $i => $value) {
-						 $suoritepaketti = get_post_meta($value->ID, 'suoritepaketti', TRUE);
-						 $ikakausi = get_post_meta($value->ID, 'ikakausi', TRUE);
-						 if($suoritepaketti == '' && $ikakausi == '') {
-							 $emptys[] = $value;
-						 }
-					 } */
-
-					 //$res3 = $emptys;
-
-            $res4 = $wpdb->get_results(
+          $res4 = $wpdb->get_results(
                        "
 			    SELECT wp_posts.ID, wp_posts.post_type, wp_posts.post_name, wp_posts.post_title
                     FROM wp_posts
