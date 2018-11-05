@@ -114,7 +114,7 @@ function pof_content_status_orphan_get_content($pof_post_type) {
 
             $res3 = $wpdb->get_results(
                         "
-			    SELECT wp_postmeta.meta_value, childpost.ID, childpost.post_type, childpost.post_name, childpost.post_title, parentpost.post_title
+			    SELECT wp_postmeta.meta_value, childpost.ID, childpost.post_type, childpost.post_name, childpost.post_title, parentpost.post_title AS parenttitle
                 FROM wp_postmeta
                 JOIN wp_posts AS childpost
                     ON wp_postmeta.post_id = childpost.ID
