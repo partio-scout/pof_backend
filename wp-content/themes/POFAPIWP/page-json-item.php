@@ -64,6 +64,8 @@ switch ($post_type) {
 $jsonItem = new $post_class;
 $jsonItem->type = $post_type;
 
+$jsonItem->task_groups = pof_get_additional_taskgroups($mypost->ID);
+
 if (empty($tree_array)) {
 	$jsonItem->parents = array();
 } else {
