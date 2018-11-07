@@ -64,7 +64,7 @@ switch ($post_type) {
 $jsonItem = new $post_class;
 $jsonItem->type = $post_type;
 
-if($post_type == 'pof_post_task') {
+if($post_type == 'task') {
 	$jsonItem->task_groups = pof_get_additional_taskgroups($mypost->ID);
 }
 
