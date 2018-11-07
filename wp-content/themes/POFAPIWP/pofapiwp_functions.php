@@ -1850,6 +1850,20 @@ function pof_output_parents_arr_json($tree_array) {
 	return $ret;
 }
 
+function pof_get_additional_taskgroups($post_id) {
+  $additional_taskgroups = get_field( 'suoritepaketti_muut', $post_id );
+  $ret = array();
+	foreach ($additional_taskgroups as $taskgroup) {
+		$tmp = new stdClass();
+		$tmp->type = 'pof_post_taskgroup';
+		$tmp->title = $taskgroup->post_title;
+		$tmp = getJsonItemBaseDetails($tmp, $taskgroup);
+		array_push($ret, $tmp);
+	}
+
+  return $ret;
+}
+
 function pof_get_agegroup_from_tree_arr($tree_array) {
 	$agegropup = null;
 
