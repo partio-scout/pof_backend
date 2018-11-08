@@ -1,5 +1,40 @@
 <?php
 
+/*
+ * Check that taskgroup doesn't have itself as parent taskgroup
+ */
+function pof_validate_taskgroup_field( $post_id ) {
+
+  if ( wp_is_post_revision( $post_id ) || get_post_type($post_id) != 'pof_post_taskgroup') {
+    return;
+  }
+
+  $taskgroup = get_field( 'suoritepaketti', $post_id);
+
+  if($taskgroup->ID == $post_id) {
+    update_field( 'suoritepaketti', '', $post_id );
+    add_post_meta( $post_id , 'invalid_taskgroup', 1 );
+  }
+}
+add_action( 'save_post', 'pof_validate_taskgroup_field' );
+
+function pof_redirect_location($location, $post_id){
+
+    if( get_post_meta($post_id, 'invalid_taskgroup', TRUE) == 1 ) {
+      $location = add_query_arg('message', 11, $location);
+      delete_post_meta($post_id, 'invalid_taskgroup');
+    }
+
+    return $location;
+}
+add_filter('redirect_post_location','pof_redirect_location',10,2);
+
+function pof_custom_messages($messages){
+  $messages['pof_post_taskgroup'][11] = '<b>Aktiviteettipaketti ei voi osoittaa itseensä. Muut tiedot ovat tallennettu, mutta Aktiviteettipaketti -kenttä on tyhjennetty</b>';
+  return $messages;
+}
+add_filter('post_updated_messages', 'pof_custom_messages');
+
 add_action( 'admin_footer', 'jquery_sortable' );
 function jquery_sortable() { ?>
   <script type="text/javascript">
