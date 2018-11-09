@@ -65,7 +65,7 @@ $jsonItem = new $post_class;
 $jsonItem->type = $post_type;
 
 if($post_type == 'task') {
-	$jsonItem->task_groups = pof_get_additional_taskgroups($mypost->ID);
+	$jsonItem->secondary_taskgroups = pof_get_additional_taskgroups($mypost->ID);
 }
 
 if (empty($tree_array)) {
