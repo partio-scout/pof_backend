@@ -883,8 +883,8 @@ function pof_taxonomy_translate_get_themes() {
 function pof_taxonomy_translate_themes() {
   $taxonomy_base_key = "theme";
   $items = pof_taxonomy_translate_get_themes();
-  $title = "Tarvikkeet";
-  $title2 = "Tarvike";
+  $title = "Teemat";
+  $title2 = "Teema";
 
   pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
 }
