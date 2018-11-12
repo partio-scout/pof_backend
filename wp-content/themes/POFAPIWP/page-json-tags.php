@@ -196,6 +196,24 @@ if ($filter_tags == "all" || strstr($filter_tags, "api_type")) {
 	$ret->api_type = pof_pages_get_tags($languages, $items, $item_tax_key);
 }
 
+if ($filter_tags == "all" || strstr($filter_tags, "teemat")) {
+	//Teemat
+	$item_tax_key = 'theme';
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+  $theme_tags = [];
+  foreach(get_terms('pof_tax_theme', array('hide_empty' => false)) as $item) {
+    $theme_tags[$item->slug] = $item->name;
+  }
+
+  foreach($items as $item_key => $item_name) {
+    if(!array_key_exists($item_key, $theme_tags)) {
+      unset($items[$item_key]);
+    }
+  }
+
+	$ret->teemat = pof_pages_get_tags($languages, $items, $item_tax_key);
+}
+
 echo json_encode($ret);
 
 ?>
