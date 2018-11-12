@@ -138,6 +138,7 @@ function pof_taxonomy_translate_menu() {
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'pof_manage_translations', 'pof_taxonomy_translate_skillareas-handle', 'pof_taxonomy_translate_skillareas');
   add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'pof_manage_translations', 'pof_taxonomy_translate_growthtarget-handle', 'pof_taxonomy_translate_growthtarget');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'pof_manage_translations', 'pof_taxonomy_translate_leaderships-handle', 'pof_taxonomy_translate_leaderships');
+  add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Teemat', 'Teemat', 'pof_manage_translations', 'pof_taxonomy_translate_themes-handle', 'pof_taxonomy_translate_themes');
 
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteettipaketin yl&auml;k&auml;site', 'Aktiviteettipaketin yl&auml;k&auml;site', 'pof_manage_translations', 'pof_taxonomy_translate_taskgroupterm-handle', 'pof_taxonomy_translate_taskgroupterm');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Aktiviteetin yl&auml;k&auml;site', 'Aktiviteetin yl&auml;k&auml;site', 'pof_manage_translations', 'pof_taxonomy_translate_taskterm-handle', 'pof_taxonomy_translate_taskterm');
@@ -464,6 +465,9 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 				case 'leadership':
 						$items = pof_taxonomy_translate_get_leaderships();
 						break;
+        case 'theme':
+            $items = pof_taxonomy_translate_get_themes();
+            break;
 		    default:
 		        $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
 		}
@@ -863,6 +867,26 @@ function pof_taxonomy_translate_api_type() {
 	$title2 = "Termi";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_translate_get_themes() {
+	$ret = array();
+
+	foreach (get_terms('pof_tax_theme', array('hide_empty' => false)) as $term) {
+		$ret[$term->slug] = $term->name;
+	}
+
+	return $ret;
+
+}
+
+function pof_taxonomy_translate_themes() {
+  $taxonomy_base_key = "theme";
+  $items = pof_taxonomy_translate_get_themes();
+  $title = "Tarvikkeet";
+  $title2 = "Tarvike";
+
+  pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
 }
 
 function pof_is_tag_used($taxonomy, $tag) {
