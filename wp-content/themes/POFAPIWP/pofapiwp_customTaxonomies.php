@@ -46,16 +46,30 @@ function AddPofApiCustomTaxonomies() {
 	));
 
     register_taxonomy('pof_tax_leadership', array('pof_post_task'), array(
-                'hierarchical' => false,
-                'labels' => array(
-                    'name' => _x( 'Johtamistaito', 'taxonomy general name' ),
-                    'singular_name' => _x( 'Johtamistaito', 'taxonomy singular name' ),
-                    'menu_name' => __( 'Johtamistaidot' )
-                ),
-                'rewrite' => array(
-                    'slug' => 'leadership',
-                    'with_front' => false,
-			'hierarchical' => false
-		)
+      'hierarchical' => false,
+      'labels' => array(
+        'name' => _x( 'Johtamistaito', 'taxonomy general name' ),
+        'singular_name' => _x( 'Johtamistaito', 'taxonomy singular name' ),
+        'menu_name' => __( 'Johtamistaidot' )
+      ),
+      'rewrite' => array(
+        'slug' => 'leadership',
+        'with_front' => false,
+        'hierarchical' => false
+	    )
 	));
+
+  register_taxonomy('pof_tax_theme', array('pof_post_task'), array(
+    'hierarchical' => false,
+    'labels' => array(
+      'name' => _x( 'Teema', 'taxonomy general name' ),
+      'singular_name' => _x( 'Teema', 'taxonomy singular name' ),
+      'menu_name' => __( 'Teemat' )
+    ),
+    'rewrite' => array(
+      'slug' => 'theme',
+      'with_front' => false,
+      'hierarchical' => false
+    )
+  ));
 }

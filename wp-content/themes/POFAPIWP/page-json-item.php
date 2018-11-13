@@ -30,7 +30,6 @@ $classAgegroup = "POFITEM\\agegroup";
 $classTaskGroup = "POFITEM\\taskgroup";
 $classTask = "POFITEM\\task";
 
-
 $post_type = str_replace('pof_post_', '', $mypost->post_type);
 
 $post_class = $classTask;
@@ -76,7 +75,6 @@ if (empty($tree_array)) {
 
 $jsonItem = getJsonItemBaseDetailsItem($jsonItem, $mypost);
 
-
 $lang = "FI";
 $lang_lowercase = "fi";
 
@@ -108,12 +106,8 @@ switch ($post_type) {
 	break;
 	case "taskgroup":
 		$jsonItem = getJsonItemDetailsTaskgroup($jsonItem, $mypost, $lang_lowercase);
-
-
 		$mandatory_tasks = getMandatoryTasksForTaskGroup($mypost->ID);
-
 		$jsonItem->mandatory_task_hashes = implode(",", $mandatory_tasks->hashes);
-
 
 		$subtask_term = getJsonTaskTerm(get_post_meta($mypost->ID, "taskgroup_subtask_term", true), $lang_lowercase);
 		if (empty($subtask_term)) {
@@ -178,7 +172,6 @@ switch ($post_type) {
 		$jsonItem->level = pof_normalize_task_level(get_post_meta($mypost->ID, "task_level", true));
 		$jsonItem->leader_tasks = get_post_meta($mypost->ID, "leader_tasks_".$lang_lowercase, true);
 
-
 	break;
 }
 
@@ -229,7 +222,4 @@ foreach ($sibling_order as $key => $val) {
 $jsonItem->order = $order;
 
 echo json_encode($jsonItem);
-
-
-
 ?>

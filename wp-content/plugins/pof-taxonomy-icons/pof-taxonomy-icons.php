@@ -103,21 +103,21 @@ function pof_taxonomy_icons_get_agegroups() {
 
 
 function pof_taxonomy_icons_menu() {
-	add_menu_page('POF Taxonomy icons', 'Ikonit', 'pof_manage_icons', 'pof_taxonomy_icons_frontpage-handle', 'pof_taxonomy_icons_frontpage', 'dashicons-format-image');
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suorituspaikat', 'Suorituspaikat', 'pof_manage_icons', 'pof_taxonomy_icons_places-handle', 'pof_taxonomy_icons_places');
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Ryhm&auml;koko', 'Ryhm&auml;koot', 'pof_manage_icons', 'pof_taxonomy_icons_groupsizes-handle', 'pof_taxonomy_icons_groupsizes');
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Pakollisuus', 'Pakollisuus', 'pof_manage_icons', 'pof_taxonomy_icons_mandatory-handle', 'pof_taxonomy_icons_mandatory');
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Aktiviteetin kestot', 'Aktiviteetin kestot', 'pof_manage_icons', 'pof_taxonomy_icons_taskduration-handle', 'pof_taxonomy_icons_taskduration');
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Aktiviteetin valmistelun kestot', 'Aktiviteetin valmistelun kestot', 'pof_manage_icons', 'pof_taxonomy_icons_taskpreparationduration-handle', 'pof_taxonomy_icons_taskpreparationduration');
+  add_menu_page('POF Taxonomy icons', 'Ikonit', 'pof_manage_icons', 'pof_taxonomy_icons_frontpage-handle', 'pof_taxonomy_icons_frontpage', 'dashicons-format-image');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Suorituspaikat', 'Suorituspaikat', 'pof_manage_icons', 'pof_taxonomy_icons_places-handle', 'pof_taxonomy_icons_places');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Ryhm&auml;koko', 'Ryhm&auml;koot', 'pof_manage_icons', 'pof_taxonomy_icons_groupsizes-handle', 'pof_taxonomy_icons_groupsizes');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Pakollisuus', 'Pakollisuus', 'pof_manage_icons', 'pof_taxonomy_icons_mandatory-handle', 'pof_taxonomy_icons_mandatory');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Aktiviteetin kestot', 'Aktiviteetin kestot', 'pof_manage_icons', 'pof_taxonomy_icons_taskduration-handle', 'pof_taxonomy_icons_taskduration');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Aktiviteetin valmistelun kestot', 'Aktiviteetin valmistelun kestot', 'pof_manage_icons', 'pof_taxonomy_icons_taskpreparationduration-handle', 'pof_taxonomy_icons_taskpreparationduration');
 
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'pof_manage_icons', 'pof_taxonomy_icons_equpments-handle', 'pof_taxonomy_icons_equpments');
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'pof_manage_icons', 'pof_taxonomy_icons_skillareas-handle', 'pof_taxonomy_icons_skillareas');
-    add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'pof_manage_icons', 'pof_taxonomy_icons_growthtarget-handle', 'pof_taxonomy_icons_growthtarget');
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'pof_manage_icons', 'pof_taxonomy_icons_leaderships-handle', 'pof_taxonomy_icons_leaderships');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'pof_manage_icons', 'pof_taxonomy_icons_equpments-handle', 'pof_taxonomy_icons_equpments');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'pof_manage_icons', 'pof_taxonomy_icons_skillareas-handle', 'pof_taxonomy_icons_skillareas');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'pof_manage_icons', 'pof_taxonomy_icons_growthtarget-handle', 'pof_taxonomy_icons_growthtarget');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'pof_manage_icons', 'pof_taxonomy_icons_leaderships-handle', 'pof_taxonomy_icons_leaderships');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Teemat', 'Teemat', 'pof_manage_icons', 'pof_taxonomy_icons_themes-handle', 'pof_taxonomy_icons_themes');
 
-    add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Aktiviteettipaketin yl&auml;k&auml;site', 'Aktiviteettipaketin yl&auml;k&auml;site', 'pof_manage_icons', 'pof_taxonomy_icons_taskgroupterm-handle', 'pof_taxonomy_icons_taskgroupterm');
-	add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Aktiviteetin yl&auml;k&auml;site', 'Aktiviteetin yl&auml;k&auml;site', 'pof_manage_icons', 'pof_taxonomy_icons_taskterm-handle', 'pof_taxonomy_icons_taskterm');
-
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Aktiviteettipaketin yl&auml;k&auml;site', 'Aktiviteettipaketin yl&auml;k&auml;site', 'pof_manage_icons', 'pof_taxonomy_icons_taskgroupterm-handle', 'pof_taxonomy_icons_taskgroupterm');
+  add_submenu_page( 'pof_taxonomy_icons_frontpage-handle', 'Aktiviteetin yl&auml;k&auml;site', 'Aktiviteetin yl&auml;k&auml;site', 'pof_manage_icons', 'pof_taxonomy_icons_taskterm-handle', 'pof_taxonomy_icons_taskterm');
 }
 
 function pof_taxonomy_icons_frontpage() {
@@ -434,7 +434,25 @@ function pof_taxonomy_icons_get_leaderships() {
 
 }
 
+function pof_taxonomy_icons_themes() {
+	$taxonomy_base_key = "theme";
+	$items = pof_taxonomy_icons_get_themes();
+	$title = "Teemat";
+	$title2 = "Teemat";
 
+	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_icons_get_themes() {
+	$ret = array();
+
+	foreach (get_terms('pof_tax_theme') as $term) {
+		$ret[$term->slug] = $term->name;
+	}
+
+	return $ret;
+
+}
 
 function pof_taxonomy_icons_leaderships() {
 	$taxonomy_base_key = "leadership";
