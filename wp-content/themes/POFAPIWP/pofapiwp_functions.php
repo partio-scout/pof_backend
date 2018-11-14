@@ -1036,7 +1036,27 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 	}
 	if (count($growth_targets)) {
 		$ret->kasvatustavoitteet = $growth_targets;
-	}
+  }
+
+  $teema_tags = wp_get_post_terms($post_id, 'pof_tax_theme');
+
+  $teemat = array();
+
+  foreach ($teema_tags as $teema_tag) {
+      $teema = new stdClass();
+
+      $tmp_name = pof_taxonomy_translate_get_translation('theme', $teema_tag->slug, $agegroup_id, $lang, true);
+      if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
+          $teema->name = $tmp_name[0]->content;
+      } else {
+          $teema->name = $teema_tag->name;
+      }
+      $teema->slug = $teema_tag->slug;
+      array_push($teemat, $teema);
+  }
+  if (count($teemat)) {
+      $ret->teemat = $teemat;
+  }
 
 	return $ret;
 }
