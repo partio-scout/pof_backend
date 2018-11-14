@@ -87,6 +87,40 @@ function pof_taxonomy_translate_get_languages() {
 	return $ret;
 }
 
+function pof_taxonomy_translate_get_programs() {
+  $args = array(
+    'numberposts' => -1,
+    'posts_per_page' => -1,
+    'post_type' => 'pof_post_program',
+    'orderby' => 'title',
+    'order' => 'ASC'
+  );
+
+  $the_query = new WP_Query( $args );
+  $ret = array();
+
+  $tmp = new stdClass();
+	$tmp->id = 0;
+	$tmp->title = "Yhteiset";
+
+  $ret[0] = $tmp;
+
+  if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+      $the_query->the_post();
+
+      $tmp = new stdClass();
+			$tmp->id = $the_query->post->ID;
+			$tmp->title = $the_query->post->post_title;
+
+      $ret[] = $tmp;
+    }
+  }
+
+  return $ret;
+
+}
+
 function pof_taxonomy_translate_get_agegroups() {
 
 	$agegroups = array();
@@ -290,6 +324,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	global $wpdb;
 	$table_name = pof_taxonomy_translate_get_table_name();
 
+  $programs = pof_taxonomy_translate_get_programs();
 	$languages = pof_taxonomy_translate_get_languages();
 	$agegroups = pof_taxonomy_translate_get_agegroups();
 
@@ -300,6 +335,11 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 
 	if (isset($_POST['Change_lang'])) {
 		$selected_lang = $_POST['language'];
+	}
+
+  $selected_program = $programs[0];
+	if (isset($_POST['program'])) {
+		$selected_program = $_POST['program'];
 	}
 
 	if(isset($_POST['Submit'])) {
@@ -476,6 +516,17 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	echo '<div class="wrap">';
 	echo '<h1>'.$title.'</h1>';
 	echo '<form id="featured_upload" method="post" action="">';
+  echo 'Valitse ohjelma:';
+  echo '<select name="program">';
+  foreach ($programs as $program_key => $program) {
+    if ($program->id == $selected_program) {
+      echo '<option selected="selected" value="'.$program->id.'">'.$program->title.'</option>';
+    } else {
+      echo '<option value="'.$program->id.'">'.$program->title.'</option>';
+    }
+  }
+  echo '<br>';
+  echo '</select>';
 	echo 'Valitse kieli:';
 	echo '<select name="language">';
 	foreach ($languages as $lang_key => $lang) {
