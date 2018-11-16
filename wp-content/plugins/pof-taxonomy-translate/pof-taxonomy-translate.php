@@ -50,11 +50,13 @@ function pof_taxonomy_translate_install() {
 		agegroup_id bigint(20) NOT NULL,
 		content varchar(255) NOT NULL,
 		lang varchar(10) NOT NULL,
+    program bigint(20),
 		UNIQUE KEY id (id),
 		KEY taxonomy_slug (taxonomy_slug),
 		KEY agegroup_id (agegroup_id),
 		KEY content (content),
-		KEY lang (lang)
+		KEY lang (lang),
+    KEY program (program)
 	) $charset_collate;";
 
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -121,7 +123,7 @@ function pof_taxonomy_translate_get_programs() {
 
 }
 
-function pof_taxonomy_translate_get_agegroups() {
+function pof_taxonomy_translate_get_agegroups($program = false) {
 
 	$agegroups = array();
 
@@ -132,6 +134,11 @@ function pof_taxonomy_translate_get_agegroups() {
 		'orderby' => 'title',
 		'order' => 'ASC'
 	);
+
+  if($program !== false) {
+    $args['meta_key'] = 'suoritusohjelma';
+  	$args['meta_value'] = $program;
+  }
 
 	$the_query = new WP_Query( $args );
 
@@ -222,7 +229,7 @@ function pof_taxonomy_translate_get_translation_content($taxonomy_base_key, $tmp
     return "";
 }
 
-function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $agegroup_id, $selected_lang, $fallback = false) {
+function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $agegroup_id, $selected_lang, $fallback = false, $program = 0) {
 	$taxonomy_slug = $taxonomy_base_key . '::' . $tmp_key;
 
 	global $wpdb;
@@ -326,7 +333,6 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 
   $programs = pof_taxonomy_translate_get_programs();
 	$languages = pof_taxonomy_translate_get_languages();
-	$agegroups = pof_taxonomy_translate_get_agegroups();
 
 	$selected_lang = 'fi';
 	if (isset($_POST['language'])) {
@@ -337,10 +343,12 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 		$selected_lang = $_POST['language'];
 	}
 
-  $selected_program = $programs[0];
+  $selected_program = 0;
 	if (isset($_POST['program'])) {
 		$selected_program = $_POST['program'];
 	}
+
+  $agegroups = pof_taxonomy_translate_get_agegroups($selected_program);
 
 	if(isset($_POST['Submit'])) {
 
@@ -538,7 +546,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	}
 	echo '</select>';
 	echo '<br />';
-	echo '<input type="submit" name="Change_lang" id="Change_lang" value="Vaihda kieli" />';
+	echo '<input type="submit" name="Change_lang" id="Change_lang" value="Vaihda" />';
 	echo '</form>';
 	echo '<br /><br /><br />';
 	echo '<form id="featured_upload" method="post" action="">';
