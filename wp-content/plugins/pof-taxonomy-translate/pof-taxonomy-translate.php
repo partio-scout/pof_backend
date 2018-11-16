@@ -50,7 +50,7 @@ function pof_taxonomy_translate_install() {
 		agegroup_id bigint(20) NOT NULL,
 		content varchar(255) NOT NULL,
 		lang varchar(10) NOT NULL,
-    program bigint(20),
+    program bigint(20) DEFAULT 0 NOT NULL,
 		UNIQUE KEY id (id),
 		KEY taxonomy_slug (taxonomy_slug),
 		KEY agegroup_id (agegroup_id),
@@ -240,6 +240,7 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 		WHERE taxonomy_slug = '" . $taxonomy_slug . "'
 			AND lang = '".$selected_lang."'
 			AND agegroup_id = ".$agegroup_id."
+      AND program = ".$program."
 		"
 	);
 
@@ -574,7 +575,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 		foreach ($agegroups as $agegroup) {
 
 			echo '<td>';
-			$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key,$tmp_key, $agegroup->id, $selected_lang, false);
+			$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key,$tmp_key, $agegroup->id, $selected_lang, false, $selected_program);
 
 			$translation_content = "";
 			if (!empty($translation)) {
