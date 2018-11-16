@@ -551,6 +551,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	echo '<br /><br /><br />';
 	echo '<form id="featured_upload" method="post" action="">';
 	echo '<input type="hidden" name="language" value="'.$selected_lang.'" />';
+  echo '<h2>Ohjelma: '.$programs[array_search($selected_program, array_column($programs, 'id'))]->title.' ('.$selected_program.')</h2>';
 	echo '<h2>Kieli: '.$languages[$selected_lang].' ('.$selected_lang.')</h2>';
 	echo '<table cellpadding="2" cellspacing="2" border="2">';
 	echo '<thead>';
