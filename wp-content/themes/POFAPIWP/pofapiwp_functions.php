@@ -1,39 +1,81 @@
 <?php
 
-/*
- * Check that taskgroup doesn't have itself as parent taskgroup
- */
-function pof_validate_taskgroup_field( $post_id ) {
+add_action( 'admin_footer', 'pof_validation_script' );
+function pof_validation_script() { ?>
+  <script type="text/javascript">
+  jQuery(document).ready(function(){
+    jQuery('#publish').click(function() {
 
-  if ( wp_is_post_revision( $post_id ) || get_post_type($post_id) != 'pof_post_taskgroup') {
-    return;
-  }
+      if(jQuery(this).data("valid")) {
+        return true;
+      }
 
-  $taskgroup = get_field( 'suoritepaketti', $post_id);
+      var form_data = jQuery('#post').serializeArray();
+      var data = {
+          action: 'pof_custom_validation',
+          security: '<?php echo wp_create_nonce( 'pre_publish_validation' ); ?>',
+          form_data: jQuery.param(form_data),
+      };
 
-  if($taskgroup->ID == $post_id) {
-    update_field( 'suoritepaketti', '', $post_id );
-    add_post_meta( $post_id , 'invalid_taskgroup', 1 );
-  }
+      jQuery.post(ajaxurl, data, function(response) {
+        if (response.indexOf('true') > -1 || response == true) {
+            jQuery("#post").data("valid", true).submit();
+        } else {
+            jQuery('.pof-error').remove();
+            jQuery('.wp-header-end').after('<div id="message" class="notice notice-error pof-error"><p>Virhe: ' + response + '</p></div>');
+            jQuery("#post").data("valid", false);
+          }
+      });
+
+      return false;
+    });
+  });
+  </script> <?php
 }
-add_action( 'save_post', 'pof_validate_taskgroup_field' );
 
-function pof_redirect_location($location, $post_id){
+add_action( 'wp_ajax_pof_custom_validation', 'pof_custom_validation' );
+function pof_custom_validation() {
+  check_ajax_referer( 'pre_publish_validation', 'security' );
 
-    if( get_post_meta($post_id, 'invalid_taskgroup', TRUE) == 1 ) {
-      $location = add_query_arg('message', 11, $location);
-      delete_post_meta($post_id, 'invalid_taskgroup');
+  parse_str( $_POST['form_data'], $vars );
+
+  $post_type = $vars['post_type'];
+
+  // Tasks: Check that additional taskgroups are from same program as primary taskgroup
+  if($post_type = 'pof_post_task') {
+    $primary_taskgroup = $vars['acf']['field_54f5bde393d24'];
+    $additional_taskgroups = $vars['acf']['field_5be2d365716ff'];
+
+    $object = (object) ['ID' => $primary_taskgroup, 'post_type' => $post_type];
+    $primary_taskgroup_program = end(pof_get_parent_tree($object, array()))->ID;
+
+    foreach($additional_taskgroups as $taskgroup) {
+      $taskgroup_object = (object) ['ID' => $taskgroup, 'post_type' => 'pof_post_taskgroup'];
+      $taskgroup_program = end(pof_get_parent_tree($taskgroup_object, array()))->ID;
+
+      if($taskgroup_program != $primary_taskgroup_program) {
+        _e("Ylimääräisten aktiviteettipakettien täytyy kuulua samaan ohjelmaan, kuin ensisijaisen aktiviteettipaketin");
+        die();
+      }
+
+    }
+  }
+
+  // Taskgroups: Check that taskgroup doesn't have itself as a parent
+  if($post_type = 'pof_post_taskgroup') {
+    $taskgroup_id = $vars['acf']['field_5634d05b4db69'];
+    $post_id = $vars['post_ID'];
+
+    if($taskgroup_id === $post_id) {
+      _e("Aktiviteettipaketti ei voi olla itsensä aktiviteettipaketti");
+      die();
     }
 
-    return $location;
-}
-add_filter('redirect_post_location','pof_redirect_location',10,2);
+  }
 
-function pof_custom_messages($messages){
-  $messages['pof_post_taskgroup'][11] = '<b>Aktiviteettipaketti ei voi osoittaa itseensä. Muut tiedot ovat tallennettu, mutta Aktiviteettipaketti -kenttä on tyhjennetty</b>';
-  return $messages;
+  echo 'true';
+  die();
 }
-add_filter('post_updated_messages', 'pof_custom_messages');
 
 add_action( 'admin_footer', 'jquery_sortable' );
 function jquery_sortable() { ?>
