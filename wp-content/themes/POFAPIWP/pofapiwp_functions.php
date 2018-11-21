@@ -1,40 +1,5 @@
 <?php
 
-/*
- * Check that taskgroup doesn't have itself as parent taskgroup
- */
-function pof_validate_taskgroup_field( $post_id ) {
-
-  if ( wp_is_post_revision( $post_id ) || get_post_type($post_id) != 'pof_post_taskgroup') {
-    return;
-  }
-
-  $taskgroup = get_field( 'suoritepaketti', $post_id);
-
-  if($taskgroup->ID == $post_id) {
-    update_field( 'suoritepaketti', '', $post_id );
-    add_post_meta( $post_id , 'invalid_taskgroup', 1 );
-  }
-}
-add_action( 'save_post', 'pof_validate_taskgroup_field' );
-
-function pof_redirect_location($location, $post_id){
-
-    if( get_post_meta($post_id, 'invalid_taskgroup', TRUE) == 1 ) {
-      $location = add_query_arg('message', 11, $location);
-      delete_post_meta($post_id, 'invalid_taskgroup');
-    }
-
-    return $location;
-}
-add_filter('redirect_post_location','pof_redirect_location',10,2);
-
-function pof_custom_messages($messages){
-  $messages['pof_post_taskgroup'][11] = '<b>Aktiviteettipaketti ei voi osoittaa itseensä. Muut tiedot ovat tallennettu, mutta Aktiviteettipaketti -kenttä on tyhjennetty</b>';
-  return $messages;
-}
-add_filter('post_updated_messages', 'pof_custom_messages');
-
 add_action( 'admin_footer', 'pof_validation_script' );
 function pof_validation_script() { ?>
   <script type="text/javascript">
@@ -54,7 +19,6 @@ function pof_validation_script() { ?>
 
       jQuery.post(ajaxurl, data, function(response) {
         if (response.indexOf('true') > -1 || response == true) {
-            console.log("Success");
             jQuery("#post").data("valid", true).submit();
         } else {
             jQuery('.pof-error').remove();
@@ -70,7 +34,6 @@ function pof_validation_script() { ?>
 }
 
 add_action( 'wp_ajax_pof_custom_validation', 'pof_custom_validation' );
-add_action( 'wp_ajax_update_menu_order', 'update_menu_order' );
 function pof_custom_validation() {
   check_ajax_referer( 'pre_publish_validation', 'security' );
 
@@ -96,6 +59,18 @@ function pof_custom_validation() {
       }
 
     }
+  }
+
+  // Taskgroups: Check that taskgroup doesn't have itself as a parent
+  if($post_type = 'pof_post_taskgroup') {
+    $taskgroup_id = $vars['acf']['field_5634d05b4db69'];
+    $post_id = $vars['post_ID'];
+
+    if($taskgroup_id === $post_id) {
+      _e("Aktiviteettipaketti ei voi olla itsensä aktiviteettipaketti");
+      die();
+    }
+
   }
 
   echo 'true';
