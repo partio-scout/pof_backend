@@ -1,7 +1,11 @@
 <?php
 
 add_action( 'admin_footer', 'pof_validation_script' );
-function pof_validation_script() { ?>
+function pof_validation_script() {
+  global $post;
+  if ( $post->post_type != 'pof_post_task' && $post->post_type != 'pof_post_taskgroup'){
+    return;
+  } ?>
   <script type="text/javascript">
   jQuery(document).ready(function(){
     jQuery('#publish').click(function() {
