@@ -44,7 +44,7 @@ function pof_custom_validation() {
   // Tasks: Check that additional taskgroups are from same program as primary taskgroup
   if($post_type = 'pof_post_task') {
     $primary_taskgroup = $vars['acf']['field_54f5bde393d24'];
-    $additional_taskgroups = $vars['acf']['field_5be2d365716ff'];
+    $additional_taskgroups = $vars['acf']['field_5beac55381ef1'];
 
     $object = (object) ['ID' => $primary_taskgroup, 'post_type' => $post_type];
     $primary_taskgroup_program = end(pof_get_parent_tree($object, array()))->ID;
