@@ -1,7 +1,11 @@
 <?php
 
 add_action( 'admin_footer', 'pof_validation_script' );
-function pof_validation_script() { ?>
+function pof_validation_script() {
+  global $post;
+  if ( $post->post_type != 'pof_post_task' && $post->post_type != 'pof_post_taskgroup'){
+    return;
+  } ?>
   <script type="text/javascript">
   jQuery(document).ready(function(){
     jQuery('#publish').click(function() {
@@ -19,7 +23,7 @@ function pof_validation_script() { ?>
 
       jQuery.post(ajaxurl, data, function(response) {
         if (response.indexOf('true') > -1 || response == true) {
-            jQuery("#post").data("valid", true).submit();
+            jQuery('#publish').data("valid", true).trigger('click');
         } else {
             jQuery('.pof-error').remove();
             jQuery('.wp-header-end').after('<div id="message" class="notice notice-error pof-error"><p>Virhe: ' + response + '</p></div>');
