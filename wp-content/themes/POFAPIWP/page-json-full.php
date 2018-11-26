@@ -331,6 +331,21 @@ function getJsonTasks($parent_id) {
 			$child = getJsonItemBaseDetails($child, $the_query->post);
 			$child = getJsonItemDetailsTask($child, $the_query->post);
 
+      $task_term = getJsonTaskTerm(get_post_meta($the_query->post->ID, "task_task_term", true), false);
+      if (empty($task_term)) {
+        $tree_array_orig = pof_get_parent_tree($the_query->post, array());
+        foreach ($tree_array_orig as $tree_item) {
+          $task_term = getJsonTaskTerm(get_post_meta($tree_item->ID, "taskgroup_subtask_term", true), false);
+
+          if ($task_term) {
+            $child->task_term = $task_term;
+            break;
+          }
+        }
+      } else {
+        $child->task_term = $task_term;
+      }
+
 			$child->title = $the_query->post->post_title;
       $child->order = $order_number;
       $order_number++;
