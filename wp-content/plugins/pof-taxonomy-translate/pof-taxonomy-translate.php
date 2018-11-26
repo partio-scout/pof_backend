@@ -372,10 +372,8 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 				$taxonomy_full_key = $taxonomy_base_key . "::" . $taxonomy_key;
 				$agegroup_id = $tmp["agegroup_id"];
 
-				$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key, $taxonomy_key, $agegroup_id, $selected_lang, false);
+				$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key, $taxonomy_key, $agegroup_id, $selected_lang, false, $selected_program);
         $taxonomy_deletion_key = 'taxonomy_delete_' . $taxonomy_key;
-
-
 
         if(isset($_POST[$taxonomy_deletion_key])) {
           $table_name = pof_taxonomy_translate_get_table_name();
@@ -430,7 +428,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 								'%d'
 							)
 						);
-						echo "<br />Updated" . $key . "";
+						echo "<br />Updated " . $key . "";
 					}
 				} else if (!empty($translation) && $item == "") {
           $wpdb->update(
