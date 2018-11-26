@@ -27,7 +27,13 @@ add_action( 'admin_menu', 'pof_taxonomy_translate_menu' );
 register_activation_hook( __FILE__, 'pof_taxonomy_translate_install' );
 
 global $pof_taxonomy_translate_db_version;
+global $selected_program;
 $pof_taxonomy_translate_db_version = '1.0';
+
+$selected_program = 0;
+if (isset($_POST['program'])) {
+  $selected_program = $_POST['program'];
+}
 
 
 function pof_taxonomy_translate_get_table_name() {
@@ -50,11 +56,13 @@ function pof_taxonomy_translate_install() {
 		agegroup_id bigint(20) NOT NULL,
 		content varchar(255) NOT NULL,
 		lang varchar(10) NOT NULL,
+    program bigint(20) DEFAULT 0 NOT NULL,
 		UNIQUE KEY id (id),
 		KEY taxonomy_slug (taxonomy_slug),
 		KEY agegroup_id (agegroup_id),
 		KEY content (content),
-		KEY lang (lang)
+		KEY lang (lang),
+    KEY program (program)
 	) $charset_collate;";
 
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -87,7 +95,41 @@ function pof_taxonomy_translate_get_languages() {
 	return $ret;
 }
 
-function pof_taxonomy_translate_get_agegroups() {
+function pof_taxonomy_translate_get_programs() {
+  $args = array(
+    'numberposts' => -1,
+    'posts_per_page' => -1,
+    'post_type' => 'pof_post_program',
+    'orderby' => 'title',
+    'order' => 'ASC'
+  );
+
+  $the_query = new WP_Query( $args );
+  $ret = array();
+
+  $tmp = new stdClass();
+	$tmp->id = 0;
+	$tmp->title = "Yhteiset";
+
+  $ret[0] = $tmp;
+
+  if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+      $the_query->the_post();
+
+      $tmp = new stdClass();
+			$tmp->id = $the_query->post->ID;
+			$tmp->title = $the_query->post->post_title;
+
+      $ret[] = $tmp;
+    }
+  }
+
+  return $ret;
+
+}
+
+function pof_taxonomy_translate_get_agegroups($program = false) {
 
 	$agegroups = array();
 
@@ -98,6 +140,11 @@ function pof_taxonomy_translate_get_agegroups() {
 		'orderby' => 'title',
 		'order' => 'ASC'
 	);
+
+  if($program !== false) {
+    $args['meta_key'] = 'suoritusohjelma';
+  	$args['meta_value'] = $program;
+  }
 
 	$the_query = new WP_Query( $args );
 
@@ -188,7 +235,7 @@ function pof_taxonomy_translate_get_translation_content($taxonomy_base_key, $tmp
     return "";
 }
 
-function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $agegroup_id, $selected_lang, $fallback = false) {
+function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $agegroup_id, $selected_lang, $fallback = false, $program = 0) {
 	$taxonomy_slug = $taxonomy_base_key . '::' . $tmp_key;
 
 	global $wpdb;
@@ -199,6 +246,7 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 		WHERE taxonomy_slug = '" . $taxonomy_slug . "'
 			AND lang = '".$selected_lang."'
 			AND agegroup_id = ".$agegroup_id."
+      AND program = ".$program."
 		"
 	);
 
@@ -253,6 +301,7 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 					'agegroup_id' => 0,
 					'lang' => 'fi',
           'content' => $tmp_key,
+          'program' => $selected_program,
           'time' => current_time( 'mysql' )
 				),
 				array(
@@ -287,11 +336,11 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
-	global $wpdb;
+	global $wpdb, $selected_program;
 	$table_name = pof_taxonomy_translate_get_table_name();
 
+  $programs = pof_taxonomy_translate_get_programs();
 	$languages = pof_taxonomy_translate_get_languages();
-	$agegroups = pof_taxonomy_translate_get_agegroups();
 
 	$selected_lang = 'fi';
 	if (isset($_POST['language'])) {
@@ -301,6 +350,12 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	if (isset($_POST['Change_lang'])) {
 		$selected_lang = $_POST['language'];
 	}
+
+  if (isset($_POST['program'])) {
+		$selected_program = $_POST['program'];
+	}
+
+  $agegroups = pof_taxonomy_translate_get_agegroups($selected_program);
 
 	if(isset($_POST['Submit'])) {
 
@@ -317,10 +372,8 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 				$taxonomy_full_key = $taxonomy_base_key . "::" . $taxonomy_key;
 				$agegroup_id = $tmp["agegroup_id"];
 
-				$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key, $taxonomy_key, $agegroup_id, $selected_lang, false);
+				$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key, $taxonomy_key, $agegroup_id, $selected_lang, false, $selected_program);
         $taxonomy_deletion_key = 'taxonomy_delete_' . $taxonomy_key;
-
-
 
         if(isset($_POST[$taxonomy_deletion_key])) {
           $table_name = pof_taxonomy_translate_get_table_name();
@@ -344,6 +397,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 							'agegroup_id' => (int) $agegroup_id,
 							'lang' => $selected_lang,
 							'content' => $item,
+              'program' => $selected_program,
               'time' => current_time( 'mysql' )
 						),
 						array(
@@ -374,7 +428,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 								'%d'
 							)
 						);
-						echo "<br />Updated" . $key . "";
+						echo "<br />Updated " . $key . "";
 					}
 				} else if (!empty($translation) && $item == "") {
           $wpdb->update(
@@ -416,6 +470,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 						'agegroup_id' => 0,
 						'lang' => 'fi',
 						'content' => $_POST['add_taxonomy_translate_key_0'],
+            'program' => $selected_program,
             'time' => current_time( 'mysql' )
 					),
 					array(
@@ -438,6 +493,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 							'agegroup_id' => $agegroup->id,
 							'lang' => 'fi',
 							'content' => $_POST['add_taxonomy_translate_key_'.$agegroup->id],
+              'program' => $selected_program,
               'time' => current_time( 'mysql' )
 						),
 						array(
@@ -469,13 +525,24 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
             $items = pof_taxonomy_translate_get_themes();
             break;
 		    default:
-		        $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+		        $items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 		}
 	}
 
 	echo '<div class="wrap">';
 	echo '<h1>'.$title.'</h1>';
 	echo '<form id="featured_upload" method="post" action="">';
+  echo 'Valitse ohjelma:';
+  echo '<select name="program">';
+  foreach ($programs as $program_key => $program) {
+    if ($program->id == $selected_program) {
+      echo '<option selected="selected" value="'.$program->id.'">'.$program->title.'</option>';
+    } else {
+      echo '<option value="'.$program->id.'">'.$program->title.'</option>';
+    }
+  }
+  echo '<br>';
+  echo '</select>';
 	echo 'Valitse kieli:';
 	echo '<select name="language">';
 	foreach ($languages as $lang_key => $lang) {
@@ -487,11 +554,13 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 	}
 	echo '</select>';
 	echo '<br />';
-	echo '<input type="submit" name="Change_lang" id="Change_lang" value="Vaihda kieli" />';
+	echo '<input type="submit" name="Change_lang" id="Change_lang" value="Vaihda" />';
 	echo '</form>';
 	echo '<br /><br /><br />';
 	echo '<form id="featured_upload" method="post" action="">';
 	echo '<input type="hidden" name="language" value="'.$selected_lang.'" />';
+  echo '<input type="hidden" name="program" value="'.$selected_program.'" />';
+  echo '<h2>Ohjelma: '.$programs[array_search($selected_program, array_column($programs, 'id'))]->title.' ('.$selected_program.')</h2>';
 	echo '<h2>Kieli: '.$languages[$selected_lang].' ('.$selected_lang.')</h2>';
 	echo '<table cellpadding="2" cellspacing="2" border="2">';
 	echo '<thead>';
@@ -514,14 +583,14 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 		foreach ($agegroups as $agegroup) {
 
 			echo '<td>';
-			$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key,$tmp_key, $agegroup->id, $selected_lang, false);
+			$translation = pof_taxonomy_translate_get_translation($taxonomy_base_key,$tmp_key, $agegroup->id, $selected_lang, false, $selected_program);
 
 			$translation_content = "";
 			if (!empty($translation)) {
 				$translation_content = $translation[0]->content;
 			}
 
-			echo '<input type="text" name="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" id="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" value="'.$translation_content.'" />';
+			echo '<input title="ID: ' . $translation[0]->id . '" type="text" name="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" id="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" value="'.$translation_content.'" />';
 			echo '</td>';
 		}
     echo '<td style="text-align:center;">';
@@ -560,13 +629,16 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 }
 
 
-function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower = false) {
+function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower = false, $program = false) {
 	$ret = array();
 
-	global $wpdb;
+	global $wpdb, $selected_program;
+
+  if($program) {
+    $selected_program = $program;
+  }
 
 	$table_name = pof_taxonomy_translate_get_table_name();
-
 
 	$translate_res = $wpdb->get_results(
 		"
@@ -575,6 +647,7 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
 		WHERE lang = 'fi'
 			AND agegroup_id = 0
 			AND taxonomy_slug LIKE '".$taxonomy_base_key."::%'
+      AND program = $selected_program
 
         ORDER BY taxonomy_slug, content
 		"
@@ -607,7 +680,7 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
 function pof_taxonomy_translate_places() {
 	$taxonomy_base_key = "place_of_performance";
 
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 	$title = "Suorituspaikat";
 	$title2 = "Suorituspaikka";
 
@@ -616,7 +689,7 @@ function pof_taxonomy_translate_places() {
 
 function pof_taxonomy_translate_groupsizes() {
 	$taxonomy_base_key = "groupsize";
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 	$title = "Ryhm&auml;koot";
 	$title2 = "Ryhm&auml;koko";
 
@@ -626,7 +699,7 @@ function pof_taxonomy_translate_groupsizes() {
 
 function pof_taxonomy_translate_mandatory() {
 	$taxonomy_base_key = "mandatory";
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 	$title = "Pakollisuus";
 	$title2 = "Pakollisuus";
 
@@ -636,7 +709,7 @@ function pof_taxonomy_translate_mandatory() {
 
 function pof_taxonomy_translate_taskduration() {
 	$taxonomy_base_key = "taskduration";
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 	$title = "Aktiviteetin kestot";
 	$title2 = "Kesto";
 
@@ -647,7 +720,7 @@ function pof_taxonomy_translate_taskduration() {
 
 function pof_taxonomy_translate_taskpreparationduration() {
 	$taxonomy_base_key = "taskpreaparationduration";
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 	$title = "Aktiviteetin valmistelun kestot";
 	$title2 = "Kesto";
 
@@ -778,7 +851,7 @@ function pof_taxonomy_translate_get_taskgroupterms() {
 
 function pof_taxonomy_translate_taskgroupterm() {
 	$taxonomy_base_key = "taskgroup_term";
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 
 	$items2 = pof_taxonomy_translate_get_taskgroupterms();
 
@@ -821,7 +894,7 @@ function pof_taxonomy_translate_get_taskterms() {
 
 function pof_taxonomy_translate_taskterm() {
 	$taxonomy_base_key = "task_term";
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 
 	$items2 = pof_taxonomy_translate_get_taskterms();
 
@@ -841,7 +914,7 @@ function pof_taxonomy_translate_taskterm() {
 
 function pof_taxonomy_translate_common() {
 	$taxonomy_base_key = "common";
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 
 	$title = "Yleiset";
 	$title2 = "Termi";
@@ -851,7 +924,7 @@ function pof_taxonomy_translate_common() {
 
 function pof_taxonomy_translate_search() {
 	$taxonomy_base_key = "search";
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 
 	$title = "Hakusivun yläkäsitteet";
 	$title2 = "Termi";
@@ -861,7 +934,7 @@ function pof_taxonomy_translate_search() {
 
 function pof_taxonomy_translate_api_type() {
 	$taxonomy_base_key = "apitype";
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 
 	$title = "Api Type";
 	$title2 = "Termi";

@@ -16,14 +16,28 @@ if (isset($_GET["tags"]) && trim($_GET["tags"]) != ''){
    $filter_tags = $_GET["tags"];
 }
 
+if (isset($_GET["program"]) && trim($_GET["program"]) != ''){
+  global $wpdb;
+  $program = $_GET["program"];
+  $program_id = $wpdb->get_var(
+   $wpdb->prepare(
+     "SELECT post_id
+     FROM $wpdb->postmeta
+     WHERE meta_key = 'post_guid' AND meta_value = %s",
+     $program
+   )
+  );
+}
+
 $ret = new stdClass();
 
 $languages = pof_taxonomy_translate_get_languages();
 
-function pof_pages_get_tags($languages, $items, $item_tax_key)
+function pof_pages_get_tags($languages, $items, $item_tax_key, $program_id)
 {
 	global $filter_langs;
 	$items_arr = array();
+
 	foreach ($languages as $lang_key => $lang) {
 		if ($filter_langs != "all" && !strstr($filter_langs, $lang_key)) {
 			continue;
@@ -37,7 +51,7 @@ function pof_pages_get_tags($languages, $items, $item_tax_key)
 			$tmp_item = new stdClass();
 			$tmp_item->key = trim($item_key);
 
-			$tmp_name = pof_taxonomy_translate_get_translation($item_tax_key, $item_key, 0, $lang_key, false);
+			$tmp_name = pof_taxonomy_translate_get_translation($item_tax_key, $item_key, 0, $lang_key, false, $program_id);
 
       $item_timestamp = $tmp_name[0]->time;
       if(strtotime($item_timestamp) > strtotime($lastModified)) {
@@ -60,42 +74,42 @@ function pof_pages_get_tags($languages, $items, $item_tax_key)
 if ($filter_tags == "all" || strstr($filter_tags, "paikka")) {
 	// Places
 	$item_tax_key = 'place_of_performance';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->paikka = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->paikka = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "ryhmakoko")) {
 	// Groupsizes
 	$item_tax_key = 'groupsize';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->ryhmakoko = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->ryhmakoko = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "pakollisuus")) {
 	// Mandatory
 	$item_tax_key = 'mandatory';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->pakollisuus = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->pakollisuus = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "suoritus_kesto")) {
 	//TaskDuration
 	$item_tax_key = 'taskduration';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->suoritus_kesto = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->suoritus_kesto = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "suoritus_valmistelu_kesto")) {
 	//TaskPreparationDuration
 	$item_tax_key = 'taskpreparationduration';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->suoritus_valmistelu_kesto = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->suoritus_valmistelu_kesto = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "tarvikkeet")) {
 	//Equipments
 	$item_tax_key = 'equpment';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
   $equipment_tags = [];
   foreach(get_terms('pof_tax_equipment', array('hide_empty' => false)) as $item) {
     $equipment_tags[$item->slug] = $item->name;
@@ -107,13 +121,13 @@ if ($filter_tags == "all" || strstr($filter_tags, "tarvikkeet")) {
     }
   }
 
-	$ret->tarvikkeet = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$ret->tarvikkeet = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "taitoalueet")) {
 	//Taitoalueet
 	$item_tax_key = 'skillarea';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
   $skillarea_tags = [];
   foreach(get_terms('pof_tax_skillarea', array('hide_empty' => false)) as $item) {
     $skillarea_tags[$item->slug] = $item->name;
@@ -124,13 +138,13 @@ if ($filter_tags == "all" || strstr($filter_tags, "taitoalueet")) {
       unset($items[$item_key]);
     }
   }
-	$ret->taitoalueet = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$ret->taitoalueet = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
 	//Kasvatustavoitteet
 	$item_tax_key = 'growth_target';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
   $growth_target_tags = [];
   foreach(get_terms('pof_tax_growth_target', array('hide_empty' => false)) as $item) {
     $growth_target_tags[$item->slug] = $item->name;
@@ -141,13 +155,13 @@ if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
       unset($items[$item_key]);
     }
   }
-	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$ret->kasvatustavoitteet = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "johtamistaidot")) {
 	//Kasvatustavoitteet
 	$item_tax_key = 'leadership';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
   $leadership_tags = [];
   foreach(get_terms('pof_tax_leadership', array('hide_empty' => false)) as $item) {
     $leadership_tags[$item->slug] = $item->name;
@@ -158,48 +172,48 @@ if ($filter_tags == "all" || strstr($filter_tags, "johtamistaidot")) {
       unset($items[$item_key]);
     }
   }
-	$ret->johtamistaidot = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$ret->johtamistaidot = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "aktiviteettipaketin_ylakasite")) {
 	//Aktiviteettipaketin ylakasite
 	$item_tax_key = 'taskgroup_term';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->aktiviteettipaketin_ylakasite = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->aktiviteettipaketin_ylakasite = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "aktiviteetin_ylakasite")) {
 	//Aktiviteetin yläkäsite
 	$item_tax_key = 'task_term';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->aktiviteetin_ylakasite = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->aktiviteetin_ylakasite = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "yleiset")) {
 	//Yleiset
 	$item_tax_key = 'common';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->yleiset = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->yleiset = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "haku")) {
 	//Haku
 	$item_tax_key = 'search';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->haku = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->haku = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "api_type")) {
 	//Api type
 	$item_tax_key = 'apitype';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
-	$ret->api_type = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
+	$ret->api_type = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 if ($filter_tags == "all" || strstr($filter_tags, "teemat")) {
 	//Teemat
 	$item_tax_key = 'theme';
-	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key);
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($item_tax_key, false, $program_id);
   $theme_tags = [];
   foreach(get_terms('pof_tax_theme', array('hide_empty' => false)) as $item) {
     $theme_tags[$item->slug] = $item->name;
@@ -211,7 +225,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "teemat")) {
     }
   }
 
-	$ret->teemat = pof_pages_get_tags($languages, $items, $item_tax_key);
+	$ret->teemat = pof_pages_get_tags($languages, $items, $item_tax_key, $program_id);
 }
 
 echo json_encode($ret);
