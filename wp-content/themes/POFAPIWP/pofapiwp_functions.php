@@ -45,9 +45,12 @@ function pof_custom_validation() {
 
   $post_type = $vars['post_type'];
 
-  // Tasks: Check that additional taskgroups are from same program as primary taskgroup
+  // Task:
+  // - Check that additional taskgroups are from same program as primary taskgroup
+  // - Check that additional taskgroup is not same as primary taskgroup
   if($post_type = 'pof_post_task') {
     $primary_taskgroup = $vars['acf']['field_54f5bde393d24'];
+    //$additional_taskgroups = $vars['acf']['field_5be2d365716ff'];
     $additional_taskgroups = $vars['acf']['field_5beac55381ef1'];
 
     $object = (object) ['ID' => $primary_taskgroup, 'post_type' => $post_type];
@@ -59,6 +62,11 @@ function pof_custom_validation() {
 
       if($taskgroup_program != $primary_taskgroup_program) {
         _e("Ylimääräisten aktiviteettipakettien täytyy kuulua samaan ohjelmaan, kuin ensisijaisen aktiviteettipaketin");
+        die();
+      }
+
+      if($taskgroup_object->ID == $object->ID) {
+        _e("Sama aktiviteettipaketti ei voi olla asetettuna sekä ensisijaiseksi että toissijaiseksi");
         die();
       }
 
