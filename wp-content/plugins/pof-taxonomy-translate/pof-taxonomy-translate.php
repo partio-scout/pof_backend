@@ -592,7 +592,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 				$translation_content = $translation[0]->content;
 			}
 
-			echo '<input type="text" name="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" id="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" value="'.$translation_content.'" />';
+			echo '<input title="ID: ' . $translation[0]->id . '" type="text" name="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" id="taxonomy_translate_'.$tmp_key.'_'.$agegroup->id.'" value="'.$translation_content.'" />';
 			echo '</td>';
 		}
     echo '<td style="text-align:center;">';
