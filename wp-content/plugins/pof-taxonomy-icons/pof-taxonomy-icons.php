@@ -78,7 +78,8 @@ function pof_taxonomy_icons_get_agegroups() {
 	$tmp = new stdClass();
 	$tmp->id = 0;
 	$tmp->title = "Default";
-    $tmp->guid = "";
+  $tmp->guid = "";
+  $tmp->program = 0;
 
 	$agegroups[0] = $tmp;
 
@@ -90,6 +91,7 @@ function pof_taxonomy_icons_get_agegroups() {
 			$tmp->id = $the_query->post->ID;
 			$tmp->title = $the_query->post->post_title;
 			$tmp->guid = get_post_meta( $the_query->post->ID, 'post_guid', true);
+      $tmp->program = get_post_meta( $the_query->post->ID, 'suoritusohjelma', true);
 			$min_age = get_field("agegroup_min_age");
 
 			$agegroups[$min_age] = $tmp;
@@ -286,17 +288,37 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 
 
 	}
-
+  ?>
+  <script>
+    jQuery(document).ready(function(){
+      jQuery("#program").change(function () {
+        jQuery('.agegroup').show();
+        var agegroup = this.value;
+        if(agegroup != 0) {
+          jQuery('.agegroup:not(.' + agegroup + ')').hide();
+          jQuery('.agegroup.0').show();
+        }
+      });
+    });
+  </script>
+  <?php
 	echo '<div class="wrap">';
 	echo '<h1>'.$title.'</h1>';
 	echo '<form id="featured_upload" method="post" action="" enctype="multipart/form-data">';
-
+  echo "Valitse ohjelma:";
+  echo '<select id="program" style="margin-bottom:10px;">';
+  $programs = pof_taxonomy_icons_get_programs();
+  foreach ($programs as $program_key => $program) {
+    echo '<option value="'.$program->id.'">'.$program->title.'</option>';
+  }
+  echo '<br>';
+  echo '</select>';
 	echo '<table cellpadding="2" cellspacing="2" border="2">';
 	echo '<thead>';
 	echo '<tr>';
 	echo '<th><h2>'.$title2.'</h2></th>';
 	foreach ($agegroups as $agegroup) {
-		echo '<th><h2>'.$agegroup->title.'</h2></th>';
+		echo '<th class="agegroup '.$agegroup->program.'"><h2>'.$agegroup->title.'</h2></th>';
 	}
 	echo '</tr>';
 	echo '</thead>';
@@ -307,7 +329,7 @@ function pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2) {
 		echo '<th>'.$tmp_title.'<br /> ('.$tmp_key.')</th>';
 		foreach ($agegroups as $agegroup) {
 
-			echo '<td>';
+			echo '<td class="agegroup '.$agegroup->program.'">';
 			$icon = pof_taxonomy_icons_get_icon($taxonomy_base_key,$tmp_key, $agegroup->id);
 
 			if (empty($icon)) {
@@ -502,4 +524,38 @@ function pof_taxonomy_icons_growthtarget() {
 	$title2 = "Kasvatustavoitteen avainsana";
 
 	pof_taxonomy_icons_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_icons_get_programs() {
+  $args = array(
+    'numberposts' => -1,
+    'posts_per_page' => -1,
+    'post_type' => 'pof_post_program',
+    'orderby' => 'title',
+    'order' => 'ASC'
+  );
+
+  $the_query = new WP_Query( $args );
+  $ret = array();
+
+  $tmp = new stdClass();
+	$tmp->id = 0;
+	$tmp->title = "Kaikki";
+
+  $ret[0] = $tmp;
+
+  if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+      $the_query->the_post();
+
+      $tmp = new stdClass();
+			$tmp->id = $the_query->post->ID;
+			$tmp->title = $the_query->post->post_title;
+
+      $ret[] = $tmp;
+    }
+  }
+
+  return $ret;
+
 }
