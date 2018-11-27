@@ -2272,7 +2272,8 @@ function pof_filter_suggestions($query) {
 
         foreach($results as $key => $post) {
           $task_id = get_post_meta($post->ID, 'pof_suggestion_task', true);
-          $task = get_post($task_id);
+          $task = (object) ['ID' => $task_id, 'post_type' => 'pof_post_task'];
+
           $program_id = end(pof_get_parent_tree($task, array()))->ID;
 
           if($program_id != $_GET['pof_program'])  {
