@@ -2192,3 +2192,76 @@ function pof_curl_post_async($url, $params = array()){
 
     fclose($fp);
 }
+
+function pof_get_programs() {
+  $args = array(
+    'numberposts' => -1,
+    'posts_per_page' => -1,
+    'post_type' => 'pof_post_program',
+    'orderby' => 'title',
+    'order' => 'ASC'
+  );
+
+  $the_query = new WP_Query( $args );
+  $ret = array();
+
+  if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+      $the_query->the_post();
+
+      $tmp = new stdClass();
+			$tmp->id = $the_query->post->ID;
+			$tmp->title = $the_query->post->post_title;
+
+      $ret[] = $tmp;
+    }
+  }
+
+  return $ret;
+
+}
+
+add_action( 'restrict_manage_posts', 'wpse45436_admin_posts_filter_restrict_manage_posts' );
+function wpse45436_admin_posts_filter_restrict_manage_posts(){
+    $type = 'post';
+    if (isset($_GET['post_type'])) {
+        $type = $_GET['post_type'];
+    }
+
+    $programs = pof_get_programs();
+
+    //only add filter to post type you want
+    if ('pof_post_suggestion' == $type){
+        ?>
+        <select name="pof_program">
+        <option value="">Suodata ohjelman mukaan</option>
+        <?php
+            $current_v = isset($_GET['pof_program'])? $_GET['pof_program']:'';
+            foreach ($programs as $program) {
+                printf
+                    (
+                        '<option value="%s"%s>%s</option>',
+                        $program->id,
+                        $program->id == $current_v ? ' selected="selected"':'',
+                        $program->title
+                    );
+                }
+        ?>
+        </select>
+        <?php
+    }
+}
+
+add_filter( 'parse_query', 'wpse45436_posts_filter' );
+function wpse45436_posts_filter( $query ){
+    global $pagenow;
+    $type = 'post';
+    if (isset($_GET['post_type'])) {
+        $type = $_GET['post_type'];
+    }
+    if ( 'pof_post_suggestion' == $type && is_admin() && $pagenow=='edit.php' && isset($_GET['pof_program']) && $_GET['pof_program'] != '') {
+
+        $query->query_vars['meta_key'] = 'pof_suggestion_task';
+        $query->query_vars['meta_value'] = $_GET['pof_program'];
+    }
+}
