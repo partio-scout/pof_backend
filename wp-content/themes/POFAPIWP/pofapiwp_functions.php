@@ -2221,8 +2221,7 @@ function pof_get_programs() {
 
 }
 
-add_action( 'restrict_manage_posts', 'wpse45436_admin_posts_filter_restrict_manage_posts' );
-function wpse45436_admin_posts_filter_restrict_manage_posts(){
+function pof_display_program_filter(){
     $type = 'post';
     if (isset($_GET['post_type'])) {
         $type = $_GET['post_type'];
@@ -2251,17 +2250,39 @@ function wpse45436_admin_posts_filter_restrict_manage_posts(){
         <?php
     }
 }
+add_action( 'restrict_manage_posts', 'pof_display_program_filter' );
 
-add_filter( 'parse_query', 'wpse45436_posts_filter' );
-function wpse45436_posts_filter( $query ){
-    global $pagenow;
+function pof_filter_suggestions($query) {
+
+    // Make sure we're in the admin and it's the main query
+    if ( !is_admin() && !is_main_query() ) {
+        return;
+    }
+
+    global $wpdb, $pagenow;
+
     $type = 'post';
     if (isset($_GET['post_type'])) {
         $type = $_GET['post_type'];
     }
-    if ( 'pof_post_suggestion' == $type && is_admin() && $pagenow=='edit.php' && isset($_GET['pof_program']) && $_GET['pof_program'] != '') {
 
-        $query->query_vars['meta_key'] = 'pof_suggestion_task';
-        $query->query_vars['meta_value'] = $_GET['pof_program'];
+    if ( 'pof_post_suggestion' == $type && is_admin() && $pagenow=='edit.php' && isset($_GET['pof_program']) && $_GET['pof_program'] != '') {
+        $to_remove = array();
+        $results = $wpdb->get_results( "SELECT ID FROM wp_posts WHERE post_type = 'pof_post_suggestion'", OBJECT );
+
+        foreach($results as $key => $post) {
+          $task_id = get_post_meta($post->ID, 'pof_suggestion_task', true);
+          $task = get_post($task_id);
+          $program_id = end(pof_get_parent_tree($task, array()))->ID;
+
+          if($program_id != $_GET['pof_program'])  {
+            $to_remove[] = $post->ID;
+          }
+        }
+
+        $query->set( 'post__not_in', $to_remove );
+        return;
     }
+
 }
+add_action('pre_get_posts', 'pof_filter_suggestions');
