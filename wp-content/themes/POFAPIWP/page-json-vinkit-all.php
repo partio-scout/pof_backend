@@ -117,10 +117,13 @@ else {
 
             $suggestion =  $the_query->post;
             $task_post_id = get_post_meta( $suggestion->ID, "pof_suggestion_task", true );
-            $suggestion_program_id = end( pof_get_parent_tree( (object) ['ID' => $task_post_id, 'post_type' => 'pof_post_task'], array() ) )->ID;
 
-            if($suggestion_program_id != $post_id) {
-              continue;
+            if(!empty($post_guid)) {
+              $suggestion_program_id = end( pof_get_parent_tree( (object) ['ID' => $task_post_id, 'post_type' => 'pof_post_task'], array() ) )->ID;
+
+              if($suggestion_program_id != $post_id) {
+                continue;
+              }
             }
 
             $suggestiong_writer = get_post_meta( $suggestion->ID, "pof_suggestion_writer", true );
