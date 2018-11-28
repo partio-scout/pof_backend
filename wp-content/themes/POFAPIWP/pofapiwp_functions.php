@@ -2252,6 +2252,26 @@ function pof_display_program_filter(){
 }
 add_action( 'restrict_manage_posts', 'pof_display_program_filter' );
 
+function pof_get_agegroup($post_id) {
+  $agegroup = get_post_meta($post_id, 'ikakausi', true);
+  $taskgroup = get_post_meta($post_id, 'suoritepaketti', true);
+
+  if(!$agegroup && !$taskgroup) {
+    return array();
+  }
+
+  // ACF saves empty values as 'null' string in some versions
+	if(empty($agegroup) || $agegroup == 'null') {
+		$agegroup = pof_get_agegroup($taskgroup);
+	}
+
+  if(empty($agegroup)) {
+    echo "Returning empty";
+  }
+
+	return $agegroup;
+}
+
 function pof_filter_suggestions($query) {
 
     // Make sure we're in the admin and it's the main query
@@ -2272,11 +2292,16 @@ function pof_filter_suggestions($query) {
 
         foreach($results as $key => $post) {
           $task_id = get_post_meta($post->ID, 'pof_suggestion_task', true);
+          if(!$task_id) {
+            continue;
+          }
           $task = (object) ['ID' => $task_id, 'post_type' => 'pof_post_task'];
 
-          $program_id = end(pof_get_parent_tree($task, array()))->ID;
+          $task_taskgroup = get_post_meta($task_id, 'suoritepaketti', true);
+          $task_agegroup = pof_get_agegroup($task_taskgroup);
+          $task_program = get_post_meta($task_agegroup, 'suoritusohjelma', true);
 
-          if($program_id != $_GET['pof_program'])  {
+          if($task_program != $_GET['pof_program'])  {
             $to_remove[] = $post->ID;
           }
         }
