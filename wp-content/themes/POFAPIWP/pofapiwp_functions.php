@@ -2252,6 +2252,9 @@ function pof_display_program_filter(){
 }
 add_action( 'restrict_manage_posts', 'pof_display_program_filter' );
 
+/*
+ * Return agegroup of given taskgroup
+ */
 function pof_get_agegroup($post_id) {
   $agegroup = get_post_meta($post_id, 'ikakausi', true);
   $taskgroup = get_post_meta($post_id, 'suoritepaketti', true);
@@ -2265,20 +2268,13 @@ function pof_get_agegroup($post_id) {
 		$agegroup = pof_get_agegroup($taskgroup);
 	}
 
-  if(empty($agegroup)) {
-    echo "Returning empty";
-  }
-
 	return $agegroup;
 }
 
+/*
+ * Filter suggestions on admin view based of given program
+ */
 function pof_filter_suggestions($query) {
-
-    // Make sure we're in the admin and it's the main query
-    if ( !is_admin() && !is_main_query() ) {
-        return;
-    }
-
     global $wpdb, $pagenow;
 
     $type = 'post';
