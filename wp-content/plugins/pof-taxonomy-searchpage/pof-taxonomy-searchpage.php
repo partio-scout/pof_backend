@@ -68,7 +68,7 @@ function pof_taxonomy_searchpage_menu() {
 
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Tarvikkeet', 'Tarvikkeet', 'manage_options', 'pof_taxonomy_searchpage_equpments-handle', 'pof_taxonomy_searchpage_equpments');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Taitoalueet', 'Taitoalueet', 'manage_options', 'pof_taxonomy_searchpage_skillareas-handle', 'pof_taxonomy_searchpage_skillareas');
-    add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'manage_options', 'pof_taxonomy_searchpage_growthtarget-handle', 'pof_taxonomy_searchpage_growthtarget');
+  add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Kasvatustavoitteen avainsanat', 'Kasvatustavoitteen avainsana', 'manage_options', 'pof_taxonomy_searchpage_growthtarget-handle', 'pof_taxonomy_searchpage_growthtarget');
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Johtamistaidot', 'Johtamistaidot', 'manage_options', 'pof_taxonomy_searchpage_leaderships-handle', 'pof_taxonomy_searchpage_leaderships');
 
 	add_submenu_page( 'pof_taxonomy_searchpage_frontpage-handle', 'Aktiviteettipaketin yl&auml;k&auml;site', 'Aktiviteettipaketin yl&auml;k&auml;site', 'manage_options', 'pof_taxonomy_searchpage_taskgroupterm-handle', 'pof_taxonomy_searchpage_taskgroupterm');
@@ -94,13 +94,25 @@ function pof_taxonomy_searchpage_frontpage() {
     'growth_target' => 'Kasvatustavoitteen avainsanat',
     'leadership' => 'Johtamistaidot'
   ];
+
+  $args = array(
+    'numberposts' => -1,
+    'posts_per_page' => -1,
+    'post_type' => 'pof_post_program'
+  );
+
+  $programs = get_posts( $args );
+
 	echo '<div class="wrap">';
 
   if(isset($_POST['update-fields'])) {
 
     foreach ($searchItems as $key => $item) {
-      if(isset($_POST['taxonomy_searchoptions_' . $key])) {
-        update_option( 'taxonomy_searchoptions_' . $key, $_POST['taxonomy_searchoptions_' . $key]);
+      foreach($programs as $program) {
+        $field_key = 'taxonomy_searchoptions_' . $key . '_' . $program->ID;
+        if(isset($_POST[$field_key])) {
+          update_option( $field_key, $_POST[$field_key]);
+        }
       }
     }
 
@@ -128,25 +140,29 @@ function pof_taxonomy_searchpage_frontpage() {
     <thead>
       <tr>
         <th><h2>Kenttä</h2></th>
-        <th><h2>Tyyppi</h2></th>
+        <!-- <th><h2>Tyyppi</h2></th> -->
+        <?php foreach($programs as $program): ?>
+            <th><h2><?php echo $program->post_title; ?><h2></th>
+        <?php endforeach; ?>
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($searchItems as $key => $item): ?>
-        <?php
-        $select_name = "taxonomy_searchoptions_$key";
-        $selected_value = get_option('taxonomy_searchoptions_' . $key);
-
-        ?>
+      <?php foreach ($searchItems as $item_key => $item): ?>
       <tr>
         <td><?php echo $item; ?></td>
-        <td>
-          <select name="<?php echo $select_name; ?>">
-            <?php foreach ($searchTypes as $key => $item): ?>
-              <option value="<?php echo sanitize_title($item); ?>" <?php echo $selected_value == sanitize_title($item) ? "selected": ""?>><?php echo $item; ?></option>
-            <?php endforeach; ?>
-          </select>
-        </td>
+        <?php foreach($programs as $program): ?>
+          <?php
+          $select_name = 'taxonomy_searchoptions_' . $item_key . '_' . $program->ID;
+          $selected_value = get_option($select_name);
+          ?>
+          <td>
+            <select name="<?php echo $select_name; ?>">
+              <?php foreach ($searchTypes as $key => $item): ?>
+                <option value="<?php echo sanitize_title($item); ?>" <?php echo $selected_value == sanitize_title($item) ? "selected": ""?>><?php echo $item; ?></option>
+              <?php endforeach; ?>
+            </select>
+          </td>
+        <?php endforeach; ?>
       </tr>
     <?php endforeach; ?>
     </tbody>
