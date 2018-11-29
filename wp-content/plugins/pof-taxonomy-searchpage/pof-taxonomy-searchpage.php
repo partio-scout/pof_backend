@@ -46,8 +46,10 @@ function pof_taxonomy_searchpage_install() {
 	$sql = "CREATE TABLE $table_name (
 		taxonomy_base varchar(255) DEFAULT '' NOT NULL,
 		taxonomy_slug varchar(255) DEFAULT '' NOT NULL,
+    program bigint(20) DEFAULT 0 NOT NULL,
 		UNIQUE KEY taxonomy_slug (`taxonomy_slug` (191)),
 		KEY taxonomy_base (taxonomy_base)
+    KEY program (program)
         ) $charset_collate;";
 
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
