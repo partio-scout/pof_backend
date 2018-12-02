@@ -213,8 +213,6 @@ function pof_taxonomy_searchpage_parser_taxonomy_key($tmpkey) {
 	return $ret;
 }
 
-
-
 function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2, $additional_text = "") {
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
@@ -234,10 +232,7 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
   $searchpage_selected_program = $programs[0]->ID;
   if (isset($_POST['program'])) {
     $searchpage_selected_program = $_POST['program'];
-    echo "Program set to " . $searchpage_selected_program;
   }
-
-  echo $searchpage_selected_program;
 
 	if(isset($_POST['Submit'])) {
         $items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $searchpage_selected_program);
@@ -259,8 +254,7 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 
 				$taxonomy_key = $tmp["key"];
 				$taxonomy_full_key = $taxonomy_base_key . "::" . $tmp["key"];
-        echo "program2 = " . $searchpage_selected_program;
-        echo $x;
+
 				$tmp = $wpdb->insert(
 					$table_name,
 					array(
