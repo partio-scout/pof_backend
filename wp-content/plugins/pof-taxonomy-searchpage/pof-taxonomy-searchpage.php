@@ -26,8 +26,13 @@ add_action( 'admin_menu', 'pof_taxonomy_searchpage_menu' );
 
 register_activation_hook( __FILE__, 'pof_taxonomy_searchpage_install' );
 
-global $pof_taxonomy_searchpage_db_version;
+global $pof_taxonomy_searchpage_db_version, $selected_program;
 $pof_taxonomy_searchpage_db_version = '1.0';
+
+$selected_program = 0;
+if (isset($_POST['program'])) {
+  $selected_program = $_POST['program'];
+}
 
 
 function pof_taxonomy_searchpage_get_table_name() {
@@ -201,11 +206,6 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 	global $wpdb;
 	$table_name = pof_taxonomy_searchpage_get_table_name();
 
-  $selected_program = 0;
-  if (isset($_POST['program'])) {
-    $selected_program = $_POST['program'];
-  }
-
   $args = array(
     'numberposts' => -1,
     'posts_per_page' => -1,
@@ -213,6 +213,11 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
   );
 
   $programs = get_posts( $args );
+
+  $selected_program = $programs[0]->ID;
+  if (isset($_POST['Change_program']) && isset($_POST['program'])) {
+    $selected_program = $_POST['program'];
+  }
 
 	if(isset($_POST['Submit'])) {
 
@@ -260,7 +265,6 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 	echo '<form id="program_form" method="post" action="">';
   echo 'Valitse ohjelma:';
   echo '<select name="program">';
-  echo '<option value="0">Yhteiset</option>';
   foreach ($programs as $program) {
     if ($program->ID == $selected_program) {
       echo '<option selected="selected" value="'.$program->ID.'">'.$program->post_title.'</option>';
@@ -304,7 +308,11 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower = false, $program = 0) {
 	$ret = array();
 
-	global $wpdb;
+	global $wpdb, $selected_program;
+
+  if(isset($selected_program)) {
+    $program = $selected_program;
+  }
 
 	$table_name = pof_taxonomy_searchpage_get_table_name();
 
@@ -316,6 +324,7 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
 
     } else {
         $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower, $program);
+        $all_items = array_merge($all_items, pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower, 0));
     }
 
 

@@ -634,10 +634,10 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
 
 	global $wpdb, $selected_program;
 
-  if($program) {
+  if(isset($program) && $program !== false) {
     $selected_program = $program;
   }
-
+  
 	$table_name = pof_taxonomy_translate_get_table_name();
 
 	$translate_res = $wpdb->get_results(
