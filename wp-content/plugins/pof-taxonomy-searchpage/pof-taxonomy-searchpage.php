@@ -26,7 +26,7 @@ add_action( 'admin_menu', 'pof_taxonomy_searchpage_menu' );
 
 register_activation_hook( __FILE__, 'pof_taxonomy_searchpage_install' );
 
-global $pof_taxonomy_searchpage_db_version, $selected_program;
+global $pof_taxonomy_searchpage_db_version, $searchpage_selected_program;
 $pof_taxonomy_searchpage_db_version = '1.0';
 
 $args = array(
@@ -37,9 +37,9 @@ $args = array(
 
 $programs = get_posts( $args );
 
-$selected_program = $programs[0]->ID;
+$searchpage_selected_program = $programs[0]->ID;
 if (isset($_POST['Change_program']) && isset($_POST['program'])) {
-  $selected_program = $_POST['program'];
+  $searchpage_selected_program = $_POST['program'];
 }
 
 function pof_taxonomy_searchpage_get_programs() {
@@ -220,7 +220,7 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 
-	global $wpdb;
+	global $wpdb, $searchpage_selected_program;
 	$table_name = pof_taxonomy_searchpage_get_table_name();
 
   $args = array(
@@ -231,16 +231,24 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 
   $programs = get_posts( $args );
 
-	if(isset($_POST['Submit'])) {
+  $searchpage_selected_program = $programs[0]->ID;
+  if (isset($_POST['program'])) {
+    $searchpage_selected_program = $_POST['program'];
+    echo "Program set to " . $searchpage_selected_program;
+  }
 
-        $items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+  echo $searchpage_selected_program;
+
+	if(isset($_POST['Submit'])) {
+        $items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $searchpage_selected_program);
 
         $wpdb->delete(
 			$table_name,
 			array(
-				'taxonomy_base' => $taxonomy_base_key
+				'taxonomy_base' => $taxonomy_base_key,
+        'program'       => $searchpage_selected_program
 			),
-			array( '%s' )
+			array( '%s', '%d' )
 		);
 
         echo "Deleted all";
@@ -251,25 +259,33 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 
 				$taxonomy_key = $tmp["key"];
 				$taxonomy_full_key = $taxonomy_base_key . "::" . $tmp["key"];
-
+        echo "program2 = " . $searchpage_selected_program;
+        echo $x;
 				$tmp = $wpdb->insert(
 					$table_name,
 					array(
 						'taxonomy_slug' => $taxonomy_full_key,
-						'taxonomy_base' => $taxonomy_base_key
+						'taxonomy_base' => $taxonomy_base_key,
+            'program'       => $searchpage_selected_program
 					),
 					array(
 						'%s',
-						'%s'
+						'%s',
+            '%d'
 					)
 				);
 				echo "<br />Added " . $key . "";
+        print_r(array(
+          'taxonomy_slug' => $taxonomy_full_key,
+          'taxonomy_base' => $taxonomy_base_key,
+          'program'       => $searchpage_selected_program
+        ));
 			}
 		}
         echo "<br />";
 
 		// reload items:
-		$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $selected_program);
+		$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $searchpage_selected_program);
 	}
 
 	echo '<div class="wrap">';
@@ -278,7 +294,7 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
   echo 'Valitse ohjelma:';
   echo '<select name="program">';
   foreach ($programs as $program) {
-    if ($program->ID == $selected_program) {
+    if ($program->ID == $searchpage_selected_program) {
       echo '<option selected="selected" value="'.$program->ID.'">'.$program->post_title.'</option>';
     } else {
       echo '<option value="'.$program->ID.'">'.$program->post_title.'</option>';
@@ -288,6 +304,7 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
   echo '<input type="submit" name="Change_program" id="Change_program" value="Vaihda" />';
   echo '</form>';
   echo '<form id="featured_upload" method="post" action="">';
+  echo '<input type="hidden" name="program" value="'.$searchpage_selected_program.'" />';
 	echo '<table cellpadding="2" cellspacing="2" border="2">';
 	echo '<thead>';
 	echo '<tr>';
@@ -320,10 +337,10 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower = false, $program = 0) {
 	$ret = array();
 
-	global $wpdb, $selected_program;
+	global $wpdb, $searchpage_selected_program;
 
-  if(isset($selected_program)) {
-    $program = $selected_program;
+  if(isset($searchpage_selected_program)) {
+    $program = $searchpage_selected_program;
   }
 
 	$table_name = pof_taxonomy_searchpage_get_table_name();
@@ -372,8 +389,8 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
 function pof_taxonomy_searchpage_places() {
 	$taxonomy_base_key = "place_of_performance";
 
-  global $selected_program;
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, false, $selected_program);
+  global $searchpage_selected_program;
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, false, $searchpage_selected_program);
 	$title = "Suorituspaikat";
 	$title2 = "Suorituspaikka";
 
@@ -383,11 +400,11 @@ function pof_taxonomy_searchpage_places() {
 function pof_taxonomy_searchpage_groupsizes() {
 	$taxonomy_base_key = "groupsize";
 
-  global $selected_program;
-  if(!$selected_program) {
-    $selected_program = pof_taxonomy_searchpage_get_programs()[0]->ID;
+  global $searchpage_selected_program;
+  if(!$searchpage_selected_program) {
+    $searchpage_selected_program = pof_taxonomy_searchpage_get_programs()[0]->ID;
   }
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, false, $selected_program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, false, $searchpage_selected_program);
 	$title = "Ryhm&auml;koot";
 	$title2 = "Ryhm&auml;koko";
 
@@ -398,8 +415,11 @@ function pof_taxonomy_searchpage_groupsizes() {
 function pof_taxonomy_searchpage_mandatory() {
 	$taxonomy_base_key = "mandatory";
 
-  global $selected_program;
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+  global $searchpage_selected_program;
+  if(!$searchpage_selected_program) {
+    $searchpage_selected_program = pof_taxonomy_searchpage_get_programs()[0]->ID;
+  }
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, false, $searchpage_selected_program);
 	$title = "Pakollisuus";
 	$title2 = "Pakollisuus";
 
@@ -410,8 +430,11 @@ function pof_taxonomy_searchpage_mandatory() {
 function pof_taxonomy_searchpage_taskduration() {
 	$taxonomy_base_key = "taskduration";
 
-  global $selected_program;
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+  global $searchpage_selected_program;
+  if(!$searchpage_selected_program) {
+    $searchpage_selected_program = pof_taxonomy_searchpage_get_programs()[0]->ID;
+  }
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, false, $searchpage_selected_program);
 	$title = "Aktiviteetin kestot";
 	$title2 = "Kesto";
 
@@ -423,8 +446,11 @@ function pof_taxonomy_searchpage_taskduration() {
 function pof_taxonomy_searchpage_taskpreparationduration() {
 	$taxonomy_base_key = "taskpreaparationduration";
 
-  global $selected_program;
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+  global $searchpage_selected_program;
+  if(!$searchpage_selected_program) {
+    $searchpage_selected_program = pof_taxonomy_searchpage_get_programs()[0]->ID;
+  }
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, false, $searchpage_selected_program);
 	$title = "Aktiviteetin valmistelun kestot";
 	$title2 = "Kesto";
 
