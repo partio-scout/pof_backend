@@ -201,6 +201,19 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 	global $wpdb;
 	$table_name = pof_taxonomy_searchpage_get_table_name();
 
+  $selected_program = 0;
+  if (isset($_POST['program'])) {
+    $selected_program = $_POST['program'];
+  }
+
+  $args = array(
+    'numberposts' => -1,
+    'posts_per_page' => -1,
+    'post_type' => 'pof_post_program'
+  );
+
+  $programs = get_posts( $args );
+
 	if(isset($_POST['Submit'])) {
 
         $items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
@@ -239,12 +252,26 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
         echo "<br />";
 
 		// reload items:
-		$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+		$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $selected_program);
 	}
 
 	echo '<div class="wrap">';
 	echo '<h1>'.$title.'</h1>';
-	echo '<form id="featured_upload" method="post" action="">';
+	echo '<form id="program_form" method="post" action="">';
+  echo 'Valitse ohjelma:';
+  echo '<select name="program">';
+  echo '<option value="0">Yhteiset</option>';
+  foreach ($programs as $program) {
+    if ($program->ID == $selected_program) {
+      echo '<option selected="selected" value="'.$program->ID.'">'.$program->post_title.'</option>';
+    } else {
+      echo '<option value="'.$program->ID.'">'.$program->post_title.'</option>';
+    }
+  }
+  echo '</select>';
+  echo '<input type="submit" name="Change_program" id="Change_program" value="Vaihda" />';
+  echo '</form>';
+  echo '<form id="featured_upload" method="post" action="">';
 	echo '<table cellpadding="2" cellspacing="2" border="2">';
 	echo '<thead>';
 	echo '<tr>';
@@ -274,7 +301,7 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 }
 
 
-function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower = false) {
+function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower = false, $program = 0) {
 	$ret = array();
 
 	global $wpdb;
@@ -288,7 +315,7 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
 	    }
 
     } else {
-        $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower);
+        $all_items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, $tolower, $program);
     }
 
 
@@ -297,6 +324,7 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
 		SELECT taxonomy_slug
 		FROM " . pof_taxonomy_searchpage_get_table_name() . "
 		WHERE taxonomy_base = '".$taxonomy_base_key."'
+    AND program = '".$program."'
 		"
 	, ARRAY_N);
 
