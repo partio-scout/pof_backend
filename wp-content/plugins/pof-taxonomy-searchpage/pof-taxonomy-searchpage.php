@@ -29,11 +29,28 @@ register_activation_hook( __FILE__, 'pof_taxonomy_searchpage_install' );
 global $pof_taxonomy_searchpage_db_version, $selected_program;
 $pof_taxonomy_searchpage_db_version = '1.0';
 
-$selected_program = 0;
-if (isset($_POST['program'])) {
+$args = array(
+  'numberposts' => -1,
+  'posts_per_page' => -1,
+  'post_type' => 'pof_post_program'
+);
+
+$programs = get_posts( $args );
+
+$selected_program = $programs[0]->ID;
+if (isset($_POST['Change_program']) && isset($_POST['program'])) {
   $selected_program = $_POST['program'];
 }
 
+function pof_taxonomy_searchpage_get_programs() {
+  $args = array(
+    'numberposts' => -1,
+    'posts_per_page' => -1,
+    'post_type' => 'pof_post_program'
+  );
+
+  return get_posts( $args );
+}
 
 function pof_taxonomy_searchpage_get_table_name() {
 	global $wpdb;
@@ -214,11 +231,6 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 
   $programs = get_posts( $args );
 
-  $selected_program = $programs[0]->ID;
-  if (isset($_POST['Change_program']) && isset($_POST['program'])) {
-    $selected_program = $_POST['program'];
-  }
-
 	if(isset($_POST['Submit'])) {
 
         $items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
@@ -360,7 +372,8 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
 function pof_taxonomy_searchpage_places() {
 	$taxonomy_base_key = "place_of_performance";
 
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+  global $selected_program;
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, false, $selected_program);
 	$title = "Suorituspaikat";
 	$title2 = "Suorituspaikka";
 
@@ -369,7 +382,12 @@ function pof_taxonomy_searchpage_places() {
 
 function pof_taxonomy_searchpage_groupsizes() {
 	$taxonomy_base_key = "groupsize";
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+
+  global $selected_program;
+  if(!$selected_program) {
+    $selected_program = pof_taxonomy_searchpage_get_programs()[0]->ID;
+  }
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, false, $selected_program);
 	$title = "Ryhm&auml;koot";
 	$title2 = "Ryhm&auml;koko";
 
@@ -379,6 +397,8 @@ function pof_taxonomy_searchpage_groupsizes() {
 
 function pof_taxonomy_searchpage_mandatory() {
 	$taxonomy_base_key = "mandatory";
+
+  global $selected_program;
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Pakollisuus";
 	$title2 = "Pakollisuus";
@@ -389,6 +409,8 @@ function pof_taxonomy_searchpage_mandatory() {
 
 function pof_taxonomy_searchpage_taskduration() {
 	$taxonomy_base_key = "taskduration";
+
+  global $selected_program;
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Aktiviteetin kestot";
 	$title2 = "Kesto";
@@ -400,6 +422,8 @@ function pof_taxonomy_searchpage_taskduration() {
 
 function pof_taxonomy_searchpage_taskpreparationduration() {
 	$taxonomy_base_key = "taskpreaparationduration";
+
+  global $selected_program;
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
 	$title = "Aktiviteetin valmistelun kestot";
 	$title2 = "Kesto";
