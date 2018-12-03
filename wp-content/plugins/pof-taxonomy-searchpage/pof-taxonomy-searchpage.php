@@ -451,7 +451,7 @@ function pof_taxonomy_searchpage_taskpreparationduration() {
 	pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title2);
 }
 
-function pof_taxonomy_searchpage_get_equpments($taxonomy_base_key) {
+function pof_taxonomy_searchpage_get_equpments($taxonomy_base_key, $program) {
 	$all_items = array();
 
 	foreach (get_terms('pof_tax_equipment') as $term) {
@@ -471,6 +471,7 @@ function pof_taxonomy_searchpage_get_equpments($taxonomy_base_key) {
 		SELECT taxonomy_slug
 		FROM " . pof_taxonomy_searchpage_get_table_name() . "
 		WHERE taxonomy_base = '".$taxonomy_base_key."'
+    AND program = '".$program."'
 		"
 	, ARRAY_N);
 
@@ -497,7 +498,11 @@ function pof_taxonomy_searchpage_get_equpments($taxonomy_base_key) {
 
 function pof_taxonomy_searchpage_equpments() {
 	$taxonomy_base_key = "equpment";
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key);
+  global $searchpage_selected_program;
+  if(!$searchpage_selected_program) {
+    $searchpage_selected_program = pof_taxonomy_searchpage_get_programs()[0]->ID;
+  }
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_key, $searchpage_selected_program);
 	$title = "Tarvikkeet";
 	$title2 = "Tarvike";
 
