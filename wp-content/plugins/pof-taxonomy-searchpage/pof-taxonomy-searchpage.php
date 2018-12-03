@@ -69,7 +69,7 @@ function pof_taxonomy_searchpage_install() {
 		taxonomy_base varchar(255) DEFAULT '' NOT NULL,
 		taxonomy_slug varchar(255) DEFAULT '' NOT NULL,
     program bigint(20) DEFAULT 0 NOT NULL,
-		UNIQUE KEY taxonomy_slug (`taxonomy_slug` (191)),
+		KEY taxonomy_slug (taxonomy_slug),
 		KEY taxonomy_base (taxonomy_base)
     KEY program (program)
         ) $charset_collate;";
@@ -269,11 +269,6 @@ function pof_taxonomy_searchpage_form($taxonomy_base_key, $items, $title, $title
 					)
 				);
 				echo "<br />Added " . $key . "";
-        print_r(array(
-          'taxonomy_slug' => $taxonomy_full_key,
-          'taxonomy_base' => $taxonomy_base_key,
-          'program'       => $searchpage_selected_program
-        ));
 			}
 		}
         echo "<br />";
