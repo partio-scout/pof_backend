@@ -397,7 +397,7 @@ function pof_settings_icons() {
                 <a href="/wp-admin/tools.php?page=regenerate-thumbnails#/">Thumbnailien regenerointi</a>
               </th>
               <td>
-                  <textarea id="suggestions_allowed_file_types" rows="10" cols="80" autocomplete="off" name="pof_settings_icons_sizes"><?php echo esc_attr( get_option('pof_settings_icons_sizes')); ?></textarea>
+                  <textarea id="pof_settings_icons_sizes" rows="10" cols="80" autocomplete="off" name="pof_settings_icons_sizes"><?php echo esc_attr( get_option('pof_settings_icons_sizes')); ?></textarea>
               </td>
           </tr>
       </table>
