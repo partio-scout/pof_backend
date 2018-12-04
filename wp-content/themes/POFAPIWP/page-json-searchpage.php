@@ -67,7 +67,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "paikka")) {
 if ($filter_tags == "all" || strstr($filter_tags, "ryhmakoko")) {
 	// Groupsizes
 	$item_tax_key = 'groupsize';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
 	$ret->ryhmakoko = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_groupsizes_' . $program)
@@ -77,7 +77,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "ryhmakoko")) {
 if ($filter_tags == "all" || strstr($filter_tags, "pakollisuus")) {
 	// Mandatory
 	$item_tax_key = 'mandatory';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
 	$ret->pakollisuus = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
@@ -87,7 +87,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "pakollisuus")) {
 if ($filter_tags == "all" || strstr($filter_tags, "suoritus_kesto")) {
 	//TaskDuration
 	$item_tax_key = 'taskduration';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
 	$ret->suoritus_kesto = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
@@ -97,7 +97,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "suoritus_kesto")) {
 if ($filter_tags == "all" || strstr($filter_tags, "suoritus_valmistelu_kesto")) {
 	//TaskPreparationDuration
 	$item_tax_key = 'taskpreparationduration';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
 	$ret->suoritus_valmistelu_kesto = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
@@ -107,7 +107,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "suoritus_valmistelu_kesto")) 
 if ($filter_tags == "all" || strstr($filter_tags, "tarvikkeet")) {
 	//Equipments
 	$item_tax_key = 'equpment';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
 	$ret->tarvikkeet = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
@@ -117,7 +117,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "tarvikkeet")) {
 if ($filter_tags == "all" || strstr($filter_tags, "taitoalueet")) {
 	//Taitoalueet
 	$item_tax_key = 'skillarea';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
 	$ret->taitoalueet = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
@@ -127,7 +127,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "taitoalueet")) {
 if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
 	//Kasvatustavoitteet
 	$item_tax_key = 'growth_target';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
 	$ret->kasvatustavoitteet = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
@@ -137,7 +137,7 @@ if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
 if ($filter_tags == "all" || strstr($filter_tags, "johtamistaito")) {
 	//Johtamistaito
 	$item_tax_key = 'leadership';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
 	$ret->johtamistaito = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
