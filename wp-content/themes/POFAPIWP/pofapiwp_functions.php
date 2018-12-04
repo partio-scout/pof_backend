@@ -2192,3 +2192,119 @@ function pof_curl_post_async($url, $params = array()){
 
     fclose($fp);
 }
+
+function pof_get_programs() {
+  $args = array(
+    'numberposts' => -1,
+    'posts_per_page' => -1,
+    'post_type' => 'pof_post_program',
+    'orderby' => 'title',
+    'order' => 'ASC'
+  );
+
+  $the_query = new WP_Query( $args );
+  $ret = array();
+
+  if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+      $the_query->the_post();
+
+      $tmp = new stdClass();
+			$tmp->id = $the_query->post->ID;
+			$tmp->title = $the_query->post->post_title;
+
+      $ret[] = $tmp;
+    }
+  }
+
+  return $ret;
+
+}
+
+function pof_display_program_filter(){
+    $type = 'post';
+    if (isset($_GET['post_type'])) {
+        $type = $_GET['post_type'];
+    }
+
+    $programs = pof_get_programs();
+
+    //only add filter to post type you want
+    if ('pof_post_suggestion' == $type){
+        ?>
+        <select name="pof_program">
+        <option value="">Suodata ohjelman mukaan</option>
+        <?php
+            $current_v = isset($_GET['pof_program'])? $_GET['pof_program']:'';
+            foreach ($programs as $program) {
+                printf
+                    (
+                        '<option value="%s"%s>%s</option>',
+                        $program->id,
+                        $program->id == $current_v ? ' selected="selected"':'',
+                        $program->title
+                    );
+                }
+        ?>
+        </select>
+        <?php
+    }
+}
+add_action( 'restrict_manage_posts', 'pof_display_program_filter' );
+
+/*
+ * Return agegroup of given taskgroup
+ */
+function pof_get_agegroup($post_id) {
+  $agegroup = get_post_meta($post_id, 'ikakausi', true);
+  $taskgroup = get_post_meta($post_id, 'suoritepaketti', true);
+
+  if(!$agegroup && !$taskgroup) {
+    return array();
+  }
+
+  // ACF saves empty values as 'null' string in some versions
+	if(empty($agegroup) || $agegroup == 'null') {
+		$agegroup = pof_get_agegroup($taskgroup);
+	}
+
+	return $agegroup;
+}
+
+/*
+ * Filter suggestions on admin view based of given program
+ */
+function pof_filter_suggestions($query) {
+    global $wpdb, $pagenow;
+
+    $type = 'post';
+    if (isset($_GET['post_type'])) {
+        $type = $_GET['post_type'];
+    }
+
+    if ( 'pof_post_suggestion' == $type && is_admin() && $pagenow=='edit.php' && isset($_GET['pof_program']) && $_GET['pof_program'] != '') {
+        $to_remove = array();
+        $results = $wpdb->get_results( "SELECT ID FROM wp_posts WHERE post_type = 'pof_post_suggestion'", OBJECT );
+
+        foreach($results as $key => $post) {
+          $task_id = get_post_meta($post->ID, 'pof_suggestion_task', true);
+          if(!$task_id) {
+            continue;
+          }
+          $task = (object) ['ID' => $task_id, 'post_type' => 'pof_post_task'];
+
+          $task_taskgroup = get_post_meta($task_id, 'suoritepaketti', true);
+          $task_agegroup = pof_get_agegroup($task_taskgroup);
+          $task_program = get_post_meta($task_agegroup, 'suoritusohjelma', true);
+
+          if($task_program != $_GET['pof_program'])  {
+            $to_remove[] = $post->ID;
+          }
+        }
+
+        $query->set( 'post__not_in', $to_remove );
+        return;
+    }
+
+}
+add_action('pre_get_posts', 'pof_filter_suggestions');
