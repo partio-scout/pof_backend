@@ -328,7 +328,7 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
 
 	global $wpdb, $searchpage_selected_program;
 
-  if(isset($searchpage_selected_program)) {
+  if(isset($searchpage_selected_program) && !$program) {
     $program = $searchpage_selected_program;
   }
 

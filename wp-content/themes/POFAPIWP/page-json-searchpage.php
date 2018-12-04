@@ -57,7 +57,7 @@ function pof_pages_get_tags_searchpage($items, $item_tax_key)
 if ($filter_tags == "all" || strstr($filter_tags, "paikka")) {
 	// Places
 	$item_tax_key = 'place_of_performance';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
+	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
 	$ret->paikka = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
@@ -109,16 +109,6 @@ if ($filter_tags == "all" || strstr($filter_tags, "tarvikkeet")) {
 	$item_tax_key = 'equpment';
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
 	$ret->tarvikkeet = array(
-    "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
-    "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
-  );
-}
-
-if ($filter_tags == "all" || strstr($filter_tags, "taitoalueet")) {
-	//Taitoalueet
-	$item_tax_key = 'skillarea';
-	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, $program);
-	$ret->taitoalueet = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)
   );
