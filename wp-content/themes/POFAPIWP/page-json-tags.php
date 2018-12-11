@@ -16,6 +16,8 @@ if (isset($_GET["tags"]) && trim($_GET["tags"]) != ''){
    $filter_tags = $_GET["tags"];
 }
 
+$program_id = 0;
+
 if (isset($_GET["program"]) && trim($_GET["program"]) != ''){
   global $wpdb;
   $program = $_GET["program"];
