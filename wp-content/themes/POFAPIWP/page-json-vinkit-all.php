@@ -9,10 +9,38 @@ $pof_settings_fulljson_cache_ttl = pof_settings_get_fulljson_cache_ttl();
 
 $post_id = $post->ID;
 
+$post_guid = "";
+
+if (!empty($_GET["postGUID"])) {
+	$post_guid = $_GET["postGUID"];
+} else if (!empty($_POST["postGUID"])) {
+	$post_guid = $_POST["postGUID"];
+}
+
 $forceRun = false;
 if (   (!empty($_POST["forceRun"]) && $_POST["forceRun"] == "1")
     || (!empty($_GET["forceRun"]) && $_GET["forceRun"] == "1")) {
     $forceRun = true;
+}
+
+if (strlen($post_guid) > 0) {
+
+	$args = array(
+		'numberposts' => -1,
+		'posts_per_page' => -1,
+		'post_type' => array('pof_post_program' ),
+		'meta_key' => 'post_guid',
+		'meta_value' => $post_guid
+	);
+
+	$the_query = new WP_Query( $args );
+
+	if( $the_query->have_posts() ) {
+		while ( $the_query->have_posts() ) {
+			$the_query->the_post();
+			$post_id = $the_query->post->ID;
+		}
+	}
 }
 
 $filepath = get_home_path() . "wp-content/cache/pof/pof-vinkit-json-".$post_id.".json";
@@ -22,7 +50,6 @@ if (!file_exists($filepath)) {
 
 $cache_last_run = (int)get_post_meta( $post_id, 'vinkit_json_last_save', true);
 $cache_run_started = (int)get_post_meta( $post_id, 'vinkit_json_cache_run_started', true);
-
 
 if(!$forceRun) {
     readfile($filepath);
@@ -86,22 +113,31 @@ else {
 
     if( $the_query->have_posts() ) {
 	    while ( $the_query->have_posts() ) {
-		    $the_query->the_post();
+            $the_query->the_post();
 
             $suggestion =  $the_query->post;
+            $task_post_id = get_post_meta( $suggestion->ID, "pof_suggestion_task", true );
+
+            if(!empty($post_guid)) {
+              $suggestion_program_id = end( pof_get_parent_tree( (object) ['ID' => $task_post_id, 'post_type' => 'pof_post_task'], array() ) )->ID;
+
+              if($suggestion_program_id != $post_id) {
+                continue;
+              }
+            }
 
             $suggestiong_writer = get_post_meta( $suggestion->ID, "pof_suggestion_writer", true );
             $suggestiong_lang = get_post_meta( $suggestion->ID, "pof_suggestion_lang", true );
-		    $item = new stdClass();
+            $item = new stdClass();
             $item->lang = $suggestiong_lang;
-		    $item->title = $suggestion->post_title;
+            $item->title = $suggestion->post_title;
             $item->guid = get_post_meta( $suggestion->ID, "post_guid", true );
-		    $item->content = $suggestion->post_content;
+            $item->content = $suggestion->post_content;
 
             $item->publisher = new stdClass();
-		    $item->publisher->nickname = $suggestiong_writer;
-		    $item->published = $suggestion->post_date;
-		    if ($pof_settings_lastupdate_overwrite == null) {
+            $item->publisher->nickname = $suggestiong_writer;
+            $item->published = $suggestion->post_date;
+	          if ($pof_settings_lastupdate_overwrite == null) {
                 $item->modified = $suggestion->post_modified;
             } else {
                 $item->modified = $pof_settings_lastupdate_overwrite;
@@ -124,12 +160,11 @@ else {
                     $item->post->guid = get_post_meta( $task_post->ID, "post_guid", true );
 
                 }
-
             }
 
             $item->additional_content = get_post_additional_content_JSON($suggestion->ID, $suggestiong_lang);
 
-		    array_push($posts, $item);
+        array_push($posts, $item);
 	    }
     }
 
