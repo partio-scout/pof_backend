@@ -37,6 +37,19 @@ function pof_settings_get_suggestions_allowed_file_types() {
 	return $file_types;
 }
 
+function pof_settings_get_image_sizes() {
+  $sizes_array = array();
+  $sizes_string = explode("\r\n", get_option('pof_settings_icons_sizes'));
+  foreach($sizes_string as $size) {
+    $sizes = explode("x", $size);
+    $sizes_array[] = array(
+      'width' => $sizes[0],
+      'height' => $sizes[1]
+    );
+  }
+	return $sizes_array;
+}
+
 function pof_settings_get_lastupdate_overwrite() {
     $val = get_option('pof_settings_lastupdate_overwrite');
 

@@ -11,6 +11,7 @@ $agegroups = pof_taxonomy_icons_get_agegroups();
 
 function pof_pages_get_tag_icons($agegroups, $items, $item_tax_key)
 {
+  $sizes = pof_settings_get_image_sizes();
 	$items_arr = array();
 	foreach ($agegroups as $agegroup_key => $agegroup) {
 		$tmp = new stdClass();
@@ -32,12 +33,24 @@ function pof_pages_get_tag_icons($agegroups, $items, $item_tax_key)
         $lastModified = $item_timestamp;
       }
 
+      $icons = array();
+
 			if (!empty($icon)) {
-				$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id);
-				if (!empty($icon_src)) {
-					$tmp_item->icon = $icon_src[0];
-				}
+        foreach($sizes as $size) {
+          $width = $size['width'];
+          $height = $size['height'];
+  				$icon_src = wp_get_attachment_image_src($icon[0]->attachment_id, "pof-icon-${width}x${height}");
+  				if (!empty($icon_src)) {
+  					$tmp_item->icon = $icon_src[0];
+            $icons[] = array(
+              'url' => $icon_src[0],
+              'width' => $width,
+              'height' => $height
+            );
+  				}
+        }
 			}
+      $tmp_item->icons = $icons;
 			array_push($tmp->items, $tmp_item);
 		}
     $tmp->lastModified = $lastModified;

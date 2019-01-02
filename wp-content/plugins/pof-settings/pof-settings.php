@@ -68,6 +68,7 @@ function pof_settings_menu() {
 	add_menu_page('POF Settings', 'POF Asetukset', 'pof_manage_options', 'pof_settings_frontpage-handle', 'pof_settings_frontpage', 'dashicons-admin-settings');
 	add_submenu_page( 'pof_settings_frontpage-handle', 'Yleiset asetukset', 'Yleiset asetukset', 'pof_manage_options', 'pof_settings_general-handle', 'pof_settings_general');
 	add_submenu_page( 'pof_settings_frontpage-handle', 'Kielet', 'Kielet', 'pof_manage_options', 'pof_settings_languages-handle', 'pof_settings_languages');
+  add_submenu_page( 'pof_settings_frontpage-handle', 'Ikonit', 'Ikonit', 'pof_manage_options', 'pof_settings_icons-handle', 'pof_settings_icons');
 }
 
 
@@ -108,7 +109,7 @@ function pof_settings_general() {
       update_option("pof_settings_suggestions_email_interval", $_POST["suggestions_email_interval"]);
     }
 
-    if (isset($_POST["suggestions_email_sender_name"])) { 
+    if (isset($_POST["suggestions_email_sender_name"])) {
 			update_option("pof_settings_suggestions_email_sender_name", $_POST["suggestions_email_sender_name"]);
 		}
 
@@ -379,3 +380,28 @@ else {
 	echo '</div>';
 
 }
+
+function pof_settings_icons() {
+  if (isset($_POST["pof_settings_icons_sizes"])) {
+    update_option("pof_settings_icons_sizes", $_POST["pof_settings_icons_sizes"]);
+  }
+  ?>
+  <div class="wrap">
+  <h1>POF Settings, ikonit</h1>
+  <form method="post" action="">
+      <table class="form-table">
+          <tr valign="top">
+              <th scope="row">
+                Ikoneista generoitavat kuvakoot (Syöttäminen muodossa 64x64 per rivi)<br>
+                <br>
+                <a href="/wp-admin/tools.php?page=regenerate-thumbnails#/">Thumbnailien regenerointi</a>
+              </th>
+              <td>
+                  <textarea id="pof_settings_icons_sizes" rows="10" cols="80" autocomplete="off" name="pof_settings_icons_sizes"><?php echo esc_attr( get_option('pof_settings_icons_sizes')); ?></textarea>
+              </td>
+          </tr>
+      </table>
+      <br /><input type="submit" name="Submit" value="Submit" />
+  </form>
+  </div>
+<?php }
