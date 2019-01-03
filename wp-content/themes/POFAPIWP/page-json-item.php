@@ -180,7 +180,7 @@ switch ($post_type) {
     $execution_order = get_post_meta($mypost->ID, "execution_order", true);
 
     $jsonItem->execution_order = $execution_order != 'empty' ? $execution_order : '';
-    $jsonItem->execution_order_code = $execution_order != 'empty' ? get_post_meta($mypost->ID, "execution_order_code", true) : '';
+    $jsonItem->execution_error = $execution_order != 'empty' ? get_post_meta($mypost->ID, "execution_error", true) : '';
 
     break;
 }
