@@ -194,6 +194,7 @@ function pof_taxonomy_translate_menu() {
 
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Hakusivu', 'Hakusivu', 'pof_manage_translations', 'pof_taxonomy_translate_search-handle', 'pof_taxonomy_translate_search');
 	add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Api Type', 'Api Type', 'pof_manage_translations', 'pof_taxonomy_translate_api_type-handle', 'pof_taxonomy_translate_api_type');
+  add_submenu_page( 'pof_taxonomy_translate_frontpage-handle', 'Tekojärjestysvirheet', 'Tekojärjestysvirheet', 'pof_manage_translations', 'pof_taxonomy_translate_order_errors-handle', 'pof_taxonomy_translate_order_errors');
 
 }
 
@@ -648,7 +649,7 @@ function pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_ke
   if(isset($program) && $program !== false) {
     $selected_program = $program;
   }
-  
+
 	$table_name = pof_taxonomy_translate_get_table_name();
 
 	$translate_res = $wpdb->get_results(
@@ -948,6 +949,16 @@ function pof_taxonomy_translate_api_type() {
 	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
 
 	$title = "Api Type";
+	$title2 = "Termi";
+
+	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
+}
+
+function pof_taxonomy_translate_order_errors() {
+	$taxonomy_base_key = "error_order";
+	$items = pof_taxonomy_translate_get_items_by_taxonomy_base_key($taxonomy_base_key, false);
+
+	$title = "Tekojärjestysvirheet";
 	$title2 = "Termi";
 
 	pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2);
