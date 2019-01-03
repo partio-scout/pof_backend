@@ -250,6 +250,17 @@ function pof_taxonomy_translate_get_translation($taxonomy_base_key, $tmp_key, $a
 		"
 	);
 
+  if($fallback && !empty($translate_res) && empty($translate_res[0]->content)) {
+    $translate_res = $wpdb->get_results(
+      "
+      SELECT *
+      FROM " . pof_taxonomy_translate_get_table_name() . "
+      WHERE taxonomy_slug = '" . $taxonomy_slug . "'
+        AND lang = '".$selected_lang."'
+      "
+		);
+  }
+
 	if (   $fallback
 		&& $agegroup_id != 0
 		&& (empty($translate_res) || count($translate_res) == 0)) {

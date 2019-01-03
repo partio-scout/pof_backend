@@ -791,7 +791,7 @@ function pof_order_post_suggestions_by_lang($post) {
 
 
 
-function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
+function get_post_tags_JSON($post_id, $agegroup_id, $lang, $program = 0) {
 	$ret = new stdClass();
 
 
@@ -915,7 +915,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
     */
 //	$place_of_performance = get_field("task_place_of_performance", $post_id);
 
-    $place_of_performance = get_post_meta($post_id, "task_place_of_performance", true);
+  $place_of_performance = get_post_meta($post_id, "task_place_of_performance", true);
 
 	$ret_places = array();
 
@@ -953,13 +953,13 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang) {
 			}
 
 			$place->slug = trim($tmp_place);
-            //make sure that there are no duplicates
-            foreach ($ret_places as $tmp_ret_place)
-            {
-                if ($tmp_ret_place->slug == $place->slug) {
-                    break;
-                }
-            }
+
+      //make sure that there are no duplicates
+      foreach ($ret_places as $tmp_ret_place) {
+          if ($tmp_ret_place->slug == $place->slug) {
+              break;
+          }
+      }
 
 			array_push($ret_places, $place);
 
