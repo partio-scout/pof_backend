@@ -26,6 +26,16 @@ add_action( 'admin_menu', 'pof_taxonomy_icons_menu' );
 
 register_activation_hook( __FILE__, 'pof_taxonomy_icons_install' );
 
+// Dynamically add image sizes defined in settings
+
+$sizes = pof_settings_get_image_sizes();
+
+foreach($sizes as $size) {
+  $width = $size['width'];
+  $height = $size['height'];
+  add_image_size( "pof-icon-${width}x${height}", $width, $height );
+}
+
 global $pof_taxonomy_icons_db_version;
 $pof_taxonomy_icons_db_version = '1.1';
 

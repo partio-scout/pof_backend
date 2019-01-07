@@ -151,6 +151,11 @@ switch ($post_type) {
 			$jsonItem->taskgroup_term = $taskgroup_term;
 		}
 
+    $execution_order = get_post_meta($mypost->ID, "execution_order", true);
+
+    $jsonItem->execution_order = $execution_order != 'empty' ? $execution_order : '';
+    $jsonItem->execution_order_code = $execution_order != 'empty' ? get_post_meta($mypost->ID, "execution_order_code", true) : '';
+
 	break;
 	case "task":
 		$jsonItem = getJsonItemDetailsTask($jsonItem, $mypost, $lang_lowercase);
@@ -172,7 +177,12 @@ switch ($post_type) {
 		$jsonItem->level = pof_normalize_task_level(get_post_meta($mypost->ID, "task_level", true));
 		$jsonItem->leader_tasks = get_post_meta($mypost->ID, "leader_tasks_".$lang_lowercase, true);
 
-	break;
+    $execution_order = get_post_meta($mypost->ID, "execution_order", true);
+
+    $jsonItem->execution_order = $execution_order != 'empty' ? $execution_order : '';
+    $jsonItem->execution_error = $execution_order != 'empty' ? get_post_meta($mypost->ID, "execution_error", true) : '';
+
+    break;
 }
 
 $agegroup_id = 0;
