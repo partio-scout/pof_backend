@@ -1,5 +1,46 @@
 <?php
 
+add_action( 'admin_footer', 'pof_translation_slug_rename' );
+function pof_translation_slug_rename() {
+  ?>
+  <script type="text/javascript">
+  jQuery(document).ready(function(){
+    jQuery('.pof-rename-modal').click(function(e) {
+
+        e.preventDefault();
+
+        var slug = jQuery(this).data('slug');
+        var modalTitle = "Muokkaa käännösavainta: " + slug;
+        var modalContent = 'Uusi avain: <input type="text" id="new-slug"/><br><br><button id="modal-save" class="button button-primary">Tallenna</button>';
+
+        jQuery("#modal-title").text(modalTitle);
+        jQuery("#new-slug").val('');
+
+        var modal = document.getElementById('myModal');
+        modal.style.display = "block";
+        var span = document.getElementsByClassName("close")[0];
+        var saveButton = document.getElementById("modal-save");
+
+        saveButton.onclick = function() {
+          var newSlug = jQuery("#new-slug").val();
+          console.log(newSlug);
+        }
+
+        span.onclick = function() {
+          modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        }
+
+    });
+  });
+  </script> <?php
+}
+
 add_action( 'admin_footer', 'pof_validation_script' );
 function pof_validation_script() {
   global $post;
