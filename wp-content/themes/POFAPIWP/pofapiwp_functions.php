@@ -10,6 +10,7 @@ function pof_translation_slug_rename() {
         e.preventDefault();
 
         var slug = jQuery(this).data('slug');
+        var taxonomyKey = jQuery(this).data('taxonomykey');
         var modalTitle = "Muokkaa käännösavainta: " + slug;
         var modalContent = 'Uusi avain: <input type="text" id="new-slug"/><br><br><button id="modal-save" class="button button-primary">Tallenna</button>';
 
@@ -20,10 +21,25 @@ function pof_translation_slug_rename() {
         modal.style.display = "block";
         var span = document.getElementsByClassName("close")[0];
         var saveButton = document.getElementById("modal-save");
-
         saveButton.onclick = function() {
           var newSlug = jQuery("#new-slug").val();
-          console.log(newSlug);
+          var data = {
+              action: 'pof_update_translation_slug',
+              security: '<?php echo wp_create_nonce( 'pre_publish_validation' ); ?>',
+              new_slug: newSlug,
+              old_slug: slug,
+              taxonomy_key: taxonomyKey
+          };
+          jQuery.post(ajaxurl, data, function(response) {
+            console.log(response);
+            if(response.success) {
+              jQuery('#modal-save').after('<p>Käännöksen avain päivitetty</p>')
+              jQuery('#modal-save').hide();
+              location.reload();
+            } else {
+              console.log("Error");
+            }
+          });
         }
 
         span.onclick = function() {
@@ -39,6 +55,46 @@ function pof_translation_slug_rename() {
     });
   });
   </script> <?php
+}
+
+add_action( 'wp_ajax_pof_update_translation_slug', 'pof_update_translation_slug' );
+function pof_update_translation_slug() {
+  $old_slug = sanitize_text_field( $_POST['old_slug'] );
+	$new_slug = sanitize_text_field( $_POST['new_slug'] );
+  $taxonomy_key = sanitize_text_field( $_POST['taxonomy_key'] ). '::' . $old_slug;
+
+  // Update slug in translations table
+
+  /*
+  Example query:
+  UPDATE wp_pof_taxonomy_translate
+  SET taxonomy_slug = REPLACE(taxonomy_slug, 'A_Kololla', 'Kololla')
+  WHERE taxonomy_slug = 'place_of_performance::A_Kololla';
+  */
+
+  $translation_table = pof_taxonomy_translate_get_table_name();
+
+  global $wpdb;
+
+  $query = $wpdb->query(
+    $wpdb->prepare(
+    "
+    UPDATE wp_pof_taxonomy_translate
+    SET taxonomy_slug = REPLACE(taxonomy_slug, '%s', '%s')
+    WHERE taxonomy_slug = %s;
+    "
+    , $old_slug, $new_slug, $taxonomy_key, $old_slug
+    )
+  );
+
+  if(false === $query) {
+    $error = new WP_Error( '500', $wpdb->last_error);
+    wp_send_json_error( $error );
+  } else {
+    wp_send_json_success();
+  }
+
+	wp_die();
 }
 
 add_action( 'admin_footer', 'pof_validation_script' );

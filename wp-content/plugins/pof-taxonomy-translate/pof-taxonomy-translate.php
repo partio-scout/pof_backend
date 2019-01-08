@@ -601,7 +601,7 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
             continue;
         }
 		echo '<tr>';
-		echo '<th>'.$tmp_title.'<br /> <a href="#" class="pof-rename-modal" data-slug="'.$tmp_key.'">('.$tmp_key.')</a></th>';
+		echo '<th>'.$tmp_title.'<br /> <a href="#" class="pof-rename-modal" data-slug="'.$tmp_key.'" data-taxonomykey="' . $taxonomy_base_key . '">('.$tmp_key.')</a></th>';
 		foreach ($agegroups as $agegroup) {
 
 			echo '<td>';
