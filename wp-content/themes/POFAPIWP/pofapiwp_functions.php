@@ -30,16 +30,35 @@ function pof_translation_slug_rename() {
               old_slug: slug,
               taxonomy_key: taxonomyKey
           };
+          /*
           jQuery.post(ajaxurl, data, function(response) {
-            console.log(response);
             if(response.success) {
-              jQuery('#modal-save').after('<p>Käännöksen avain päivitetty</p>')
-              jQuery('#modal-save').hide();
-              location.reload();
+
             } else {
               console.log("Error");
             }
+          }, 'json');
+          */
+
+          jQuery.ajax({
+              type: 'post',
+              data: data,
+              dataType: 'json',
+              url: ajaxurl,
+              success: function(response){
+               if(response.success) {
+                  console.log("Success");
+                  console.log(response.data.amount);
+                  jQuery('#modal-save').after('<p>Uudelleenladataan sivu</p>');
+                  jQuery('#modal-save').after('<h3>Käännöksen avain päivitetty - päivitettiin ' + response.data.amount + 'kpl taskeja</h3>');
+                  jQuery('#modal-save').hide();
+                  setTimeout(function(){ location.reload(); }, 2000);
+               } else {
+                  console.log("Error");
+               }
+              }
           });
+
         }
 
         span.onclick = function() {
@@ -61,7 +80,8 @@ add_action( 'wp_ajax_pof_update_translation_slug', 'pof_update_translation_slug'
 function pof_update_translation_slug() {
   $old_slug = sanitize_text_field( $_POST['old_slug'] );
 	$new_slug = sanitize_text_field( $_POST['new_slug'] );
-  $taxonomy_key = sanitize_text_field( $_POST['taxonomy_key'] ). '::' . $old_slug;
+  $taxonomy_key = sanitize_text_field( $_POST['taxonomy_key'] );
+  $taxonomy_slug = $taxonomy_key . '::' . $old_slug;
 
   // Update slug in translations table
 
@@ -83,16 +103,45 @@ function pof_update_translation_slug() {
     SET taxonomy_slug = REPLACE(taxonomy_slug, '%s', '%s')
     WHERE taxonomy_slug = %s;
     "
-    , $old_slug, $new_slug, $taxonomy_key, $old_slug
+    , $old_slug, $new_slug, $taxonomy_slug, $old_slug
     )
   );
 
   if(false === $query) {
-    $error = new WP_Error( '500', $wpdb->last_error);
+    $error = 'Error: ' . $wpdb->last_error;
     wp_send_json_error( $error );
-  } else {
-    wp_send_json_success();
   }
+
+
+  // Update all posts that are using the old slug
+
+  $field_key = 'task_' . $taxonomy_key;
+
+  $args = array(
+  	'numberposts' => -1,
+  	'posts_per_page' => -1,
+    'post_type' => array('pof_post_task'),
+    'meta_query' => array(
+      array(
+          'key' => $field_key,
+          'value' => '"' . $old_slug . '"',
+          'compare' => 'LIKE'
+      )
+    )
+  );
+
+  $posts = get_posts( $args );
+
+  $count = 0;
+  foreach( $posts as $post ) {
+  	$id = $post->ID;
+    update_field( $field_key, $new_slug, $id );
+    $count++;
+  }
+
+  wp_send_json_success(array(
+    'amount' => $count
+  ));
 
 	wp_die();
 }
