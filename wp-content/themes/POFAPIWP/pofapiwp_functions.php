@@ -132,6 +132,17 @@ function pof_update_translation_slug() {
 
   $posts = get_posts( $args );
 
+  if(count($posts) == 0) {
+    $args = array(
+      'numberposts' => -1,
+      'posts_per_page' => -1,
+      'post_type' => array('pof_post_task'),
+      'meta_value' => $old_slug
+    );
+
+    $posts = get_posts( $args );
+  }
+
   $count = 0;
   foreach( $posts as $post ) {
   	$id = $post->ID;
