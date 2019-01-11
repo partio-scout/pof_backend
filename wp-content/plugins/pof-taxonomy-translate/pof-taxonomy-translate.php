@@ -35,6 +35,21 @@ if (isset($_POST['program'])) {
   $selected_program = $_POST['program'];
 }
 
+function get_editable_taxonomies() {
+  return [
+    "place_of_performance",
+    "groupsize",
+    "mandatory",
+    "taskduration",
+    "taskpreaparationduration",
+    "common",
+    "search",
+    "apitype",
+    "error_order",
+    "theme"
+  ];
+}
+
 
 function pof_taxonomy_translate_get_table_name() {
 	global $wpdb;
@@ -601,7 +616,14 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
             continue;
         }
 		echo '<tr>';
-		echo '<th>'.$tmp_title.'<br /> <a href="#" class="pof-rename-modal" data-slug="'.$tmp_key.'" data-taxonomykey="' . $taxonomy_base_key . '">('.$tmp_key.')</a></th>';
+    echo '<th>'.$tmp_title.'<br />';
+
+    if(in_array($taxonomy_base_key, get_editable_taxonomies())) {
+      echo '<a href="#" class="pof-rename-modal" data-slug="'.$tmp_key.'" data-taxonomykey="' . $taxonomy_base_key . '">('.$tmp_key.')</a></th>';
+    } else {
+      echo '('.$tmp_key.')</th>';
+    }
+
 		foreach ($agegroups as $agegroup) {
 
 			echo '<td>';
