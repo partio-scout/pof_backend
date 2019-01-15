@@ -116,6 +116,9 @@ function pof_update_translation_slug() {
   // Update all posts that are using the old slug
 
   $field_key = 'task_' . $taxonomy_key;
+  if($taxonomy_key = 'taskduration') {
+    $field_key = 'task_duration';
+  }
 
   $args = array(
   	'numberposts' => -1,
