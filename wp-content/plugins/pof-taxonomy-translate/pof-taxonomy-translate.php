@@ -42,6 +42,7 @@ function get_editable_taxonomies() {
     "mandatory",
     "taskduration",
     "taskpreaparationduration",
+    "task_term",
     "common",
     "search",
     "apitype",

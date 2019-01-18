@@ -50,6 +50,7 @@ function pof_translation_slug_rename() {
                   console.log("Success");
                   console.log(response.data.amount);
                   jQuery('#modal-save').after('<p>Uudelleenladataan sivu</p>');
+                  jQuery('#modal-save').after('<p>' + response.data.msg + '</p>');
                   jQuery('#modal-save').after('<h3>Käännöksen avain päivitetty - päivitettiin ' + response.data.amount + 'kpl taskeja, mistä löytyi avain ' + response.data.field_key+ '</h3>');
                   jQuery('#modal-save').hide();
                   setTimeout(function(){ location.reload(); }, 2000);
@@ -115,9 +116,14 @@ function pof_update_translation_slug() {
 
   // Update all posts that are using the old slug
 
+  $msg = "";
   $field_key = 'task_' . $taxonomy_key;
   if($taxonomy_key == 'taskduration') {
     $field_key = 'task_duration';
+  }
+  if($taxonomy_key == 'task_term') {
+    $old_slug = str_replace("_single", "", $old_slug);
+    $new_slug = str_replace("_single", "", $new_slug);
   }
 
   $args = array(
@@ -140,6 +146,7 @@ function pof_update_translation_slug() {
       'numberposts' => -1,
       'posts_per_page' => -1,
       'post_type' => array('pof_post_task'),
+      'meta_key' => $field_key,
       'meta_value' => $old_slug
     );
 
@@ -155,7 +162,8 @@ function pof_update_translation_slug() {
 
   wp_send_json_success(array(
     'amount' => $count,
-    'field_key' => $field_key
+    'field_key' => $field_key,
+    'msg' => $msg
   ));
 
 	wp_die();
