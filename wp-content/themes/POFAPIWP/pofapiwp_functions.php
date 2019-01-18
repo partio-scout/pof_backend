@@ -121,6 +121,9 @@ function pof_update_translation_slug() {
   if($taxonomy_key == 'taskduration') {
     $field_key = 'task_duration';
   }
+  if($taxonomy_key == 'taskpreaparationduration') {
+    $field_key = 'task_preparationduration';
+  }
   if($taxonomy_key == 'task_term') {
     $old_slug = str_replace("_single", "", $old_slug);
     $new_slug = str_replace("_single", "", $new_slug);

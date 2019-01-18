@@ -39,7 +39,6 @@ function get_editable_taxonomies() {
   return [
     "place_of_performance",
     "groupsize",
-    "mandatory",
     "taskduration",
     "taskpreaparationduration",
     "task_term",
