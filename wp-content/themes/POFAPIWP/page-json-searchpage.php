@@ -13,10 +13,10 @@ if (isset($_GET["tags"]) && trim($_GET["tags"]) != ''){
    $filter_tags = $_GET["tags"];
 }
 
-if (!empty($_GET["postGUID"])) {
-	$post_guid = $_GET["postGUID"];
-} else if (!empty($_POST["postGUID"])) {
-	$post_guid = $_POST["postGUID"];
+if (!empty($_GET["program"])) {
+	$post_guid = $_GET["program"];
+} else if (!empty($_POST["program"])) {
+	$post_guid = $_POST["program"];
 }
 
 $args = array(
