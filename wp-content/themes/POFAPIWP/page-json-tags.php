@@ -78,7 +78,12 @@ function merge_items($items1, $items2) {
   foreach ($items1 as $item1) {
     foreach($items2 as $item2) {
       if($item1->lang == $item2->lang) {
-        $items[] = array_merge_recursive((array)$item1, (array)$item2);
+        $translation_array = array(
+          "lang" => $item1->lang,
+          "lastModified" => $item1->lastModified > $item2->lastModified ? $item1->lastModified : $item2->lastModified,
+          "items" => array_merge((array)$item1->items, (array)$item2->items)
+        );
+        $items[] = $translation_array;
       }
     }
   }
