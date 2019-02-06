@@ -232,7 +232,7 @@ function pof_custom_validation() {
     //$additional_taskgroups = $vars['acf']['field_5be2d365716ff'];
     $additional_taskgroups = $vars['acf']['field_5beac55381ef1'];
 
-    $object = (object) ['ID' => $primary_taskgroup, 'post_type' => $post_type];
+    $object = (object) ['ID' => $primary_taskgroup, 'post_type' => 'pof_post_taskgroup'];
     $primary_taskgroup_program = end(pof_get_parent_tree($object, array()))->ID;
 
     foreach($additional_taskgroups as $taskgroup) {
