@@ -79,9 +79,9 @@ function pof_translation_slug_rename() {
 
 add_action( 'wp_ajax_pof_update_translation_slug', 'pof_update_translation_slug' );
 function pof_update_translation_slug() {
-  $old_slug = sanitize_text_field( $_POST['old_slug'] );
+  $old_slug = $_POST['old_slug'];
 	$new_slug = sanitize_text_field( $_POST['new_slug'] );
-  $taxonomy_key = sanitize_text_field( $_POST['taxonomy_key'] );
+  $taxonomy_key = $_POST['taxonomy_key'];
   $taxonomy_slug = $taxonomy_key . '::' . $old_slug;
 
   // Update slug in translations table
@@ -159,7 +159,14 @@ function pof_update_translation_slug() {
   $count = 0;
   foreach( $posts as $post ) {
   	$id = $post->ID;
-    update_field( $field_key, $new_slug, $id );
+    $old_field_content = get_field($field_key, $id);
+    $new_field_content = array_replace($old_field_content,
+        array_fill_keys(
+            array_keys($old_field_content, $old_slug),
+            $new_slug
+        )
+    );
+    update_field( $field_key, $new_field_content, $id );
     $count++;
   }
 
