@@ -3,7 +3,7 @@
 Template Name: JSON Searchpage
 */
 
-header('Content-type: application/json');
+//header('Content-type: application/json');
 
 $filter_tags = "all";
 $post_guid = "";
@@ -128,6 +128,18 @@ if ($filter_tags == "all" || strstr($filter_tags, "kasvatustavoitteet")) {
 	//Kasvatustavoitteet
 	$item_tax_key = 'growth_target';
 	$items = pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($item_tax_key, false, $program);
+
+  $growth_target_tags = [];
+  foreach(get_terms('pof_tax_growth_target', array('hide_empty' => false)) as $item) {
+    $growth_target_tags[$item->slug] = $item->name;
+  }
+
+  foreach($items as $item_key => $item_name) {
+    if(!array_key_exists($item_key, $growth_target_tags)) {
+      unset($items[$item_key]);
+    }
+  }
+
 	$ret->kasvatustavoitteet = array(
     "fields" => pof_pages_get_tags_searchpage($items, $item_tax_key),
     "type" => get_option('taxonomy_searchoptions_' . $item_tax_key . '_' . $program)

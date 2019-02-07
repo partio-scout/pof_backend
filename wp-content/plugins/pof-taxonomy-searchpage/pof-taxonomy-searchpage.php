@@ -334,7 +334,7 @@ function pof_taxonomy_searchpage_get_items_by_taxonomy_base_key($taxonomy_base_k
 
 	$table_name = pof_taxonomy_searchpage_get_table_name();
 
-    if ($taxonomy_base_key == 'equipment' || $taxonomy_base_key == 'skillarea') {
+    if ($taxonomy_base_key == 'equipment' || $taxonomy_base_key == 'skillarea' || $taxonomy_base_key == 'growth_target') {
         $all_items = array();
         foreach (get_terms('pof_tax_'.$taxonomy_base_key) as $term) {
 		    $all_items[$term->slug] = $term->name;
