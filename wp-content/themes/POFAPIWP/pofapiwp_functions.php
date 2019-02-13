@@ -109,7 +109,23 @@ function pof_update_translation_slug() {
   );
 
   if(false === $query) {
-    $error = 'Error: ' . $wpdb->last_error;
+    $error = 'Virhe käännöstaulun päivittämisessä: ' . $wpdb->last_error;
+    wp_send_json_error( $error );
+  }
+
+  $query = $wpdb->query(
+    $wpdb->prepare(
+    "
+    UPDATE wp_pof_taxonomy_searchpage
+    SET taxonomy_slug = REPLACE(taxonomy_slug, '%s', '%s')
+    WHERE taxonomy_slug = %s;
+    "
+    , $old_slug, $new_slug, $taxonomy_slug, $old_slug
+    )
+  );
+
+  if(false === $query) {
+    $error = 'Virhe avaimen päivittämisessä hakutauluun: ' . $wpdb->last_error;
     wp_send_json_error( $error );
   }
 
