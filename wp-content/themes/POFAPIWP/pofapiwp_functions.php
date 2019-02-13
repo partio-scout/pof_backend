@@ -1,5 +1,261 @@
 <?php
 
+/*
+ *  Update slugs in translation and search table, when tag slug is updated via WP interface
+ */
+function pof_update_translations( $update_data, $term_id, $taxonomy ) {
+
+  $pof_taxonomies = array(
+    'pof_tax_skillarea',
+    'pof_tax_equipment',
+    'pof_tax_growth_target',
+    'pof_tax_leadership',
+    'pof_tax_theme'
+  );
+
+  $pof_taxonomy_key_map = array(
+    'pof_tax_skillarea' => 'skillarea',
+    'pof_tax_equipment' => 'equpment',
+    'pof_tax_growth_target' => 'growth_target',
+    'pof_tax_leadership' => 'leadership',
+    'pof_tax_theme' => 'theme'
+  );
+
+  if( !in_array($taxonomy, $pof_taxonomies) ) {
+      return $update_data;
+  }
+
+  global $wpdb;
+
+  $term = get_term( $term_id, $taxonomy );
+
+  $old_slug = $term->slug;
+  $new_slug = $update_data['slug'];
+  $taxonomy_key = $pof_taxonomy_key_map[$taxonomy];
+  $taxonomy_slug = $taxonomy_key . '::' . $old_slug;
+
+  $query = $wpdb->query(
+    $wpdb->prepare(
+    "
+    UPDATE wp_pof_taxonomy_translate
+    SET taxonomy_slug = REPLACE(taxonomy_slug, '%s', '%s')
+    WHERE taxonomy_slug = %s;
+    "
+    , $old_slug, $new_slug, $taxonomy_slug, $old_slug
+    )
+  );
+
+  $query = $wpdb->query(
+    $wpdb->prepare(
+    "
+    UPDATE wp_pof_taxonomy_searchpage
+    SET taxonomy_slug = REPLACE(taxonomy_slug, '%s', '%s')
+    WHERE taxonomy_slug = %s;
+    "
+    , $old_slug, $new_slug, $taxonomy_slug, $old_slug
+    )
+  );
+
+  return $update_data;
+}
+add_filter( 'wp_update_term_data', 'pof_update_translations', 10, 3 );
+
+
+add_action( 'admin_footer', 'pof_translation_slug_rename' );
+function pof_translation_slug_rename() {
+  ?>
+  <script type="text/javascript">
+  jQuery(document).ready(function(){
+    jQuery('.pof-rename-modal').click(function(e) {
+
+        e.preventDefault();
+
+        var slug = jQuery(this).data('slug');
+        var taxonomyKey = jQuery(this).data('taxonomykey');
+        var modalTitle = "Muokkaa käännösavainta: " + slug;
+        var modalContent = 'Uusi avain: <input type="text" id="new-slug"/><br><br><button id="modal-save" class="button button-primary">Tallenna</button>';
+
+        jQuery("#modal-title").text(modalTitle);
+        jQuery("#new-slug").val('');
+
+        var modal = document.getElementById('myModal');
+        modal.style.display = "block";
+        var span = document.getElementsByClassName("close")[0];
+        var saveButton = document.getElementById("modal-save");
+        saveButton.onclick = function() {
+          var newSlug = jQuery("#new-slug").val();
+          var data = {
+              action: 'pof_update_translation_slug',
+              security: '<?php echo wp_create_nonce( 'pre_publish_validation' ); ?>',
+              new_slug: newSlug,
+              old_slug: slug,
+              taxonomy_key: taxonomyKey
+          };
+          /*
+          jQuery.post(ajaxurl, data, function(response) {
+            if(response.success) {
+
+            } else {
+              console.log("Error");
+            }
+          }, 'json');
+          */
+
+          jQuery.ajax({
+              type: 'post',
+              data: data,
+              dataType: 'json',
+              url: ajaxurl,
+              success: function(response){
+               if(response.success) {
+                  console.log("Success");
+                  console.log(response.data.amount);
+                  jQuery('#modal-save').after('<p>Uudelleenladataan sivu</p>');
+                  jQuery('#modal-save').after('<p>' + response.data.msg + '</p>');
+                  jQuery('#modal-save').after('<h3>Käännöksen avain päivitetty - päivitettiin ' + response.data.amount + 'kpl taskeja, mistä löytyi avain ' + response.data.field_key+ '</h3>');
+                  jQuery('#modal-save').hide();
+                  setTimeout(function(){ location.reload(); }, 2000);
+               } else {
+                  console.log("Error");
+               }
+              }
+          });
+
+        }
+
+        span.onclick = function() {
+          modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        }
+
+    });
+  });
+  </script> <?php
+}
+
+add_action( 'wp_ajax_pof_update_translation_slug', 'pof_update_translation_slug' );
+function pof_update_translation_slug() {
+  $old_slug = $_POST['old_slug'];
+	$new_slug = sanitize_text_field( $_POST['new_slug'] );
+  $taxonomy_key = $_POST['taxonomy_key'];
+  $taxonomy_slug = $taxonomy_key . '::' . $old_slug;
+
+  // Update slug in translations table
+
+  /*
+  Example query:
+  UPDATE wp_pof_taxonomy_translate
+  SET taxonomy_slug = REPLACE(taxonomy_slug, 'A_Kololla', 'Kololla')
+  WHERE taxonomy_slug = 'place_of_performance::A_Kololla';
+  */
+
+  $translation_table = pof_taxonomy_translate_get_table_name();
+
+  global $wpdb;
+
+  $query = $wpdb->query(
+    $wpdb->prepare(
+    "
+    UPDATE wp_pof_taxonomy_translate
+    SET taxonomy_slug = REPLACE(taxonomy_slug, '%s', '%s')
+    WHERE taxonomy_slug = %s;
+    "
+    , $old_slug, $new_slug, $taxonomy_slug, $old_slug
+    )
+  );
+
+  if(false === $query) {
+    $error = 'Virhe käännöstaulun päivittämisessä: ' . $wpdb->last_error;
+    wp_send_json_error( $error );
+  }
+
+  $query = $wpdb->query(
+    $wpdb->prepare(
+    "
+    UPDATE wp_pof_taxonomy_searchpage
+    SET taxonomy_slug = REPLACE(taxonomy_slug, '%s', '%s')
+    WHERE taxonomy_slug = %s;
+    "
+    , $old_slug, $new_slug, $taxonomy_slug, $old_slug
+    )
+  );
+
+  if(false === $query) {
+    $error = 'Virhe avaimen päivittämisessä hakutauluun: ' . $wpdb->last_error;
+    wp_send_json_error( $error );
+  }
+
+
+  // Update all posts that are using the old slug
+
+  $msg = "";
+  $field_key = 'task_' . $taxonomy_key;
+  if($taxonomy_key == 'taskduration') {
+    $field_key = 'task_duration';
+  }
+  if($taxonomy_key == 'taskpreaparationduration') {
+    $field_key = 'task_preparationduration';
+  }
+  if($taxonomy_key == 'task_term') {
+    $old_slug = str_replace("_single", "", $old_slug);
+    $new_slug = str_replace("_single", "", $new_slug);
+  }
+
+  $args = array(
+  	'numberposts' => -1,
+  	'posts_per_page' => -1,
+    'post_type' => array('pof_post_task'),
+    'meta_query' => array(
+      array(
+          'key' => $field_key,
+          'value' => '"' . $old_slug . '"',
+          'compare' => 'LIKE'
+      )
+    )
+  );
+
+  $posts = get_posts( $args );
+
+  if(count($posts) == 0) {
+    $args = array(
+      'numberposts' => -1,
+      'posts_per_page' => -1,
+      'post_type' => array('pof_post_task'),
+      'meta_key' => $field_key,
+      'meta_value' => $old_slug
+    );
+
+    $posts = get_posts( $args );
+  }
+
+  $count = 0;
+  foreach( $posts as $post ) {
+  	$id = $post->ID;
+    $old_field_content = get_field($field_key, $id);
+    $new_field_content = array_replace($old_field_content,
+        array_fill_keys(
+            array_keys($old_field_content, $old_slug),
+            $new_slug
+        )
+    );
+    update_field( $field_key, $new_field_content, $id );
+    $count++;
+  }
+
+  wp_send_json_success(array(
+    'amount' => $count,
+    'field_key' => $field_key,
+    'msg' => $msg
+  ));
+
+	wp_die();
+}
+
 add_action( 'admin_footer', 'pof_validation_script' );
 function pof_validation_script() {
   global $post;
@@ -53,7 +309,7 @@ function pof_custom_validation() {
     //$additional_taskgroups = $vars['acf']['field_5be2d365716ff'];
     $additional_taskgroups = $vars['acf']['field_5beac55381ef1'];
 
-    $object = (object) ['ID' => $primary_taskgroup, 'post_type' => $post_type];
+    $object = (object) ['ID' => $primary_taskgroup, 'post_type' => 'pof_post_taskgroup'];
     $primary_taskgroup_program = end(pof_get_parent_tree($object, array()))->ID;
 
     foreach($additional_taskgroups as $taskgroup) {

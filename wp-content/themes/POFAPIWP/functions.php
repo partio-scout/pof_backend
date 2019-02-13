@@ -237,6 +237,8 @@ add_action( 'wp_enqueue_scripts', 'twentyfifteen_scripts' );
 
 function twentyfifteen_admin_scripts() {
   wp_enqueue_script( 'jquery-ui', get_template_directory_uri() . '/js/jquery-ui.min.js', array( 'jquery' ) );
+	wp_enqueue_script( 'jquery-modal', get_template_directory_uri() . '/js/modal.js', array( 'jquery' ) );
+	wp_enqueue_style( 'modal', get_template_directory_uri() . '/css/modal.css', array(), '1.0' );
 }
 add_action( 'admin_enqueue_scripts', 'twentyfifteen_admin_scripts' );
 

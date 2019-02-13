@@ -35,6 +35,21 @@ if (isset($_POST['program'])) {
   $selected_program = $_POST['program'];
 }
 
+function get_editable_taxonomies() {
+  return [
+    "place_of_performance",
+    "groupsize",
+    "taskduration",
+    "taskpreaparationduration",
+    "task_term",
+    "common",
+    "search",
+    "apitype",
+    "error_order",
+    "theme"
+  ];
+}
+
 
 function pof_taxonomy_translate_get_table_name() {
 	global $wpdb;
@@ -541,6 +556,16 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
 		}
 	}
 
+  echo
+  '<div id="myModal" class="modal">
+  <div class="modal-content">
+  <span class="close">&times;</span>
+  <h1 id="modal-title"></h1>
+  <div id="modal-content">
+    Uusi avain: <input type="text" id="new-slug"/><br><br><button id="modal-save" class="button button-primary">Tallenna</button>
+  </div>
+  </div>
+  </div>';
 	echo '<div class="wrap">';
 	echo '<h1>'.$title.'</h1>';
 	echo '<form id="featured_upload" method="post" action="">';
@@ -591,7 +616,14 @@ function pof_taxonomy_translate_form($taxonomy_base_key, $items, $title, $title2
             continue;
         }
 		echo '<tr>';
-		echo '<th>'.$tmp_title.'<br /> ('.$tmp_key.')</th>';
+    echo '<th>'.$tmp_title.'<br />';
+
+    if(in_array($taxonomy_base_key, get_editable_taxonomies())) {
+      echo '<a href="#" class="pof-rename-modal" data-slug="'.$tmp_key.'" data-taxonomykey="' . $taxonomy_base_key . '">('.$tmp_key.')</a></th>';
+    } else {
+      echo '('.$tmp_key.')</th>';
+    }
+
 		foreach ($agegroups as $agegroup) {
 
 			echo '<td>';
