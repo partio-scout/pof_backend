@@ -1,5 +1,66 @@
 <?php
 
+/*
+ *  Update slugs in translation and search table, when tag slug is updated via WP interface
+ */
+function pof_update_translations( $update_data, $term_id, $taxonomy ) {
+
+  $pof_taxonomies = array(
+    'pof_tax_skillarea',
+    'pof_tax_equipment',
+    'pof_tax_growth_target',
+    'pof_tax_leadership',
+    'pof_tax_theme'
+  );
+
+  $pof_taxonomy_key_map = array(
+    'pof_tax_skillarea' => 'skillarea',
+    'pof_tax_equipment' => 'equpment',
+    'pof_tax_growth_target' => 'growth_target',
+    'pof_tax_leadership' => 'leadership',
+    'pof_tax_theme' => 'theme'
+  );
+
+  if( !in_array($taxonomy, $pof_taxonomies) ) {
+      return $update_data;
+  }
+
+  global $wpdb;
+
+  $term = get_term( $term_id, $taxonomy );
+
+  $old_slug = $term->slug;
+  $new_slug = $update_data['slug'];
+  $taxonomy_key = $pof_taxonomy_key_map[$taxonomy];
+  $taxonomy_slug = $taxonomy_key . '::' . $old_slug;
+
+  $query = $wpdb->query(
+    $wpdb->prepare(
+    "
+    UPDATE wp_pof_taxonomy_translate
+    SET taxonomy_slug = REPLACE(taxonomy_slug, '%s', '%s')
+    WHERE taxonomy_slug = %s;
+    "
+    , $old_slug, $new_slug, $taxonomy_slug, $old_slug
+    )
+  );
+
+  $query = $wpdb->query(
+    $wpdb->prepare(
+    "
+    UPDATE wp_pof_taxonomy_searchpage
+    SET taxonomy_slug = REPLACE(taxonomy_slug, '%s', '%s')
+    WHERE taxonomy_slug = %s;
+    "
+    , $old_slug, $new_slug, $taxonomy_slug, $old_slug
+    )
+  );
+
+  return $update_data;
+}
+add_filter( 'wp_update_term_data', 'pof_update_translations', 10, 3 );
+
+
 add_action( 'admin_footer', 'pof_translation_slug_rename' );
 function pof_translation_slug_rename() {
   ?>
