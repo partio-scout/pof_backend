@@ -2022,7 +2022,7 @@ function pof_get_siblings($post_item) {
 	if( $the_query ) {
       foreach($the_query as $q) {
           if ($post_id != $q->ID) {
-				      array_push($to_ret, $q->ID);
+				      array_push($to_ret, $q);
           }
 	    }
 	}
@@ -2101,7 +2101,7 @@ function pof_get_childs($post_item) {
 	if( $the_query ) {
       foreach($the_query as $q) {
           if ($post_id != $q->ID) {
-				      array_push($to_ret, $q->ID);
+				      array_push($to_ret, $q);
           }
 	    }
 	}
@@ -2159,7 +2159,7 @@ function pof_get_suggestions($post_item) {
 	if( $the_query ) {
       foreach($the_query as $q) {
           if ($post_id != $q->ID) {
-				      array_push($to_ret, $q->ID);
+				      array_push($to_ret, $q);
           }
 	    }
 	}
