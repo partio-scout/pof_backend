@@ -2017,15 +2017,14 @@ function pof_get_siblings($post_item) {
 		return $to_ret;
 	}
 
-	$the_query = new WP_Query( $args );
+	$the_query = get_posts ( $args );
 
-	if( $the_query->have_posts() ) {
-		while ( $the_query->have_posts() ) {
-			$the_query->the_post();
-			if ($post_id != $the_query->post->ID) {
-				array_push($to_ret, $the_query->post);
-			}
-		}
+	if( $the_query ) {
+      foreach($the_query as $q) {
+          if ($post_id != $q->ID) {
+				      array_push($to_ret, $q->ID);
+          }
+	    }
 	}
 
 
@@ -2097,17 +2096,15 @@ function pof_get_childs($post_item) {
 		return $to_ret;
 	}
 
-	$the_query = new WP_Query( $args );
+  $the_query = get_posts ( $args );
 
-	if( $the_query->have_posts() ) {
-		while ( $the_query->have_posts() ) {
-			$the_query->the_post();
-			if ($post_id != $the_query->post->ID) {
-				array_push($to_ret, $the_query->post);
-			}
-		}
+	if( $the_query ) {
+      foreach($the_query as $q) {
+          if ($post_id != $q->ID) {
+				      array_push($to_ret, $q->ID);
+          }
+	    }
 	}
-
 
 	return $to_ret;
 }
@@ -2157,19 +2154,17 @@ function pof_get_suggestions($post_item) {
 		'meta_value' => $post_id
 	);
 
-	$the_query = new WP_Query( $args );
+  $the_query = get_posts ( $args );
 
-	if( $the_query->have_posts() ) {
-		while ( $the_query->have_posts() ) {
-			$the_query->the_post();
-			if ($post_id != $the_query->post->ID) {
-				array_push($to_ret, $the_query->post);
-			}
-		}
+	if( $the_query ) {
+      foreach($the_query as $q) {
+          if ($post_id != $q->ID) {
+				      array_push($to_ret, $q->ID);
+          }
+	    }
 	}
 
-
-	return $to_ret;
+	return array();
 }
 
 function pof_item_suggestion_meta_box() {
