@@ -2154,7 +2154,7 @@ function pof_get_suggestions($post_item) {
 		'meta_value' => $post_id
 	);
 
-  $the_query = get_posts ( $args );
+  $the_query = get_posts( $args );
 
 	if( $the_query ) {
       foreach($the_query as $q) {
@@ -2164,7 +2164,7 @@ function pof_get_suggestions($post_item) {
 	    }
 	}
 
-	return array();
+	return $to_ret;
 }
 
 function pof_item_suggestion_meta_box() {
