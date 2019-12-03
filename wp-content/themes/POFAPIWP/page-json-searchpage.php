@@ -3,7 +3,8 @@
 Template Name: JSON Searchpage
 */
 
-//header('Content-type: application/json');
+header('Content-type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $filter_tags = "all";
 $post_guid = "";

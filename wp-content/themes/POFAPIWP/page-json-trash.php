@@ -4,6 +4,7 @@ Template Name: JSON Trash
 */
 
 header('Content-type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $ret = array();
 

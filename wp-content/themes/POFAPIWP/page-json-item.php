@@ -4,6 +4,7 @@ Template Name: JSON item
 */
 
 header('Content-type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $post_guid = $_GET["postGUID"];
 
