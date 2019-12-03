@@ -4,6 +4,7 @@ Template Name: JSON Full
 */
 
 header('Content-type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $lastModified = strtotime('2010-01-01');
 $lastModifiedBy = 0;

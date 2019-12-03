@@ -4,6 +4,7 @@ Template Name: JSON Tag icons
 */
 
 header('Content-type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $ret = new stdClass();
 

@@ -4,6 +4,7 @@ Template Name: JSON vinkit kaikki
 */
 
 header('Content-type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $pof_settings_fulljson_cache_ttl = pof_settings_get_fulljson_cache_ttl();
 

@@ -4,6 +4,7 @@ Template Name: JSON Tags
 */
 
 header('Content-type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $filter_langs = "all";
 $filter_tags = "all";

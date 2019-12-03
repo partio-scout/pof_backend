@@ -4,6 +4,7 @@ Template Name: JSON Muokatut vinkit
 */
 
 header('Content-type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 $startDate = null;
 
