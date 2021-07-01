@@ -1301,7 +1301,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang, $program = 0) {
 		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
 			$suoritus_valmistelu_kesto->name = $tmp_name[0]->content;
 		} else {
-			$suoritus_valmistelu_kesto->name = $suoritus_kesto_tmp;
+			$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tmp;
 		}
 
 		//$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tmp;
