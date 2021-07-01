@@ -1097,7 +1097,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang, $program = 0) {
 		array_push($pakollisuus, $pakollinen);
 		$ret->pakollisuus = $pakollisuus;
 	}
-    /*
+
 	$groupsizes = get_field("task_groupsize", $post_id);
 
 	$ret_groupsizes = array();
@@ -1168,7 +1168,7 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang, $program = 0) {
 	if (count($ret_groupsizes) > 0) {
 		$ret->ryhmakoko = $ret_groupsizes;
 	}
-    */
+
 //	$place_of_performance = get_field("task_place_of_performance", $post_id);
 
   $place_of_performance = get_post_meta($post_id, "task_place_of_performance", true);
@@ -1291,12 +1291,21 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang, $program = 0) {
 		}
 		$ret->suoritus_kesto = $suoritus_kesto;
 	}
-    /*
+
 	$suoritus_valmistelu_kesto_tmp = get_field("task_preparationduration", $post_id);
+
 	if ($suoritus_valmistelu_kesto_tmp) {
 		$suoritus_valmistelu_kesto = new stdClass();
-		$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tmp;
-		$suoritus_valmistelu_kesto->slug = $suoritus_valmistelu_kesto_tmp;
+
+		$tmp_name = pof_taxonomy_translate_get_translation('task_preparationduration', $suoritus_valmistelu_kesto_tmp, $agegroup_id, $lang, true);
+		if (!empty($tmp_name) && !empty($tmp_name[0]->content)) {
+			$suoritus_valmistelu_kesto->name = $tmp_name[0]->content;
+		} else {
+			$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tmp;
+		}
+
+		//$suoritus_valmistelu_kesto->name = $suoritus_valmistelu_kesto_tmp;
+		//$suoritus_valmistelu_kesto->slug = $suoritus_valmistelu_kesto_tmp;
 		$icon = pof_taxonomy_icons_get_icon('taskpreaparationduration', $suoritus_valmistelu_kesto_tmp, $agegroup_id, true);
 
 		if (!empty($icon)) {
@@ -1307,7 +1316,8 @@ function get_post_tags_JSON($post_id, $agegroup_id, $lang, $program = 0) {
 		}
 		$ret->suoritus_valmistelu_kesto = $suoritus_valmistelu_kesto;
 	}
-    */
+
+
 	$tarvike_tags = wp_get_post_terms($post_id, 'pof_tax_equipment');
 
 	$tarvikkeet = array();
